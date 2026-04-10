@@ -856,8 +856,7 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-  // **ตรงนี้สำคัญมาก!** ถ้าพี่เคยมีลิงก์ API เดิม เอามาวางแทนบรรทัดนี้ได้เลยครับ
-  const API_URL = "https://script.google.com/macros/s/AKfycbxeZ2m-hnUEyLFtBVDPbW2f6s3brOeAh4z34pVHsX4PBqQddmuDdzlVdAoR6NlF6ZqNWQ/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbwQnWbbfA9BqalAJMBlBI8HSbAiMeMXEjLzowtRsHPemAabX1OQbX7T_6I00j-CQ7OU/exec"; 
 
   var allData = [];
   var dashboardChart = null;
@@ -877,7 +876,6 @@
     } catch (e) { console.error("Error loading dropdowns", e); }
   }
 
-  // 👉 แก้ไขฟังก์ชันนี้แล้ว ไม่ต้องรอดึงลิงก์จากเซิร์ฟเวอร์
   function openDatabase() {
     Swal.fire({ title: 'กำลังเปิดฐานข้อมูล...', text: 'กรุณารอสักครู่', icon: 'info', timer: 1500, showConfirmButton: false });
     setTimeout(() => {
