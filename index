@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KSH SUPERVISOR SYSTEM</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='%231e3c72' d='M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm95.8 32.6L272 480l-32-136 32-56h-96l32 56-32 136-47.8-191.4C56.9 292 0 350.3 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-72.1-56.9-130.4-128.2-133.8z'/%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    /* CSS Styles (คงเดิมจากที่พี่เขียนมา เพราะ UI สวยอยู่แล้วครับ) */
+    :root { --primary-color: #1e3c72; --secondary-color: #2a5298; --accent-color: #6f42c1; --bg-light: #f4f6f9; }
+    body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-light); color: #333; -webkit-tap-highlight-color: transparent; }
+    .app-header { background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%); color: white; padding: 30px 15px 50px 15px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .btn-database { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: white; border-radius: 20px; padding: 6px 15px; font-size: 0.85rem; backdrop-filter: blur(5px); }
+    .container-main { max-width: 1100px; margin: -25px auto 20px auto; padding: 0 10px; position: relative; z-index: 10; }
+    
+    /* Navigation */
+    @media (max-width: 767px) {
+      body { padding-bottom: 85px; } 
+      .nav-pills { position: fixed; bottom: 0; left: 0; right: 0; border-radius: 20px 20px 0 0; background: white; z-index: 1030; display: flex; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); }
+      .nav-pills .nav-link { font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; }
+      .nav-pills .nav-link i { font-size: 1.4rem; margin-bottom: 4px; }
+    }
+
+    /* อื่นๆ เหมือนเดิม... */
+    .custom-card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: white; margin-bottom: 20px; }
+    .signature-wrapper { border: 2px dashed #ced4da; border-radius: 10px; position: relative; }
+    #signaturePad { width: 100%; height: 200px; touch-action: none; }
+    #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center; }
+  </style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="spinner-border text-primary"></div>
+  <h5 class="mt-3 text-primary fw-bold">กำลังประมวลผล...</h5>
+</div>
+
+<div class="app-header text-center">
+  <h2 class="mb-2"><i class="fas fa-user-shield"></i> KSH SUPERVISOR SYSTEM</h2>
+  <p class="mb-3 opacity-75">ระบบบันทึกและรายงานประจำเวรพยาบาลตรวจการนอกเวลา</p>
+  <button class="btn btn-database" onclick="openDatabase()">
+    <i class="fas fa-database me-1"></i> Google Sheet Database
+  </button>
+</div>
+
+<div class="container-main">
+  <ul class="nav nav-pills nav-fill mb-3" id="mainNav">
+    <li class="nav-item"><button class="nav-link active" onclick="showSection('dashboardSection', this)"><i class="fas fa-home"></i> Home</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showSection('formSection', this)"><i class="fas fa-plus-circle"></i> บันทึกเวร</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showSection('tableSection', this)"><i class="fas fa-list-ul"></i> ประวัติ</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showSection('handoutSection', this)"><i class="fas fa-book-medical"></i> คู่มือ</button></li>
+  </ul>
+
+  <div id="dashboardSection">...</div>
+  <div id="formSection" style="display:none;">...</div>
+  <div id="tableSection" style="display:none;">...</div>
+  <div id="handoutSection" style="display:none;">...</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  // 1. ตั้งค่า API และ URL
+  const API_URL = "https://script.google.com/macros/s/AKfycbxeZ2m-hnUEyLFtBVDPbW2f6s3brOeAh4z34pVHsX4PBqQddmuDdzlVdAoR6NlF6ZqNWQ/exec"; // ใส่ URL ที่ได้จากการ Deploy .gs
+  const SHEET_DATABASE_URL = "https://docs.google.com/spreadsheets/d/1UjALgJTm6M2k_Qx8A0KYlteII1CR9uotY4SaiCebXRc/edit";
+
+  // 2. ฟังก์ชันเปิด Database (แก้ปัญหาปุ่มกดไม่ได้)
+  function openDatabase() {
+    Swal.fire({
+      title: 'กำลังเปิดฐานข้อมูล...',
+      text: 'กรุณารอสักครู่',
+      icon: 'info',
+      timer: 1500,
+      showConfirmButton: false
+    });
+    setTimeout(() => {
+      window.open(SHEET_DATABASE_URL, '_blank');
+    }, 1000);
+  }
+
+  // 3. ระบบสลับหน้าแบบ Clean Code
+  function showSection(sectionId, btn) {
+    // ซ่อนทุกหน้า
+    $('#dashboardSection, #formSection, #tableSection, #handoutSection').hide();
+    $('.nav-link').removeClass('active');
+    
+    // แสดงหน้าที่เลือก
+    $(`#${sectionId}`).fadeIn(300);
+    $(btn).addClass('active');
+    
+    // พิเศษสำหรับหน้าฟอร์ม (ต้องรีไซส์ Signature Canvas)
+    if (sectionId === 'formSection') {
+      setTimeout(resizeCanvas, 100);
+      initSelect2();
+    }
+    window.scrollTo(0,0);
+  }
+
+  // 4. Initialization
+  $(document).ready(function() {
+    // เริ่มต้นที่ Dashboard
+    showSection('dashboardSection', $('.nav-link').first());
+    
+    // โหลดข้อมูลเบื้องต้น
+    // loadTableData(); 
+    // fetchDropdowns();
+  });
+
+  // [ใส่ฟังก์ชันอื่นๆ เช่น Signature, handleFormSubmit, renderChart ต่อท้ายตามโค้ดเดิมได้เลยครับ]
+</script>
+</body>
+</html>
