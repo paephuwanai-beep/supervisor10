@@ -21,27 +21,54 @@
     :root { --primary-color: #1e3c72; --secondary-color: #2a5298; --accent-color: #6f42c1; --bg-light: #f4f6f9; }
     body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-light); color: #333; -webkit-tap-highlight-color: transparent; }
     .app-header { background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%); color: white; padding: 30px 15px 50px 15px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
+    .app-header h2 { font-size: 1.5rem; font-weight: 700; }
+    .app-header p { font-size: 0.9rem; }
+    
     .btn-database { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: white; border-radius: 20px; padding: 6px 15px; font-size: 0.85rem; backdrop-filter: blur(5px); transition: all 0.2s; text-decoration: none; display: inline-block; }
+    .btn-database:hover { background: white; color: var(--primary-color); }
+    
     .container-main { max-width: 1100px; margin: -25px auto 20px auto; padding: 0 10px; position: relative; z-index: 10; }
+    
     .nav-pills { background: white; border-radius: 15px; padding: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .nav-pills .nav-link { color: #555; font-weight: 600; border-radius: 12px; padding: 12px; font-size: 0.95rem; cursor: pointer; border: none; width: 100%;}
+    .nav-pills .nav-link { color: #555; font-weight: 600; border-radius: 12px; padding: 12px; font-size: 0.95rem; transition: all 0.3s; cursor: pointer; border: none; width: 100%;}
     .nav-pills .nav-link.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2); }
+    
     @media (max-width: 767px) {
-      body { padding-bottom: 85px; } .nav-pills { position: fixed; bottom: 0; left: 0; right: 0; border-radius: 20px 20px 0 0 !important; padding: 8px 5px 12px 5px !important; box-shadow: 0 -4px 20px rgba(0,0,0,0.1) !important; z-index: 1030; background: white; display: flex; justify-content: space-between; }
-      .nav-pills .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem !important; padding: 8px 2px !important; background: transparent !important; }
-      .nav-pills .nav-link i { font-size: 1.4rem; margin-bottom: 4px; }
+      body { padding-bottom: 85px; } 
+      .nav-pills { position: fixed; bottom: 0; left: 0; right: 0; border-radius: 20px 20px 0 0 !important; margin-bottom: 0 !important; padding: 8px 5px 12px 5px !important; box-shadow: 0 -4px 20px rgba(0,0,0,0.1) !important; z-index: 1030; background: white; display: flex; justify-content: space-between; }
+      .nav-pills .nav-item { margin: 0 2px; }
+      .nav-pills .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem !important; padding: 8px 2px !important; color: #6c757d; background: transparent !important; }
+      .nav-pills .nav-link i { font-size: 1.4rem; margin-right: 0 !important; margin-bottom: 4px; }
+      .nav-pills .nav-link.active { background: #eef2ff !important; color: var(--primary-color) !important; box-shadow: none !important; font-weight: 700; }
     }
+
     .quick-menu-btn { background: white; border-radius: 15px; padding: 15px 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #f0f0f0; width: 100%; transition: all 0.2s; color: #555; font-weight: 600;}
+    .quick-menu-btn:hover, .quick-menu-btn:active { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); background: #fafafa;}
+    .quick-menu-btn i { font-size: 2rem; margin-bottom: 8px; display: block;}
+
     .custom-card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: white; margin-bottom: 20px; overflow: hidden; }
     .card-title-bar { background: #fff; padding: 12px 18px; font-weight: 600; font-size: 1.05rem; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; color: var(--primary-color); }
+    .card-title-bar i { margin-right: 10px; font-size: 1.2rem; opacity: 0.8; }
     .card-body-custom { padding: 15px; } 
+    .form-label { font-weight: 600; font-size: 0.85rem; color: #555; margin-bottom: 6px; }
     .form-control, .form-select { border-radius: 10px; border: 1px solid #ddd; padding: 10px 12px; font-size: 16px; background-color: #fafafa; }
+    .form-control:focus, .form-select:focus { border-color: var(--accent-color); background-color: #fff; box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1); }
+    
     .signature-wrapper { border: 2px dashed #ced4da; border-radius: 10px; background-color: #fff; position: relative; overflow: hidden; }
     #signaturePad { width: 100%; height: 200px; touch-action: none; cursor: crosshair; }
-    .btn-gradient { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px; font-weight: 600; font-size: 1.1rem; border-radius: 12px; box-shadow: 0 6px 15px rgba(111, 66, 193, 0.25); width: 100%;}
+    .btn-clear-sig { position: absolute; top: 10px; right: 10px; z-index: 10; border-radius: 20px; font-size: 0.8rem; }
+    
+    .select2-container--bootstrap-5 .select2-selection { font-size: 16px !important; border-radius: 10px; border-color: #ddd; background-color: #fafafa; min-height: 42px; display: flex; align-items: center; }
+    .stats-container { background: #f8f9fa; border: 1px solid #ececec; border-radius: 12px; padding: 12px; margin-top: 15px; }
+    .stat-title { font-size: 0.85rem; font-weight: bold; color: #666; margin-bottom: 8px; display: block; }
+    .btn-gradient { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px; font-weight: 600; font-size: 1.1rem; border-radius: 12px; box-shadow: 0 6px 15px rgba(111, 66, 193, 0.25); transition: transform 0.2s; width: 100%;}
+    .btn-gradient:hover { transform: translateY(-2px); color: white; }
     #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
     
-    /* แก้ปัญหา PDF หน้าขาว โดยการปรับการซ่อน Capture Area แบบใหม่ */
+    table.dataTable tbody td { vertical-align: middle; font-size: 0.9rem; }
+    .table-responsive { border-radius: 10px; }
+    
+    /* ซ่อน Capture Area แบบแนบเนียน ไม่ให้ PDF ขาวโพลน */
     #captureArea { position: absolute; left: 0; top: 0; width: 800px; background: white; padding: 40px; font-family: 'Sarabun'; z-index: -9999; opacity: 0; pointer-events: none;}
     
     .dash-card { border-radius: 15px; padding: 20px; color: white; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 100%; min-height: 130px; display: flex; flex-direction: column; justify-content: center;}
@@ -115,7 +142,12 @@
           <option value="desc">ใหม่ > เก่า</option><option value="asc">เก่า > ใหม่</option>
         </select>
       </div>
-      <div class="table-responsive"><table id="dataTable" class="table table-hover w-100"><thead class="table-light"><tr><th>วันที่</th><th>เวร</th><th>ผู้ตรวจการ</th><th class="text-center">ไฟล์</th><th class="text-end">จัดการ</th></tr></thead><tbody></tbody></table></div>
+      <div class="table-responsive">
+        <table id="dataTable" class="table table-hover w-100">
+          <thead class="table-light"><tr><th>วันที่</th><th>เวร</th><th>ผู้ตรวจการ</th><th class="text-center">ไฟล์</th><th class="text-end">จัดการ</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -165,36 +197,45 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-  // 👇👇👇 วางลิงก์ Web App ของคุณที่นี่ 👇👇👇
+  // ลิงก์ API ถูกฝังไว้ตรงนี้แล้ว ห้ามแก้หรือลบนะครับ!
   const API_URL = "https://script.google.com/macros/s/AKfycbwLEBU1Ufs2F97tUEn5Jdsiry6q283qWVa-di6oWOckN_6uzQGTlFUrrOcVRszB3Ie9/exec"; 
 
   var allData = [];
 
-  $(document).ready(function() { showDashboard(); loadTableData(); fetchDropdowns(); });
+  $(document).ready(function() { 
+    showDashboard(); 
+    loadTableData(); 
+    fetchDropdowns(); 
+  });
 
-  // แก้ไขปัญหา Dropdown ลงผิดช่อง
   async function fetchDropdowns() {
     try {
       let res = await fetch(API_URL + "?action=getDropdownOptions");
+      if (!res.ok) throw new Error("Fetch Error");
       let data = await res.json();
       
       createOpts('supList', data.supervisors); 
       createOpts('posList', data.positions || ['พยาบาลวิชาชีพชำนาญการ', 'พยาบาลวิชาชีพปฏิบัติการ']); 
       createOpts('docList1', data.doctors); 
       createOpts('docList2', data.doctors); 
-      
       fillCls('nurse-list', data.nurses); 
       fillCls('helper-list', data.helpers); 
       fillCls('card-list', data.cardStaff); 
 
       $('.select2-input').select2({ theme: 'bootstrap-5', width: '100%' });
-    } catch(e) { console.log(e); }
+    } catch(e) { 
+      console.log("เชื่อมต่อ Dropdown ไม่สำเร็จ ลองตั้งค่าเริ่มต้น...", e); 
+    }
   }
   
   function createOpts(id, list) { 
     let s = document.getElementById(id); 
-    if(s && list) { s.innerHTML = '<option value="" disabled selected>เลือก...</option>'; list.forEach(v => s.add(new Option(v, v))); }
+    if(s && list) { 
+      s.innerHTML = '<option value="" disabled selected>เลือก...</option>'; 
+      list.forEach(v => s.add(new Option(v, v))); 
+    }
   }
+
   function fillCls(cName, list) {
     let els = document.getElementsByClassName(cName);
     if(list) {
@@ -210,9 +251,14 @@
   function showTable() { hideAll(); $('#tableSection').show(); $('#btnTabTable').addClass('active'); loadTableData(); }
   function hideAll() { $('#dashboardSection, #formSection, #tableSection').hide(); $('.nav-link').removeClass('active'); }
   function showHandout() { Swal.fire('คู่มือ', 'ระบบกำลังจัดทำคู่มือ...', 'info'); }
-  function resetForm() { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val('').trigger('change'); clearSignature(); }
+  
+  function resetForm() { 
+    document.getElementById('mainForm').reset(); 
+    $('#recId').val(''); 
+    $('.select2-input').val('').trigger('change'); 
+    clearSignature(); 
+  }
 
-  // ฟังก์ชันช่วยเรียงลำดับเวร
   function getShiftOrder(shiftName) {
       if(shiftName === 'ดึก') return 1;
       if(shiftName === 'เช้า') return 2;
@@ -220,18 +266,30 @@
       return 99;
   }
 
-  // ---- บันทึกและสร้าง PDF ----
+  function formatDate(d) { 
+    if(!d) return ''; 
+    var dt=new Date(d); 
+    return dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2); 
+  }
+
+  function formatThaiDateCE(dateString) {
+      if(!dateString) return '';
+      const d = new Date(dateString);
+      if(isNaN(d.getTime())) return dateString;
+      const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
   async function handleFormSubmit(e) {
     e.preventDefault(); 
     $('#loadingOverlay').css('display', 'flex');
-    let fd = {}; new FormData(e.target).forEach((v, k) => fd[k] = v);
+    let fd = {}; 
+    new FormData(e.target).forEach((v, k) => fd[k] = v);
 
-    // กำหนดเวลาคร่าวๆ ไว้เซฟลงชีต (เผื่อใช้คำนวณ)
-    if(fd.Shift==="ดึก"){ fd.StartTime="00:30"; fd.EndTime="08:30"; }
-    else if(fd.Shift==="เช้า"){ fd.StartTime="08:30"; fd.EndTime="16:30"; }
-    else { fd.StartTime="16:30"; fd.EndTime="00:30"; }
+    if(fd.Shift === "ดึก") { fd.StartTime = "00:30"; fd.EndTime = "08:30"; }
+    else if(fd.Shift === "เช้า") { fd.StartTime = "08:30"; fd.EndTime = "16:30"; }
+    else { fd.StartTime = "16:30"; fd.EndTime = "00:30"; }
     
-    // อัปเดตข้อมูลที่จะไปโผล่ใน PDF ให้ตรง
     $('#c_date').text(fd.ReportDate);
     $('#c_time').text(`เวร${fd.Shift} (${fd.StartTime} - ${fd.EndTime} น.)`);
     $('#c_sup').text(fd.SupervisorName || '-'); $('#c_pos').text(fd.Position || '-');
@@ -239,82 +297,140 @@
     $('#c_stat_er').text(fd.StatER_Total || '0'); $('#c_stat_ipd3').text(fd.StatIPD3_Remain || '0');
     $('#c_ref_sum').text(fd.Refer_Total || '0'); $('#c_prob_det').text(fd.Problem_Detail || '-');
 
-    if (!isCanvasBlank(canvas)) $('#c_sig_img').attr('src', canvas.toDataURL()).show(); else $('#c_sig_img').hide();
+    if (!isCanvasBlank(canvas)) {
+      $('#c_sig_img').attr('src', canvas.toDataURL()).show();
+    } else {
+      $('#c_sig_img').hide();
+    }
 
-    // รอให้ UI แสดงข้อมูลครบก่อนแปลงไฟล์
     await new Promise(r => setTimeout(r, 500));
     
     var element = document.getElementById('captureArea');
-    
-    // สร้างรูป (html2canvas)
+    element.style.opacity = '1'; 
+
     let cap = await html2canvas(element, { scale: 1.5 });
     let imageBase64 = cap.toDataURL("image/png");
 
-    // สร้าง PDF (html2pdf) แบบตั้งค่าให้แสดงชั่วคราว
-    element.style.opacity = '1';
-    let pdfOpt = { margin: 0.5, filename: 'Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+    let pdfOpt = { 
+      margin: 0.5, filename: 'Report.pdf', image: { type: 'jpeg', quality: 0.98 }, 
+      html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
+    };
     
     let pdfBase64 = await html2pdf().set(pdfOpt).from(element).outputPdf('datauristring');
     element.style.opacity = '0';
 
-    let payload = { action: fd.recId ? 'updateRecord' : 'processForm', recId: fd.recId, formObject: fd, imageBase64: imageBase64, pdfBase64: pdfBase64 };
+    let payload = { 
+      action: fd.recId ? 'updateRecord' : 'processForm', 
+      recId: fd.recId, 
+      formObject: fd, 
+      imageBase64: imageBase64, 
+      pdfBase64: pdfBase64 
+    };
 
-    fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+    fetch(API_URL, { 
+      method: 'POST', 
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
     .then(r => r.json()).then(res => {
       $('#loadingOverlay').hide();
-      if(res.status === 'success') { Swal.fire('สำเร็จ', 'บันทึกเรียบร้อย', 'success'); resetForm(); showTable(); }
+      if(res.status === 'success') { 
+        Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success'); 
+        resetForm(); 
+        showTable(); 
+      }
       else { Swal.fire('Error', res.message, 'error'); }
-    }).catch(err => { $('#loadingOverlay').hide(); Swal.fire('Error', 'การเชื่อมต่อขัดข้อง', 'error'); });
-  }
-
-  // โหลดตาราง
-  async function loadTableData() {
-    let res = await fetch(API_URL + "?action=getAllRecords");
-    allData = await res.json();
-    let tbody = $('#dataTable tbody').empty();
-    allData.forEach(r => {
-      // ดึงค่าเวรจากคอลัมน์ที่ 3 โดยตรง
-      let shiftVal = String(r.fullData[3] || '-');
-      let order = getShiftOrder(shiftVal);
-      
-      let pdfLink = r.pdfUrl ? `<a href="${r.pdfUrl}" target="_blank" class="btn btn-sm btn-outline-danger me-1">PDF</a>` : '';
-      let imgLink = r.imgUrl ? `<a href="${r.imgUrl}" target="_blank" class="btn btn-sm btn-outline-primary">รูป</a>` : '';
-      
-      tbody.append(`<tr>
-        <td data-order="${new Date(r.fullData[2]).getTime()}">${r.dateFormatted}</td>
-        <td data-order="${order}"><span class="badge bg-info">เวร${shiftVal}</span></td>
-        <td>${r.supervisor}</td>
-        <td class="text-center">${pdfLink}${imgLink}</td>
-        <td class="text-end"><button class="btn btn-sm btn-warning me-1" onclick="editRec('${r.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-danger" onclick="deleteRec('${r.id}')"><i class="fas fa-trash"></i></button></td>
-      </tr>`);
+    }).catch(err => { 
+      $('#loadingOverlay').hide(); 
+      Swal.fire('Error', 'การเชื่อมต่อขัดข้อง', 'error'); 
     });
-    if ($.fn.DataTable.isDataTable('#dataTable')) $('#dataTable').DataTable().destroy();
-    $('#dataTable').DataTable({ order: [[0, 'desc'], [1, 'asc']], responsive: true });
-    updateCards();
   }
 
-  // แก้ไข
+  async function loadTableData() {
+    try {
+      let res = await fetch(API_URL + "?action=getAllRecords");
+      let text = await res.text();
+      let data = JSON.parse(text);
+      allData = data;
+
+      let tbody = $('#dataTable tbody').empty();
+      if(data.length === 0){ tbody.append('<tr><td colspan="5" class="text-center text-muted">ไม่พบประวัติ</td></tr>'); }
+      
+      allData.forEach(r => {
+        let shiftVal = String(r.fullData[3] || '-');
+        let order = getShiftOrder(shiftVal);
+        let pdfLink = r.pdfUrl ? `<a href="${r.pdfUrl}" target="_blank" class="btn btn-sm btn-outline-danger me-1">PDF</a>` : '';
+        let imgLink = r.imgUrl ? `<a href="${r.imgUrl}" target="_blank" class="btn btn-sm btn-outline-primary">รูป</a>` : '';
+        
+        tbody.append(`<tr>
+          <td data-order="${new Date(r.fullData[2]).getTime()}">${r.dateFormatted}</td>
+          <td data-order="${order}"><span class="badge bg-info">เวร${shiftVal}</span></td>
+          <td>${r.supervisor}</td>
+          <td class="text-center">${pdfLink}${imgLink}</td>
+          <td class="text-end text-nowrap"><button class="btn btn-sm btn-warning me-1" onclick="editRec('${r.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-danger" onclick="deleteRec('${r.id}')"><i class="fas fa-trash"></i></button></td>
+        </tr>`);
+      });
+
+      if ($.fn.DataTable.isDataTable('#dataTable')) $('#dataTable').DataTable().destroy();
+      $('#dataTable').DataTable({ order: [[0, 'desc'], [1, 'asc']], responsive: true });
+      updateCards();
+    } catch(e) {
+      console.log("Table load error", e);
+    }
+  }
+
   function editRec(id) {
-    var record = allData.find(r => r.id == id); if (!record) return;
-    resetForm(); var d = record.fullData; var f = document.forms['mainForm'];
-    $('#recId').val(d[0]); f['ReportDate'].value = formatDate(d[2]); 
-    f['Shift'].value = d[3]; // เซ็ตเวรกลับให้ถูก
+    var record = allData.find(r => r.id == id); 
+    if (!record) return;
+    
+    resetForm(); 
+    var d = record.fullData; 
+    var f = document.forms['mainForm'];
+    
+    $('#recId').val(d[0]); 
+    f['ReportDate'].value = formatDate(d[2]); 
+    f['Shift'].value = d[3]; // เซ็ตเวรให้ตรงเป๊ะ
     
     setS2('supList',d[5]); f['Position'].value = d[6]; setS2('docList1',d[7]); setS2('docList2',d[8]);
     setS2Cls('nurse-list',0,d[9]); setS2Cls('nurse-list',1,d[10]); setS2Cls('nurse-list',2,d[11]); setS2Cls('nurse-list',3,d[12]); setS2Cls('helper-list',0,d[13]); setS2Cls('helper-list',1,d[14]); 
     
     f['StatER_Total'].value=d[15]; f['StatIPD3_Remain'].value=d[57]; f['Refer_Total'].value=d[63]; f['Problem_Detail'].value=d[85];
-    showForm(); Swal.fire({ title: 'โหมดแก้ไขข้อมูล', icon: 'info', timer: 2000, showConfirmButton: false });
+    showForm(); 
+    Swal.fire({ title: 'โหมดแก้ไขข้อมูล', icon: 'info', timer: 2000, showConfirmButton: false });
   }
 
   function applyCustomSort() { $('#dataTable').DataTable().order([[0, $('#sortOrderSelect').val()], [1, 'asc']]).draw(); }
-  function deleteRec(id) { Swal.fire({title:'ลบ?', icon:'warning', showCancelButton:true}).then(r=>{if(r.isConfirmed){ $('#loadingOverlay').css('display', 'flex'); fetch(API_URL,{method:'POST', body:JSON.stringify({action:'deleteRecord', id:id})}).then(()=>loadTableData()); }}); }
-  function updateCards() { if(allData.length>0){ let l = allData[0].fullData; $('#dash_date').text(allData[0].dateFormatted); $('#dash_refer').text(l[63]||0); $('#dash_ipd').text(l[57]||0); $('#dash_er').text(l[15]||0); } }
+  function deleteRec(id) { 
+    Swal.fire({title:'ลบ?', icon:'warning', showCancelButton:true}).then(r=>{
+      if(r.isConfirmed){ 
+        $('#loadingOverlay').css('display', 'flex'); 
+        fetch(API_URL, {
+          method:'POST', 
+          body: JSON.stringify({action:'deleteRecord', id:id}),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        }).then(()=>loadTableData()).finally(() => $('#loadingOverlay').hide()); 
+      }
+    }); 
+  }
+
+  function updateCards() { 
+    if(allData.length > 0){ 
+      let l = allData[0].fullData; 
+      $('#dash_date').text(allData[0].dateFormatted); 
+      $('#dash_refer').text(l[63]||0); 
+      $('#dash_ipd').text(l[57]||0); 
+      $('#dash_er').text(l[15]||0); 
+    } 
+  }
 
   var canvas = document.getElementById('signaturePad'), ctx = canvas.getContext('2d'), drawing = false;
   function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = 200; }
-  canvas.addEventListener('mousedown', () => drawing = true); canvas.addEventListener('mouseup', () => drawing = false);
-  canvas.addEventListener('mousemove', e => { if(drawing){ ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } else { ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); } });
+  canvas.addEventListener('mousedown', () => drawing = true); 
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mousemove', e => { 
+    if(drawing){ ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } 
+    else { ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); } 
+  });
   function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); }
   function isCanvasBlank(c) { var b = document.createElement('canvas'); b.width = c.width; b.height = c.height; return c.toDataURL() === b.toDataURL(); }
 </script>
