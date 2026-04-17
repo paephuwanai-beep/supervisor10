@@ -6,7 +6,6 @@
   <title>KSH SUPERVISOR SYSTEM</title>
   
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='%231e3c72' d='M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm95.8 32.6L272 480l-32-136 32-56h-96l32 56-32 136-47.8-191.4C56.9 292 0 350.3 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-72.1-56.9-130.4-128.2-133.8z'/%3E%3C/svg%3E">
-
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -888,14 +887,55 @@
   async function fetchDropdowns() {
     try {
       let response = await fetch(API_URL + "?action=getDropdownOptions");
+      if (!response.ok) throw new Error("Network response was not ok");
       let data = await response.json();
       populateDropdowns(data);
-    } catch (e) { console.error("Error loading dropdowns", e); }
+    } catch (e) { 
+      console.error("Error loading dropdowns", e); 
+      // ข้อมูลสำรอง (Fallback) กันเว็บค้าง ถ้าดึงไม่ได้
+      let fallbackData = {
+          supervisors: ["นายพีรสันติ์ มาเพชร", "นายภูวนัย จุลนัน", "นายเทอดพงศ์ สุรไพฑูรย์", "นายภูวนัย", "น.ส.ปิยะนันท์"],
+          positions: ["พยาบาลวิชาชีพชำนาญการ", "พยาบาลวิชาชีพปฏิบัติการ"],
+          doctors: ["นพ. A", "พญ. B", "นพ. C"],
+          nurses: ["พยาบาล A", "พยาบาล B", "พยาบาล C", "พยาบาล D"],
+          helpers: ["ผู้ช่วยเหลือ 1", "ผู้ช่วยเหลือ 2"],
+          cardStaff: ["ห้องบัตร 1", "ห้องบัตร 2"]
+      };
+      console.warn("Using fallback options.");
+      populateDropdowns(fallbackData);
+    }
   }
 
-  function populateDropdowns(o) { createOpts('supList',o.supervisors); createOpts('posList',o.positions); createOpts('docList1',o.doctors); createOpts('docList2',o.doctors); fillCls('nurse-list',o.nurses); fillCls('helper-list',o.helpers); fillCls('card-list',o.cardStaff); }
-  function createOpts(id, l) { var s=document.getElementById(id); if(s) { s.innerHTML = ''; l.forEach(v=>{var o=document.createElement('option');o.value=v;o.text=v;s.add(o)}); } }
-  function fillCls(c, l) { var ss=document.getElementsByClassName(c); for(var i=0;i<ss.length;i++){ ss[i].innerHTML = ''; var d=document.createElement('option');d.value="";ss[i].add(d); l.forEach(v=>{var o=document.createElement('option');o.value=v;o.text=v;ss[i].add(o)}); }}
+  function populateDropdowns(o) { 
+    if(!o) o = {};
+    createOpts('supList', o.supervisors || []); 
+    createOpts('posList', o.positions || ['พยาบาลวิชาชีพชำนาญการ', 'พยาบาลวิชาชีพปฏิบัติการ']); 
+    createOpts('docList1', o.doctors || []); 
+    createOpts('docList2', o.doctors || []); 
+    fillCls('nurse-list', o.nurses || []); 
+    fillCls('helper-list', o.helpers || []); 
+    fillCls('card-list', o.cardStaff || []); 
+  }
+
+  function createOpts(id, l) { 
+    var s = document.getElementById(id); 
+    if(s && l && l.forEach) { 
+      s.innerHTML = ''; 
+      l.forEach(v => { var o = document.createElement('option'); o.value=v; o.text=v; s.add(o); }); 
+    } 
+  }
+
+  function fillCls(c, l) { 
+    var ss = document.getElementsByClassName(c); 
+    if(l && l.forEach) {
+      for(var i=0; i<ss.length; i++){ 
+        ss[i].innerHTML = ''; 
+        var d = document.createElement('option'); d.value=""; ss[i].add(d); 
+        l.forEach(v => { var o = document.createElement('option'); o.value=v; o.text=v; ss[i].add(o); }); 
+      }
+    }
+  }
+
   function setS2(id, v) { $('#'+id).val(v).trigger('change'); }
   function setS2Cls(c, i, v) { $(document.getElementsByClassName(c)[i]).val(v).trigger('change'); }
   function setRadio(n, v) { if(v) $(`input[name="${n}"][value="${v}"]`).prop('checked', true); }
