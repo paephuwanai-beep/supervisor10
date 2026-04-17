@@ -304,9 +304,25 @@
 
   <div id="tableSection" style="display:none;">
     <div class="custom-card card-body-custom">
+      <div class="d-flex justify-content-between align-items-end mb-3">
+        <h5 class="m-0 fw-bold text-primary"><i class="fas fa-list-ul"></i> ประวัติการบันทึกเวร</h5>
+        <div>
+          <label class="form-label small text-muted mb-1 d-block text-end">เรียงลำดับวันที่</label>
+          <select id="sortOrderSelect" class="form-select form-select-sm" onchange="applyCustomSort()">
+            <option value="desc">ใหม่ไปเก่า (ล่าสุดก่อน)</option>
+            <option value="asc">เก่าไปใหม่</option>
+          </select>
+        </div>
+      </div>
       <div class="table-responsive">
         <table id="dataTable" class="table table-hover align-middle w-100">
-          <thead class="table-light"><tr><th style="min-width:90px;">วันที่</th><th>ผู้ตรวจการ</th><th class="text-center" style="min-width:120px;">ไฟล์</th><th class="text-end" style="min-width:90px;">จัดการ</th></tr></thead>
+          <thead class="table-light"><tr>
+            <th style="min-width:100px;">วันที่</th>
+            <th style="min-width:75px;">เวร</th>
+            <th>ผู้ตรวจการ</th>
+            <th class="text-center" style="min-width:120px;">ไฟล์</th>
+            <th class="text-end" style="min-width:90px;">จัดการ</th>
+          </tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -699,8 +715,15 @@
 
       <div class="custom-card"><div class="card-title-bar"><i class="fas fa-user-clock"></i> 1. ข้อมูลทั่วไป</div><div class="card-body-custom"><div class="row g-3">
         <div class="col-12 col-md-4"><label class="form-label">วันที่</label><input type="date" class="form-control" name="ReportDate" required></div>
-        <div class="col-6 col-md-4"><label class="form-label">เวลาเริ่ม</label><input type="time" class="form-control" name="StartTime" required></div>
-        <div class="col-6 col-md-4"><label class="form-label">สิ้นสุด</label><input type="time" class="form-control" name="EndTime" required></div>
+        <div class="col-12 col-md-8">
+          <label class="form-label">เวร (ผลัด)</label>
+          <select class="form-select" name="Shift" required>
+            <option value="" disabled selected>เลือกเวร...</option>
+            <option value="ดึก">เวรดึก (00.30 น. - 08.30 น.)</option>
+            <option value="เช้า">เวรเช้า (08.30 น. - 16.30 น.)</option>
+            <option value="บ่าย">เวรบ่าย (16.30 น. - 00.30 น.)</option>
+          </select>
+        </div>
         <div class="col-12 col-md-6"><label class="form-label">ผู้ตรวจการ</label><select class="form-select select2-input" name="SupervisorName" id="supList"></select></div>
         <div class="col-12 col-md-6"><label class="form-label">ตำแหน่ง</label><select class="form-select select2-input" name="Position" id="posList"></select></div>
         <div class="col-12 col-md-6"><label class="form-label">แพทย์ ER</label><select class="form-select select2-input" name="DoctorER" id="docList1"></select></div>
@@ -881,7 +904,6 @@
     } catch (e) { console.error("Error loading dropdowns", e); }
   }
 
-  // แก้ไข: เพิ่มคำสั่งล้างข้อมูลเก่าก่อน (innerHTML = '') ป้องกันชื่อพยาบาลเบิ้ลซ้ำ
   function populateDropdowns(o) { createOpts('supList',o.supervisors); createOpts('posList',o.positions); createOpts('docList1',o.doctors); createOpts('docList2',o.doctors); fillCls('nurse-list',o.nurses); fillCls('helper-list',o.helpers); fillCls('card-list',o.cardStaff); }
   function createOpts(id, l) { var s=document.getElementById(id); if(s) { s.innerHTML = ''; l.forEach(v=>{var o=document.createElement('option');o.value=v;o.text=v;s.add(o)}); } }
   function fillCls(c, l) { var ss=document.getElementsByClassName(c); for(var i=0;i<ss.length;i++){ ss[i].innerHTML = ''; var d=document.createElement('option');d.value="";ss[i].add(d); l.forEach(v=>{var o=document.createElement('option');o.value=v;o.text=v;ss[i].add(o)}); }}
@@ -889,6 +911,29 @@
   function setS2Cls(c, i, v) { $(document.getElementsByClassName(c)[i]).val(v).trigger('change'); }
   function setRadio(n, v) { if(v) $(`input[name="${n}"][value="${v}"]`).prop('checked', true); }
   function formatDate(d) { if(!d) return ''; var dt=new Date(d); return dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2); }
+
+  // ฟังก์ชันแปลงวันที่เป็นภาษาไทย
+  function formatThaiDateCE(dateString) {
+      if(!dateString) return '';
+      const d = new Date(dateString);
+      if(isNaN(d.getTime())) return dateString;
+      const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  // ฟังก์ชันแปลงเวลาเริ่มต้นเป็นชื่อเวร และลำดับ
+  function getShiftData(sTime) {
+      let st = String(sTime || '');
+      if(st.includes('00:30') || st === '00:30:00') return { name: 'ดึก', order: 1 };
+      if(st.includes('08:30') || st === '08:30:00') return { name: 'เช้า', order: 2 };
+      if(st.includes('16:30') || st === '16:30:00') return { name: 'บ่าย', order: 3 };
+      return { name: '-', order: 99 };
+  }
+
+  function applyCustomSort() {
+      var order = $('#sortOrderSelect').val();
+      $('#dataTable').DataTable().order([[0, order], [1, 'asc']]).draw();
+  }
 
   // ---- Navigation Logic ----
   function hideAllSections() {
@@ -939,7 +984,13 @@
     var fd = {}; new FormData(form).forEach((v, k) => fd[k] = v); 
     const j = (arr) => arr.filter(v => v).join(', ');
 
-    $('#c_date').text(fd.ReportDate); $('#c_time').text(`${fd.StartTime} - ${fd.EndTime}`);
+    // แปลงเวรเป็นเวลา
+    if(fd.Shift === "ดึก") { fd.StartTime = "00:30"; fd.EndTime = "08:30"; }
+    else if(fd.Shift === "เช้า") { fd.StartTime = "08:30"; fd.EndTime = "16:30"; }
+    else if(fd.Shift === "บ่าย") { fd.StartTime = "16:30"; fd.EndTime = "00:30"; }
+
+    $('#c_date').text(fd.ReportDate); 
+    $('#c_time').text(`เวร${fd.Shift} (${fd.StartTime} น. - ${fd.EndTime} น.)`);
     $('#c_sup').text(fd.SupervisorName); $('#c_pos').text(fd.Position);
     $('#c_docER').text(fd.DoctorER||'-'); $('#c_docWard').text(fd.DoctorWard||'-');
     $('#c_nurse_er').text(j([fd.NurseER1,fd.NurseER2,fd.NurseER3,fd.NurseER4])||'-');
@@ -993,16 +1044,33 @@
       allData = data;
       if ($.fn.DataTable.isDataTable('#dataTable')) { $('#dataTable').DataTable().destroy(); }
       var tbody = $('#dataTable tbody'); tbody.empty();
-      if(data.length===0){ tbody.append('<tr><td colspan="4" class="text-center text-muted py-4">ไม่พบประวัติ</td></tr>'); return; }
+      if(data.length===0){ tbody.append('<tr><td colspan="5" class="text-center text-muted py-4">ไม่พบประวัติ</td></tr>'); return; }
 
       data.forEach(function(r) {
+        let ts = new Date(r.fullData[2]).getTime(); 
+        let formattedDate = formatThaiDateCE(r.fullData[2]);
+        let shiftInfo = getShiftData(r.fullData[3]);
+
         var pdfBtn = r.pdfUrl && r.pdfUrl.startsWith('http') ? `<a href="${r.pdfUrl}" target="_blank" class="btn btn-sm btn-outline-danger me-1 mb-1"><i class="fas fa-file-pdf"></i> PDF</a>` : '';
         var imgBtn = r.imgUrl && r.imgUrl.startsWith('http') ? `<a href="${r.imgUrl}" target="_blank" class="btn btn-sm btn-outline-primary mb-1"><i class="fas fa-image"></i> รูป</a>` : '';
         var editBtn = `<button class="btn btn-sm btn-warning me-1 mb-1" onclick="editRecord('${r.id}')"><i class="fas fa-pen"></i></button>`;
         var delBtn = `<button class="btn btn-sm btn-light text-danger mb-1" onclick="deleteRecord('${r.id}')"><i class="fas fa-trash"></i></button>`;
-        tbody.append(`<tr><td class="fw-bold text-nowrap">${r.dateFormatted}</td><td>${r.supervisor}</td><td class="text-center">${pdfBtn}${imgBtn}</td><td class="text-end text-nowrap">${editBtn}${delBtn}</td></tr>`);
+        
+        tbody.append(`<tr>
+            <td data-order="${ts}" class="fw-bold text-nowrap">${formattedDate}</td>
+            <td data-order="${shiftInfo.order}"><span class="badge bg-primary rounded-pill fw-normal">เวร${shiftInfo.name}</span></td>
+            <td>${r.supervisor}</td>
+            <td class="text-center">${pdfBtn}${imgBtn}</td>
+            <td class="text-end text-nowrap">${editBtn}${delBtn}</td>
+        </tr>`);
       });
-      $('#dataTable').DataTable({ "order": [], "language": { "search": "ค้นหา:", "lengthMenu":"แสดง _MENU_ รายการ", "info":"แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ", "paginate": { "next": "ถัดไป", "previous": "ก่อนหน้า" } }, "responsive": true });
+
+      $('#dataTable').DataTable({ 
+        "order": [[0, 'desc'], [1, 'asc']], 
+        "language": { "search": "ค้นหา:", "lengthMenu":"แสดง _MENU_ รายการ", "info":"แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ", "paginate": { "next": "ถัดไป", "previous": "ก่อนหน้า" } }, 
+        "responsive": true 
+      });
+      
       updateDashboardCards();
       renderChart();
     } catch (e) { console.error("Error loading table", e); }
@@ -1027,7 +1095,14 @@
     var record = allData.find(r => r.id == id); if (!record) return;
     resetForm(); 
     var d = record.fullData; var f = document.forms['mainForm'];
-    $('#recId').val(d[0]); f['ReportDate'].value = formatDate(d[2]); f['StartTime'].value=d[3]; f['EndTime'].value=d[4];
+    $('#recId').val(d[0]); f['ReportDate'].value = formatDate(d[2]); 
+    
+    // ตั้งค่าเวรให้ถูกต้อง
+    let st = String(d[3] || '');
+    if(st.includes('00:30') || st === '00:30:00') f['Shift'].value = "ดึก";
+    else if(st.includes('08:30') || st === '08:30:00') f['Shift'].value = "เช้า";
+    else if(st.includes('16:30') || st === '16:30:00') f['Shift'].value = "บ่าย";
+
     setS2('supList',d[5]); setS2('posList',d[6]); setS2('docList1',d[7]); setS2('docList2',d[8]);
     setS2Cls('nurse-list',0,d[9]); setS2Cls('nurse-list',1,d[10]); setS2Cls('nurse-list',2,d[11]); setS2Cls('nurse-list',3,d[12]); setS2Cls('nurse-list',4,d[13]); setS2Cls('helper-list',0,d[14]); 
     f['StatER_Total'].value=d[15]; f['StatER_Refer'].value=d[16]; f['StatER_EMS'].value=d[17]; f['StatER_Dead'].value=d[18]; f['StatER_Autopsy'].value=d[19];
