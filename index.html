@@ -1,6 +1,565 @@
-<!-- นำเข้า Firebase SDK (เวอร์ชัน Compat เพื่อให้เข้ากับโค้ดโครงสร้างเดิม) -->
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KSH SUPERVISOR SYSTEM</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='%231e3c72' d='M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm95.8 32.6L272 480l-32-136 32-56h-96l32 56-32 136-47.8-191.4C56.9 292 0 350.3 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-72.1-56.9-130.4-128.2-133.8z'/%3E%3C/svg%3E">
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+  
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root { --primary-color: #1e3c72; --secondary-color: #2a5298; --accent-color: #6f42c1; }
+    
+    body { 
+      font-family: 'Sarabun', sans-serif; 
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      background-attachment: fixed;
+      color: #333; 
+      -webkit-tap-highlight-color: transparent; 
+      overflow-x: hidden; 
+    }
+    
+    .app-header { 
+      background: rgba(30, 60, 114, 0.85); 
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: white; 
+      padding: 30px 15px 50px 15px; 
+      border-bottom-left-radius: 20px; 
+      border-bottom-right-radius: 20px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+      position: relative; 
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .app-header h2 { font-size: 1.5rem; font-weight: 700; }
+    .container-main { max-width: 1100px; margin: -25px auto 20px auto; padding: 0 10px; position: relative; z-index: 10; }
+    
+    .nav-pills { 
+      background: rgba(255, 255, 255, 0.8); 
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 15px; 
+      padding: 5px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .nav-pills .nav-link { color: #555; font-weight: 600; border-radius: 12px; padding: 12px; font-size: 0.95rem; transition: all 0.3s; cursor: pointer; border: none; width: 100%;}
+    .nav-pills .nav-link.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2); }
+    
+    @media (max-width: 767px) {
+      body { padding-bottom: 85px; } 
+      .nav-pills { 
+        position: fixed; 
+        bottom: 0; left: 0; right: 0; 
+        border-radius: 20px 20px 0 0 !important; 
+        margin-bottom: 0 !important; 
+        padding: 8px 5px 12px 5px !important; 
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.1) !important; 
+        z-index: 1030; 
+        background: rgba(255, 255, 255, 0.9); 
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-top: 1px solid rgba(255, 255, 255, 0.8);
+        display: flex; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap;
+      }
+      .nav-pills::-webkit-scrollbar { display: none; }
+      .nav-pills .nav-item { margin: 0 2px; flex: 0 0 auto; min-width: 75px;}
+      .nav-pills .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem !important; padding: 8px 5px !important; color: #6c757d; background: transparent !important; }
+      .nav-pills .nav-link i { font-size: 1.3rem; margin-bottom: 4px; }
+      .nav-pills .nav-link.active { background: #eef2ff !important; color: var(--primary-color) !important; font-weight: 700; border-radius: 15px;}
+    }
+
+    .quick-menu-btn { 
+      background: rgba(255, 255, 255, 0.7); 
+      backdrop-filter: blur(8px);
+      border-radius: 15px; padding: 15px 5px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04); 
+      border: 1px solid rgba(255, 255, 255, 0.6); 
+      width: 100%; transition: all 0.2s; color: #555; font-weight: 600;
+    }
+    .quick-menu-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); background: rgba(255, 255, 255, 0.9);}
+    .quick-menu-btn i { font-size: 1.8rem; margin-bottom: 8px; display: block;}
+
+    .custom-card { 
+      border: 1px solid rgba(255, 255, 255, 0.6); 
+      border-radius: 15px; 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.05); 
+      background: rgba(255, 255, 255, 0.75); 
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin-bottom: 20px; overflow: hidden; 
+    }
+    .card-title-bar { background: rgba(255, 255, 255, 0.85); padding: 12px 18px; font-weight: 600; font-size: 1.05rem; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; color: var(--primary-color); }
+    .card-title-bar i { margin-right: 10px; font-size: 1.2rem; opacity: 0.8; }
+    .card-body-custom { padding: 15px; } 
+    .form-label { font-weight: 600; font-size: 0.85rem; color: #555; margin-bottom: 6px; }
+    .form-control, .form-select { border-radius: 10px; border: 1px solid #ddd; padding: 10px 12px; font-size: 16px; background-color: rgba(255,255,255,0.9); }
+    .form-control:focus, .form-select:focus { border-color: var(--accent-color); background-color: #fff; box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1); }
+    .form-control[readonly] { background-color: #e9ecef; opacity: 1; border-style: dashed; }
+    
+    .signature-wrapper { border: 2px dashed #ced4da; border-radius: 10px; background-color: #fff; position: relative; overflow: hidden; }
+    #signaturePad { width: 100%; height: 200px; touch-action: none; cursor: crosshair; }
+    .btn-clear-sig { position: absolute; top: 10px; right: 10px; z-index: 10; border-radius: 20px; font-size: 0.8rem; }
+    
+    .select2-container--bootstrap-5 .select2-selection { font-size: 16px !important; border-radius: 10px; border-color: #ddd; background-color: rgba(255,255,255,0.9); min-height: 42px; display: flex; align-items: center; }
+    .stats-container { background: rgba(248, 249, 250, 0.6); border: 1px solid rgba(236, 236, 236, 0.8); border-radius: 12px; padding: 12px; margin-top: 15px; }
+    .stat-title { font-size: 0.85rem; font-weight: bold; color: #666; margin-bottom: 8px; display: block; }
+    .btn-gradient { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px; font-weight: 600; font-size: 1.1rem; border-radius: 12px; box-shadow: 0 6px 15px rgba(111, 66, 193, 0.25); transition: transform 0.2s; width: 100%;}
+    
+    #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.85); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+    
+    /* ===== FIX: captureArea ต้องซ่อนแบบที่ html2canvas ยังอ่านได้ ===== */
+    #captureArea {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 794px; /* A4 at 96dpi */
+      background: white;
+      padding: 40px;
+      font-family: 'Sarabun', sans-serif;
+      color: #333;
+      line-height: 1.6;
+      z-index: -1;
+      visibility: hidden;
+    }
+    /* เมื่อต้องการ render ให้ใช้ class นี้ */
+    #captureArea.ready-to-capture {
+      left: 0;
+      top: 0;
+      z-index: 9999;
+      visibility: visible;
+    }
+
+    .snap-header { text-align: center; border-bottom: 3px solid var(--primary-color); padding-bottom: 15px; margin-bottom: 25px; }
+    .snap-header h2 { color: var(--primary-color); font-weight: bold; margin: 0; }
+    .snap-header p { margin: 5px 0 0; color: #666; }
+    .snap-section { margin-bottom: 20px; page-break-inside: avoid; }
+    .snap-h3 { font-size: 18px; font-weight: bold; color: var(--accent-color); border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; }
+    .snap-row { display: flex; margin-bottom: 8px; }
+    .snap-label { font-weight: 600; width: 180px; color: #555; flex-shrink: 0; }
+    .snap-value { flex: 1; font-weight: 500; }
+    .snap-block { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
+
+    .dash-card { border-radius: 15px; padding: 20px; color: white; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 100%; display: flex; flex-direction: column; justify-content: center; min-height: 130px;}
+    .dash-card .bg-icon { position: absolute; right: -10px; bottom: -20px; font-size: 6rem; opacity: 0.2; }
+    .dash-card .title { font-size: 1rem; font-weight: 600; margin-bottom: 5px; z-index: 1; position: relative; display: flex; align-items: center; gap: 8px;}
+    .dash-card .value { font-size: 2.8rem; font-weight: 700; line-height: 1; z-index: 1; position: relative; margin-top: 5px;}
+    .dash-card .unit { font-size: 1.2rem; font-weight: 500; }
+    .bg-blue-light { background: #f0f4f8; color: #1e3c72; border: 1px solid #d9e2ec; }
+    .bg-blue-light .bg-icon { color: #1e3c72; opacity: 0.05; }
+    .bg-orange { background: linear-gradient(135deg, #ff9966, #ff5e62); }
+    .bg-purple { background: linear-gradient(135deg, #7F00FF, #E100FF); }
+    .bg-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .filter-box { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.6); }
+
+    .setting-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;}
+    .setting-card { background: rgba(255, 255, 255, 0.6); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: none; height: 100%;}
+    .setting-header { background: rgba(248, 249, 250, 0.8); padding: 10px 15px; font-weight: 600; border-radius: 10px 10px 0 0; color: var(--primary-color);}
+
+    .ho-bg { font-family: 'Sarabun', sans-serif; }
+    .ho-header { background: linear-gradient(to right, #1e40af, #0f766e); color: white; padding: 2rem; border-radius: 20px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;}
+    .ho-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border-radius: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; height: 100%; position: relative; border-top: 4px solid var(--primary-color);}
+    .ho-card-header { padding: 1rem; display: flex; align-items: center; gap: 0.75rem; background-color: rgba(248, 250, 252, 0.7);}
+    .ho-icon-box { background: white; padding: 0.5rem; border-radius: 0.75rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; width: 3rem; height: 3rem; font-size: 1.5rem; color: var(--primary-color);}
+    .ho-module-badge { font-size: 0.75rem; font-weight: 700; color: #6b7280; text-transform: uppercase; }
+    .ho-title { font-size: 1.1rem; font-weight: 700; color: #1f2937; line-height: 1.25; margin-bottom: 0; }
+    .ho-card-body { padding: 1.25rem; flex-grow: 1; }
+    .ho-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.9rem;}
+    .ho-bullet { min-width: 6px; width: 6px; height: 6px; border-radius: 50%; background-color: #9ca3af; margin-top: 0.4rem; margin-right: 0.5rem;}
+    .ho-alert-area { padding: 1rem; font-size: 0.85rem; font-weight: 500; border-top: 1px solid #eee; background: rgba(253, 253, 253, 0.9);}
+    .theme-blue { border-top: 4px solid #3b82f6; } .theme-orange { border-top: 4px solid #f97316; } .theme-teal { border-top: 4px solid #14b8a6; } .theme-green { border-top: 4px solid #22c55e; } .theme-purple { border-top: 4px solid #a855f7; } .theme-indigo { border-top: 4px solid #6366f1; } .theme-cyan { border-top: 4px solid #06b6d4; } .theme-emerald { border-top: 4px solid #10b981; } .theme-rose { border-top: 4px solid #f43f5e; } .theme-fuchsia { border-top: 4px solid #d946ef; } 
+    .ho-step-badge { position: absolute; top: 0; right: 0; color: white; padding: 0.25rem 0.75rem; border-bottom-left-radius: 0.75rem; font-size: 0.7rem; font-weight: 700; }
+    .bg-indigo { background-color: #6366f1; } .bg-cyan { background-color: #06b6d4; } .bg-emerald { background-color: #10b981; } .bg-rose { background-color: #f43f5e; } .bg-fuchsia { background-color: #d946ef; }
+    .ho-mini-badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 0.2rem; margin-right: 0.2rem;}
+    .badge-rose { background-color: #ffe4e6; color: #be123c; } .badge-indigo { background-color: #e0e7ff; color: #4338ca; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: white !important;}
+      .print-hide { display: none !important; }
+      .app-header, .nav-pills, .filter-box, #dashboardSection, #formSection, #tableSection, #settingsSection { display: none !important; }
+      #handoutSection { display: block !important; width: 100%; margin: 0; padding: 0; }
+      .container-main { max-width: 100%; margin: 0; padding: 0;}
+      .ho-header { box-shadow: none; border-radius: 0; padding: 1rem; color: black; background: white !important; border-bottom: 2px solid #1e40af;}
+      .ho-header h1 { color: #1e40af; } .ho-header p { color: #4b5563; }
+      .print-page-break { page-break-before: always; }
+      .ho-card { break-inside: avoid; margin-bottom: 15px;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem;"></div>
+  <h5 class="mt-3 text-primary fw-bold" id="loadingText">กำลังประมวลผล...</h5>
+</div>
+
+<!-- ===== captureArea: เนื้อหาที่จะถูก capture เป็น PDF/JPG ===== -->
+<div id="captureArea">
+  <div class="snap-header"><h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2><p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p></div>
+  <div class="snap-section">
+    <div class="snap-row"><span class="snap-label">วันที่:</span> <span class="snap-value" id="c_date"></span></div>
+    <div class="snap-row"><span class="snap-label">เวลาปฏิบัติงาน:</span> <span class="snap-value" id="c_time"></span></div>
+  </div>
+  <div class="snap-section"><div class="snap-h3">1. ข้อมูลทั่วไป</div><div class="snap-row"><span class="snap-label">ผู้ตรวจการ:</span> <span class="snap-value"><span id="c_sup"></span> (<span id="c_pos"></span>)</span></div><div class="snap-row"><span class="snap-label">แพทย์เวร ER:</span> <span class="snap-value" id="c_docER"></span></div><div class="snap-row"><span class="snap-label">แพทย์เวร Ward:</span> <span class="snap-value" id="c_docWard"></span></div></div>
+  <div class="snap-section"><div class="snap-h3">2. อัตรากำลัง</div><div class="snap-row"><span class="snap-label">ER:</span> <span class="snap-value" id="c_nurse_er"></span></div><div class="snap-row"><span class="snap-label">EMT:</span> <span class="snap-value" id="c_emt"></span></div> <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ ER:</span> <span class="snap-value" id="c_helper_er"></span></div><div class="snap-row"><span class="snap-label">LR:</span> <span class="snap-value" id="c_nurse_lr"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ LR:</span> <span class="snap-value" id="c_helper_lr"></span></div><div class="snap-row"><span class="snap-label">IPD หญิง:</span> <span class="snap-value" id="c_nurse_ipd2"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD2:</span> <span class="snap-value" id="c_helper_ipd2"></span></div><div class="snap-row"><span class="snap-label">IPD ชาย:</span> <span class="snap-value" id="c_nurse_ipd3"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD3:</span> <span class="snap-value" id="c_helper_ipd3"></span></div><div class="snap-row"><span class="snap-label">สนับสนุน:</span> <span class="snap-value">ห้องบัตร <span id="c_card"></span> | เปล <span id="c_porter"></span></span></div></div>
+  <div class="snap-section"><div class="snap-h3">3. สถิติผู้ป่วย</div><div class="snap-block"><div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div><div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div><div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div><div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div></div></div>
+  <div class="snap-section"><div class="snap-h3">4. การส่งต่อ (Refer)</div><div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div></div>
+  <div class="snap-section"><div class="snap-h3">5. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div></div>
+  <div class="snap-section"><div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div><div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div><div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div></div>
+  
+  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; padding: 0 10px; page-break-inside: avoid;">
+      <div style="width: 30%;">
+          <p style="margin-bottom: 5px;">ลงชื่อ............................................</p>
+          <img id="c_sig_img" src="" style="max-height: 50px; display: none; margin-bottom: 5px; margin-left: auto; margin-right: auto;">
+          <p style="margin-bottom: 0;">(<span id="c_sup_name2"></span>)</p>
+          <p>ผู้รายงาน (พยาบาลตรวจการ)</p>
+      </div>
+      <div style="width: 30%;">
+          <p style="margin-bottom: 30px;">ลงชื่อ............................................</p>
+          <p style="margin-bottom: 0;">(<span id="c_head_name"></span>)</p>
+          <p id="c_head_pos">หัวหน้ากลุ่มงานการพยาบาลฯ</p>
+      </div>
+      <div style="width: 30%;">
+          <p style="margin-bottom: 30px;">ลงชื่อ............................................</p>
+          <p style="margin-bottom: 0;">(<span id="c_dir_name"></span>)</p>
+          <p id="c_dir_pos">ผู้อำนวยการโรงพยาบาล</p>
+      </div>
+  </div>
+</div>
+
+<div class="app-header text-center print-hide">
+  <h2 class="mb-2"><i class="fas fa-user-shield"></i> KSH SUPERVISOR SYSTEM</h2>
+  <p class="mb-0 opacity-75">ระบบดิจิทัลรายงานเวรพยาบาลตรวจการนอกเวลา</p>
+</div>
+
+<div class="container-main">
+
+  <ul class="nav nav-pills nav-fill mb-3 d-flex flex-row print-hide" id="mainNav">
+    <li class="nav-item"><button class="nav-link active" onclick="showSection('dashboard')" id="btnTabDash"><i class="fas fa-home"></i> Home</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showSection('form')" id="btnTabForm"><i class="fas fa-plus-circle"></i> บันทึกเวร</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showSection('table')" id="btnTabTable"><i class="fas fa-list-ul"></i> ประวัติ</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showSection('handout')" id="btnTabHandout"><i class="fas fa-book-medical"></i> คู่มือ</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showSection('settings')" id="btnTabSettings"><i class="fas fa-cog"></i> ตั้งค่า</button></li>
+  </ul>
+
+  <div id="dashboardSection" class="section-content">
+    <div id="pdfDashboardArea">
+      <div class="row g-2 mb-4 print-hide">
+        <div class="col-3"><button class="quick-menu-btn text-center px-1" onclick="showSection('form')"><i class="fas fa-plus-circle text-primary" style="font-size: 1.5rem;"></i><span class="d-block" style="font-size: 0.75rem;">บันทึกเวร</span></button></div>
+        <div class="col-3"><button class="quick-menu-btn text-center px-1" onclick="showSection('table')"><i class="fas fa-list-ul text-primary" style="font-size: 1.5rem;"></i><span class="d-block" style="font-size: 0.75rem;">ประวัติ</span></button></div>
+        <div class="col-3"><button class="quick-menu-btn text-center px-1" onclick="showSection('handout')"><i class="fas fa-book-medical text-primary" style="font-size: 1.5rem;"></i><span class="d-block" style="font-size: 0.75rem;">คู่มือ</span></button></div>
+        <div class="col-3"><button class="quick-menu-btn text-center px-1" onclick="showSection('settings')"><i class="fas fa-cog text-primary" style="font-size: 1.5rem;"></i><span class="d-block" style="font-size: 0.75rem;">ตั้งค่า</span></button></div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="dash-card bg-blue-light"><i class="fas fa-calendar-alt bg-icon"></i><div class="title small">วันที่ปัจจุบัน</div><div class="value" id="dash_date" style="font-size: 1.4rem;">-</div></div></div>
+        <div class="col-6 col-md-3"><div class="dash-card bg-orange"><i class="fas fa-ambulance bg-icon"></i><div class="title small">Refer (ล่าสุด)</div><div class="value"><span id="dash_refer">0</span> <span class="unit">ราย</span></div></div></div>
+        <div class="col-6 col-md-3"><div class="dash-card bg-green"><i class="fas fa-bed bg-icon"></i><div class="title small">IPD รวม (ล่าสุด)</div><div class="value"><span id="dash_ipd">0</span> <span class="unit">ราย</span></div></div></div>
+        <div class="col-6 col-md-3"><div class="dash-card bg-purple"><i class="fas fa-user-injured bg-icon"></i><div class="title small">ER (ล่าสุด)</div><div class="value"><span id="dash_er">0</span> <span class="unit">ราย</span></div></div></div>
+      </div>
+
+      <div class="custom-card border-primary print-hide">
+          <div class="card-title-bar"><i class="fas fa-file-export text-primary"></i> ส่งออกข้อมูลประวัติ (Export Data)</div>
+          <div class="card-body-custom">
+              <div class="row g-3 align-items-end">
+                  <div class="col-12 col-md-4"><label class="form-label">เริ่มวันที่</label><input type="date" class="form-control" id="exportStart"></div>
+                  <div class="col-12 col-md-4"><label class="form-label">ถึงวันที่</label><input type="date" class="form-control" id="exportEnd"></div>
+                  <div class="col-12 col-md-4"><button class="btn btn-primary w-100 py-2 fw-bold" onclick="exportDataPSV()"><i class="fas fa-download me-2"></i> โหลดไฟล์ .PSV</button></div>
+              </div>
+          </div>
+      </div>
+
+      <div class="filter-box" data-html2canvas-ignore="true">
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-3"><label class="form-label">ตั้งแต่วันที่</label><input type="date" class="form-control" id="filterStartDate" onchange="renderChart()"></div>
+          <div class="col-12 col-md-3"><label class="form-label">ถึงวันที่</label><input type="date" class="form-control" id="filterEndDate" onchange="renderChart()"></div>
+          <div class="col-12 col-md-4"><label class="form-label">ข้อมูลที่วิเคราะห์</label>
+            <select class="form-select" id="filterDataSelect" multiple="multiple" style="width: 100%;" onchange="renderChart()">
+              <option value="er_total" selected>ยอดผู้ป่วย ER</option>
+              <option value="refer_total">ยอด Refer รวม</option>
+              <option value="ipd_total">ยอดผู้ป่วย IPD</option>
+              <option value="supervisor_count">ความถี่เวรผู้ตรวจการ</option>
+              <option value="problem_count">สถิติปัญหา</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-2"><label class="form-label">รูปแบบ</label>
+            <select class="form-select" id="filterChartType" onchange="renderChart()"><option value="bar">แท่ง (Bar)</option><option value="line">เส้น (Line)</option><option value="pie">วงกลม (Pie)</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-card card-body-custom mt-3"><canvas id="mainDashboardChart" style="max-height: 350px;"></canvas></div>
+    </div>
+  </div>
+
+  <div id="settingsSection" class="section-content" style="display:none;">
+    <div class="alert alert-info border-0 shadow-sm rounded-4 mb-4">
+      <i class="fas fa-info-circle me-2"></i> เพิ่มหรือลบรายชื่อต่างๆ ได้ที่นี่ ระบบจะอัปเดตไปที่ช่องให้เลือกตอนบันทึกเวร และใน PDF โดยอัตโนมัติ
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">ผู้ตรวจการ</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_supervisors" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('supervisors')">เพิ่ม</button></div><div id="list_supervisors" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">ตำแหน่งผู้ตรวจการ</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_positions" class="form-control" placeholder="ระบุตำแหน่ง..."><button class="btn btn-primary" onclick="addDropdownItem('positions')">เพิ่ม</button></div><div id="list_positions" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">แพทย์</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_doctors" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('doctors')">เพิ่ม</button></div><div id="list_doctors" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">พยาบาล</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_nurses" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('nurses')">เพิ่ม</button></div><div id="list_nurses" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">EMT</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_emt" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('emt')">เพิ่ม</button></div><div id="list_emt" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">ผู้ช่วยเหลือ (NA)</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_helpers" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('helpers')">เพิ่ม</button></div><div id="list_helpers" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">พนักงานเปล</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_porters" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('porters')">เพิ่ม</button></div><div id="list_porters" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header">ห้องบัตร</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_cardStaff" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('cardStaff')">เพิ่ม</button></div><div id="list_cardStaff" class="bg-light rounded"></div></div></div></div>
+      
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header text-bg-primary text-white">หัวหน้ากลุ่มงาน (ประทับใน PDF อัตโนมัติ)</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_head_name" class="form-control" placeholder="ระบุชื่อ..."><input type="text" id="add_head_pos" class="form-control" placeholder="ตำแหน่ง..."><button class="btn btn-primary" onclick="addDropdownItemComplex('head')">เพิ่ม</button></div><div id="list_head" class="bg-light rounded"></div></div></div></div>
+      <div class="col-md-6"><div class="setting-card"><div class="setting-header text-bg-primary text-white">ผู้อำนวยการ รพ. (ประทับใน PDF อัตโนมัติ)</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_director_name" class="form-control" placeholder="ระบุชื่อ..."><input type="text" id="add_director_pos" class="form-control" placeholder="ตำแหน่ง..."><button class="btn btn-primary" onclick="addDropdownItemComplex('director')">เพิ่ม</button></div><div id="list_director" class="bg-light rounded"></div></div></div></div>
+    </div>
+  </div>
+
+  <div id="formSection" class="section-content" style="display:none;">
+    <!-- ===== FIX: ลบ onsubmit และใช้ novalidate เพื่อไม่บังคับ required ===== -->
+    <form id="mainForm" novalidate>
+      <input type="hidden" name="recId" id="recId">
+
+      <div class="custom-card"><div class="card-title-bar"><i class="fas fa-user-clock"></i> 1. ข้อมูลทั่วไป</div><div class="card-body-custom"><div class="row g-3">
+        <!-- ===== FIX: ลบ required ออกทั้งหมด ===== -->
+        <div class="col-12 col-md-4"><label class="form-label">วันที่</label><input type="date" class="form-control" name="ReportDate"></div>
+        <div class="col-6 col-md-4">
+            <label class="form-label">เวรปฏิบัติงาน</label>
+            <select class="form-select" name="Shift" id="shiftSelect" onchange="updateShiftTime()">
+                <option value="">เลือกเวร...</option>
+                <option value="ดึก">ดึก (00.30 - 08.30)</option>
+                <option value="เช้า">เช้า (08.30 - 16.30)</option>
+                <option value="บ่าย">บ่าย (16.30 - 24.00)</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-4">
+            <label class="form-label">เวลาปฏิบัติงาน</label>
+            <input type="text" class="form-control" id="shiftTimeDisplay" name="ShiftTimeDisplay" readonly placeholder="ระบุอัตโนมัติ">
+            <input type="hidden" name="StartTime" id="StartTime">
+            <input type="hidden" name="EndTime" id="EndTime">
+        </div>
+        <div class="col-12 col-md-6"><label class="form-label">ผู้ตรวจการ</label><select class="form-select select2-input list-supervisors" name="SupervisorName"></select></div>
+        <div class="col-12 col-md-6"><label class="form-label">ตำแหน่ง</label><select class="form-select select2-input list-positions" name="Position"></select></div>
+        <div class="col-12 col-md-6"><label class="form-label">แพทย์ ER</label><select class="form-select select2-input list-doctors" name="DoctorER"></select></div>
+        <div class="col-12 col-md-6"><label class="form-label">แพทย์ Ward</label><select class="form-select select2-input list-doctors" name="DoctorWard"></select></div>
+      </div></div></div>
+
+      <div class="custom-card"><div class="card-title-bar" style="color:#dc3545;"><i class="fas fa-ambulance"></i> 2. แผนกฉุกเฉิน (ER)</div><div class="card-body-custom"><div class="row g-3">
+        <div class="col-6"><label class="form-label">พยาบาล 1</label><select class="form-select select2-input list-nurses" name="NurseER1"></select></div>
+        <div class="col-6"><label class="form-label">พยาบาล 2</label><select class="form-select select2-input list-nurses" name="NurseER2"></select></div>
+        <div class="col-6"><label class="form-label">พยาบาล 3</label><select class="form-select select2-input list-nurses" name="NurseER3"></select></div>
+        <div class="col-6"><label class="form-label">พยาบาล 4</label><select class="form-select select2-input list-nurses" name="NurseER4"></select></div>
+        <div class="col-12"><label class="form-label fw-bold text-danger">EMT</label><select class="form-select select2-input list-emt" name="EMT"></select></div>
+        <div class="col-12"><label class="form-label">ผู้ช่วยเหลือ ER</label><select class="form-select select2-input list-helpers" name="HelperER"></select></div>
+      </div>
+      <div class="stats-container mt-3"><span class="stat-title text-danger"><i class="fas fa-chart-line me-1"></i> สถิติผู้ป่วย ER</span><div class="row g-2">
+        <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_Total" placeholder="ยอดรวม"></div>
+        <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_Refer" placeholder="Refer"></div>
+        <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_EMS" placeholder="EMS"></div>
+        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Dead" placeholder="Dead"></div>
+        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Autopsy" placeholder="ชันสูตร"></div>
+      </div></div></div></div>
+
+      <div class="custom-card"><div class="card-title-bar" style="color:#d63384;"><i class="fas fa-baby-carriage"></i> 3. ห้องคลอด (LR)</div><div class="card-body-custom"><div class="row g-3">
+        <div class="col-6"><label class="form-label">พยาบาล 1</label><select class="form-select select2-input list-nurses" name="NurseLR1"></select></div>
+        <div class="col-6"><label class="form-label">พยาบาล 2</label><select class="form-select select2-input list-nurses" name="NurseLR2"></select></div>
+        <div class="col-12"><label class="form-label">ผู้ช่วยเหลือ</label><select class="form-select select2-input list-helpers" name="HelperLR"></select></div>
+      </div>
+      <div class="stats-container mt-3"><div class="row g-2 text-center">
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ยกมา</label><input type="number" class="form-control text-center" name="StatLR_Carry"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">รับใหม่</label><input type="number" class="form-control text-center" name="StatLR_New"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ย้ายไป</label><input type="number" class="form-control text-center" name="StatLR_Move"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Refer</label><input type="number" class="form-control text-center" name="StatLR_Refer"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">D/C</label><input type="number" class="form-control text-center" name="StatLR_DC"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">คลอด</label><input type="number" class="form-control text-center" name="StatLR_Birth"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatLR_Dead"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">คงเหลือ</label><input type="number" class="form-control text-center" name="StatLR_Remain"></div>
+      </div></div></div></div>
+
+      <div class="custom-card"><div class="card-title-bar" style="color:#0dcaf0;"><i class="fas fa-procedures"></i> 4. IPD หญิง (IPD2)</div><div class="card-body-custom"><div class="row g-3">
+        <div class="col-12 col-md-4"><label class="form-label">พยาบาล 1</label><select class="form-select select2-input list-nurses" name="NurseIPD2_1"></select></div>
+        <div class="col-6 col-md-4"><label class="form-label">พยาบาล 2</label><select class="form-select select2-input list-nurses" name="NurseIPD2_2"></select></div>
+        <div class="col-6 col-md-4"><label class="form-label">พยาบาล 3</label><select class="form-select select2-input list-nurses" name="NurseIPD2_3"></select></div>
+        <div class="col-12"><label class="form-label">ผู้ช่วยเหลือ</label><select class="form-select select2-input list-helpers" name="HelperIPD2"></select></div>
+      </div>
+      <div class="stats-container mt-3"><div class="row g-2 text-center">
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ยกมา</label><input type="number" class="form-control text-center" name="StatIPD2_Carry"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">รับใหม่</label><input type="number" class="form-control text-center" name="StatIPD2_New"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">รับย้าย</label><input type="number" class="form-control text-center" name="StatIPD2_RecMove"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ย้ายไป</label><input type="number" class="form-control text-center" name="StatIPD2_Move"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Refer</label><input type="number" class="form-control text-center" name="StatIPD2_Refer"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">D/C</label><input type="number" class="form-control text-center" name="StatIPD2_DC"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ปฏิเสธ</label><input type="number" class="form-control text-center" name="StatIPD2_Refuse"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatIPD2_Dead"></div>
+        <div class="col-6 col-md"><label class="small text-muted mb-1">คงเหลือ</label><input type="number" class="form-control text-center" name="StatIPD2_Remain"></div>
+        <div class="col-6 col-md"><label class="small text-muted mb-1">HW</label><input type="number" class="form-control text-center" name="StatIPD2_HW"></div>
+      </div></div></div></div>
+
+      <div class="custom-card"><div class="card-title-bar" style="color:#0dcaf0;"><i class="fas fa-procedures"></i> 5. IPD ชาย (IPD3)</div><div class="card-body-custom"><div class="row g-3">
+        <div class="col-12 col-md-4"><label class="form-label">พยาบาล 1</label><select class="form-select select2-input list-nurses" name="NurseIPD3_1"></select></div>
+        <div class="col-6 col-md-4"><label class="form-label">พยาบาล 2</label><select class="form-select select2-input list-nurses" name="NurseIPD3_2"></select></div>
+        <div class="col-6 col-md-4"><label class="form-label">พยาบาล 3</label><select class="form-select select2-input list-nurses" name="NurseIPD3_3"></select></div>
+        <div class="col-12"><label class="form-label">ผู้ช่วยเหลือ</label><select class="form-select select2-input list-helpers" name="HelperIPD3"></select></div>
+      </div>
+      <div class="stats-container mt-3"><div class="row g-2 text-center">
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ยกมา</label><input type="number" class="form-control text-center" name="StatIPD3_Carry"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">รับใหม่</label><input type="number" class="form-control text-center" name="StatIPD3_New"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">รับย้าย</label><input type="number" class="form-control text-center" name="StatIPD3_RecMove"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ย้ายไป</label><input type="number" class="form-control text-center" name="StatIPD3_Move"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Refer</label><input type="number" class="form-control text-center" name="StatIPD3_Refer"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">D/C</label><input type="number" class="form-control text-center" name="StatIPD3_DC"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ปฏิเสธ</label><input type="number" class="form-control text-center" name="StatIPD3_Refuse"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatIPD3_Dead"></div>
+        <div class="col-6 col-md"><label class="small text-muted mb-1">คงเหลือ</label><input type="number" class="form-control text-center" name="StatIPD3_Remain"></div>
+        <div class="col-6 col-md"><label class="small text-muted mb-1">HW</label><input type="number" class="form-control text-center" name="StatIPD3_HW"></div>
+      </div></div></div></div>
+
+      <div class="custom-card"><div class="card-title-bar"><i class="fas fa-users-cog"></i> 6-7. สนับสนุน</div><div class="card-body-custom"><div class="row g-3">
+        <div class="col-6"><label class="form-label">ห้องบัตร 1</label><select class="form-select select2-input list-cardStaff" name="CardStaff1"></select></div>
+        <div class="col-6"><label class="form-label">ห้องบัตร 2</label><select class="form-select select2-input list-cardStaff" name="CardStaff2"></select></div>
+        <div class="col-6"><label class="form-label">เปล 1</label><select class="form-select select2-input list-porters" name="Porter1"></select></div>
+        <div class="col-6"><label class="form-label">เปล 2</label><select class="form-select select2-input list-porters" name="Porter2"></select></div>
+      </div></div></div>
+
+      <div class="custom-card"><div class="card-title-bar" style="color:#ffc107;"><i class="fas fa-ambulance"></i> 8. การส่งต่อ (Refer)</div><div class="card-body-custom">
+        <div class="row g-2 mb-3">
+          <div class="col-12 col-md-4"><label class="form-label">ยอดรวม Refer (ราย)</label><input type="number" class="form-control" name="Refer_Total"></div>
+          <div class="col-4 col-md-4"><label class="form-label">ชัยภูมิ</label><input type="number" class="form-control text-center" name="Ref_CP"></div>
+          <div class="col-4 col-md-4"><label class="form-label">ชุมแพ</label><input type="number" class="form-control text-center" name="Ref_CP2"></div>
+          <div class="col-4 col-md-4"><label class="form-label">ภูเขียว</label><input type="number" class="form-control text-center" name="Ref_PK"></div>
+          <div class="col-6 col-md-4"><label class="form-label">ขอนแก่น</label><input type="number" class="form-control text-center" name="Ref_KK"></div>
+          <div class="col-6 col-md-4"><label class="form-label">อื่นๆ</label><input type="number" class="form-control text-center" name="Ref_Other"></div>
+          <div class="col-12"><input type="text" class="form-control" name="Ref_OtherName" placeholder="ระบุชื่อ รพ. ปลายทางอื่นๆ (ถ้ามี)"></div>
+        </div>
+        <div class="stats-container">
+          <span class="stat-title"><i class="fas fa-clock me-1"></i> รายละเอียด (รพ.ปลายทาง - เวลา)</span>
+          <input type="text" class="form-control mb-2" name="Ref1" placeholder="รอบ 1">
+          <input type="text" class="form-control mb-2" name="Ref2" placeholder="รอบ 2">
+          <input type="text" class="form-control mb-2" name="Ref3" placeholder="รอบ 3">
+          <input type="text" class="form-control mb-2" name="Ref4" placeholder="รอบ 4">
+          <input type="text" class="form-control mb-2" name="Ref5" placeholder="รอบ 5">
+          <input type="text" class="form-control mb-1" name="Ref6" placeholder="รอบ 6">
+        </div>
+      </div></div>
+
+      <div class="custom-card"><div class="card-title-bar" style="color:#fd7e14;"><i class="fas fa-exclamation-triangle"></i> 9. ปัญหาที่พบ</div><div class="card-body-custom">
+        <div class="table-responsive border rounded mb-3">
+          <table class="table table-striped table-sm mb-0 align-middle">
+            <thead class="table-light"><tr class="text-center"><th class="text-start ps-3" width="60%">ประเด็น</th><th>พบ</th><th>ไม่พบ</th></tr></thead>
+            <tbody>
+              <tr><td class="ps-3">1. ขาดคน/ลาป่วย</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob1" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob1" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">2. การแต่งกาย</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob2" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob2" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">3. เล่นเกม/ใช้คอมฯ</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob3" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob3" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">4. ต่อเวรเกิน</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob4" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob4" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">5. พฤติกรรมบริการ</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob5" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob5" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">6. Incident/ความเสี่ยง</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob6" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob6" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">7. อุปกรณ์ไม่พร้อม</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob7" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob7" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">8. การสื่อสาร</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob8" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob8" value="ไม่พบ" checked></td></tr>
+              <tr><td class="ps-3">9. อื่นๆ (รปภ/สวน)</td><td class="text-center"><input class="form-check-input" type="radio" name="Prob9" value="พบ"></td><td class="text-center"><input class="form-check-input" type="radio" name="Prob9" value="ไม่พบ" checked></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <label class="form-label">รายละเอียดปัญหาและการแก้ไข</label>
+        <textarea class="form-control" name="Problem_Detail" rows="3" placeholder="ระบุรายละเอียด..."></textarea>
+      </div></div>
+
+      <div class="custom-card"><div class="card-title-bar"><i class="fas fa-shield-alt"></i> 10. ความปลอดภัยและอื่นๆ</div><div class="card-body-custom">
+        <div class="mb-3"><label class="form-label">ระบบล็อคประตู</label><input type="text" class="form-control" name="Security" placeholder="ระบุ ปกติ หรือ ผิดปกติ"></div>
+        <div class="mb-3"><label class="form-label">รายละเอียดอื่นๆ (Case Dead/ร้องเรียน)</label><textarea class="form-control" name="Other_Detail" rows="2"></textarea></div>
+        <div class="mb-3"><label class="form-label">ข้อเสนอแนะ หัวหน้ากลุ่มงาน</label><textarea class="form-control" name="HeadNurse_Comment" rows="2"></textarea></div>
+      </div></div>
+
+      <div class="custom-card border-primary">
+        <div class="card-title-bar text-bg-primary text-white"><i class="fas fa-file-signature"></i> 11. ลายมือชื่อผู้รายงาน (ไม่บังคับ)</div>
+        <div class="card-body-custom">
+           <div class="alert alert-secondary small mb-3 border-0">
+             <i class="fas fa-info-circle"></i> รายชื่อผู้อำนวยการ และ หัวหน้ากลุ่มงาน จะถูกประทับลงในเอกสาร PDF และ JPG อัตโนมัติ ตามที่ได้ระบุไว้ในเมนู 'ตั้งค่า' | <strong>ลายเซ็นเป็นตัวเลือก ไม่บังคับกรอก</strong>
+           </div>
+           <label class="form-label text-primary"><i class="fas fa-pen-nib me-1"></i> เซ็นชื่อ (ถ้ามี) — วาดในกรอบด้านล่าง</label>
+           <div class="signature-wrapper mb-2">
+             <button type="button" class="btn btn-sm btn-light border btn-clear-sig" onclick="clearSignature()"><i class="fas fa-eraser"></i> ลบ/เขียนใหม่</button>
+             <canvas id="signaturePad"></canvas>
+           </div>
+        </div>
+      </div>
+
+      <!-- ===== FIX: ปุ่มบันทึกใช้ onclick แทน submit ===== -->
+      <div class="d-grid gap-2 mb-5">
+        <button type="button" class="btn btn-gradient text-white" onclick="handleFormSubmit()">
+          <i class="fas fa-save me-2"></i> บันทึกข้อมูลและสร้างไฟล์รายงานอัตโนมัติ
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div id="tableSection" class="section-content" style="display:none;">
+    <div class="custom-card card-body-custom">
+      <div class="table-responsive">
+        <table id="dataTable" class="table table-hover align-middle w-100">
+          <thead class="table-light"><tr><th style="min-width:120px;">วันที่/เวร</th><th>ผู้ตรวจการ</th><th class="text-center" style="min-width:160px;">ดาวน์โหลด</th><th class="text-end" style="min-width:90px;">จัดการ</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="handoutSection" class="section-content" style="display:none;">
+    <div class="ho-bg pb-5">
+      <div class="ho-header">
+        <div class="d-flex align-items-center gap-3">
+          <i class="fas fa-heartbeat fa-3x"></i>
+          <div>
+            <h1 class="mb-0 fw-bold fs-3">คู่มือพยาบาลตรวจการ</h1>
+            <p class="mb-0 opacity-75 fs-5">Nurse Supervisor Guide — โรงพยาบาลชุมชน</p>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
+          <div class="text-end d-none d-md-block">
+            <p class="mb-0 fw-bold fs-5">5 ความรู้หลัก</p>
+            <p class="mb-0 fs-6 opacity-75">ที่ต้องมีในเวรตรวจการ</p>
+          </div>
+          <button onclick="window.print()" class="btn btn-light rounded-circle print-hide shadow-sm" style="width:50px; height:50px;" title="พิมพ์ Infographic">
+            <i class="fas fa-print fs-5 text-primary"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col"><div class="ho-card theme-blue"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-users"></i></div><div><div class="ho-module-badge">Module 01</div><h3 class="ho-title">การบริหารอัตรากำลัง</h3><p class="ho-subtitle">Human Resource Management</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>ประเมินก่อนรับเวร:</b> IPD ผู้ป่วยหนัก สัดส่วนพยาบาลไม่เกิน 1:4 / ER ไม่เกิน 1:3</div></li><li><div class="ho-bullet"></div><div><b>Patient Acuity:</b> ประเมิน Level 1-3, ผู้ป่วย on vent / drip / post-op</div></li><li><div class="ho-bullet"></div><div><b>Float Staff:</b> เกลี่ยคนเมื่อขาด &rarr; บันทึก Float Log &rarr; แจ้งหัวหน้า/ตาม On-call</div></li><li><div class="ho-bullet"></div><div><b>ติดตามผล:</b> บันทึก Supervisor Log และรายงานตอนส่งเวร</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Float Policy</span><span class="ho-tag">On-call List</span><span class="ho-tag">Acuity Tool</span><span class="ho-tag">Supervisor Log</span></div><div class="ho-alert-area alert-blue"><i class="fas fa-exclamation-triangle me-1"></i> ห้ามหอผู้ป่วยวิกฤตมีพยาบาลคนเดียวเด็ดขาด ขาดคนต้องแจ้งผู้บริหารทันที</div></div></div></div>
+        <div class="col"><div class="ho-card theme-orange"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-exclamation-triangle"></i></div><div><div class="ho-module-badge">Module 02</div><h3 class="ho-title">ฉุกเฉินและอุบัติภัยหมู่</h3><p class="ho-subtitle">Emergency & MCI</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>ประเมินขนาด:</b> แยก 'ฉุกเฉินปกติ' กับ 'MCI' (ผู้บาดเจ็บ > ทรัพยากร)</div></li><li><div class="ho-bullet"></div><div><b>ประกาศรหัส:</b> Code Disaster &rarr; ตาม Key Person &rarr; เปิด Command Post</div></li><li><div class="ho-bullet"></div><div><b>START Triage:</b> <br>🔴 ด่วนมาก (Immediate) 🟡 ปานกลาง (Delayed)<br>🟢 เล็กน้อย (Minor) ⚫ เสียชีวิต (Expectant)</div></li><li><div class="ho-bullet"></div><div><b>Surge Management:</b> จัด Zone &rarr; D/C เคส stable &rarr; เตรียม Supplies/EMS</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">START Triage</span><span class="ho-tag">Code Disaster</span><span class="ho-tag">Command Post</span><span class="ho-tag">Surge Plan</span></div><div class="ho-alert-area alert-orange"><i class="fas fa-lightbulb me-1"></i> หลัก MCI: Greatest Good for Greatest Number ช่วยผู้ที่มีโอกาสรอดก่อน</div></div></div></div>
+        <div class="col"><div class="ho-card theme-teal"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-ambulance"></i></div><div><div class="ho-module-badge">Module 03</div><h3 class="ho-title">ระบบการส่งต่อผู้ป่วย</h3><p class="ho-subtitle">Patient Referral System</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>เคสที่ต้อง Refer:</b><br><span class="ho-mini-badge badge-rose">ผ่าตัดเฉพาะทาง</span> <span class="ho-mini-badge badge-rose">ต้องการ ICU จริง</span><br><span class="ho-mini-badge badge-rose">CT/MRI ฉุกเฉิน</span> <span class="ho-mini-badge badge-rose">ขาดแพทย์เฉพาะทาง</span></div></li><li><div class="ho-bullet"></div><div><b>รายงาน ISBAR:</b> Identify / Situation / Background / Assessment / Recommend</div></li><li><div class="ho-bullet"></div><div><b>เตรียมผู้ป่วย:</b> Stabilize V/S &rarr; เตรียมเอกสาร &rarr; ขอ Consent &rarr; ให้การรักษาต่อ</div></li><li><div class="ho-bullet"></div><div><b>ประสาน EMS:</b> จัดรถพร้อม Escort &rarr; ส่งมอบข้อมูลให้ทีม</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">ISBAR</span><span class="ho-tag">Transfer Decision</span><span class="ho-tag">EMS</span><span class="ho-tag">Referral Audit</span></div><div class="ho-alert-area alert-teal"><i class="fas fa-clock me-1"></i> เป้าหมาย: Door-to-Door สำหรับผู้ป่วยวิกฤตไม่ควรเกิน 30 นาที</div></div></div></div>
+        <div class="col"><div class="ho-card theme-green"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-shield-alt"></i></div><div><div class="ho-module-badge">Module 04</div><h3 class="ho-title">คุณภาพและความปลอดภัย</h3><p class="ho-subtitle">HA & 2P Safety Goals</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>จัดการทันที:</b> เมื่อเกิดเหตุ (เช่น ตกเตียง) ให้รักษา Situation/ความปลอดภัยผู้ป่วยก่อน</div></li><li><div class="ho-bullet"></div><div><b>Incident Report:</b> บันทึก IR ภายในเวร ระบุข้อเท็จจริง ห้ามซ่อน/ห้ามแก้</div></li><li><div class="ho-bullet"></div><div><b>SIMPLE Goals:</b> Safe Surgery, Infection Control, Med Error, Process, Line, Emergency</div></li><li><div class="ho-bullet"></div><div><b>IC & Med Error:</b> ดู Hand Hygiene / ให้ยาผิดต้องหยุดยา, แจ้งแพทย์, เขียน IR</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">SIMPLE Goals</span><span class="ho-tag">Incident Report</span><span class="ho-tag">Hand Hygiene</span><span class="ho-tag">Open Disclosure</span></div><div class="ho-alert-area alert-green"><i class="fas fa-check-circle me-1"></i> วัฒนธรรม 'Just Culture': รายงานเพื่อเรียนรู้และป้องกัน ไม่ใช่เพื่อลงโทษ</div></div></div></div>
+        <div class="col"><div class="ho-card theme-purple"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-balance-scale"></i></div><div><div class="ho-module-badge">Module 05</div><h3 class="ho-title">กฎหมายและสิทธิผู้ป่วย</h3><p class="ho-subtitle">Law & Conflict Resolution</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>รับมือร้องเรียน:</b> พาไปห้องเงียบ &rarr; ฟังไม่ขัด &rarr; อธิบายข้อเท็จจริง &rarr; ไม่โต้เถียง</div></li><li><div class="ho-bullet"></div><div><b>Violence:</b> เอาบุคลากรออกก่อน &rarr; แจ้ง รปภ./ตำรวจ &rarr; ดูแล Second Victim</div></li><li><div class="ho-bullet"></div><div><b>สิทธิผู้ป่วย:</b> รับทราบข้อมูล / ปฏิเสธ (AMA) / ความลับ (PDPA) / มีผู้ดูแล</div></li><li><div class="ho-bullet"></div><div><b>จัดการศพ & นิติเวช:</b> ตายผิดธรรมชาติ &rarr; แจ้งตำรวจ &rarr; อย่าทิ้งหลักฐาน</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Patient Rights</span><span class="ho-tag">AMA Form</span><span class="ho-tag">PDPA</span><span class="ho-tag">Medicolegal</span></div><div class="ho-alert-area alert-purple"><i class="fas fa-gavel me-1"></i> หลักทอง: ไม่แน่ใจกฎหมาย อย่าทำคนเดียว ให้ปรึกษาผู้บริหารทันที</div></div></div></div>
+        <div class="col"><div class="ho-card text-white p-4 d-flex flex-column justify-content-center border-top-0" style="background: linear-gradient(135deg, #1e293b, #334155);"><div class="d-flex align-items-center gap-2 mb-4"><i class="fas fa-clipboard-check fa-3x mb-3 text-secondary opacity-50"></i><h2 class="fw-bold fs-4 mb-3">Checklist ก่อนส่งเวร</h2></div><ul class="ho-list mt-2 mb-4" style="font-size: 0.95rem;"><li><i class="far fa-square text-secondary"></i> บันทึก Supervisor Log ครบถ้วน</li><li><i class="far fa-square text-secondary"></i> รายงาน Incident Report เรียบร้อย</li><li><i class="far fa-square text-secondary"></i> เคลียร์เคส Refer เรียบร้อย / ดำเนินการอยู่</li><li><i class="far fa-square text-secondary"></i> จัดเตรียมอัตรากำลังของเวรถัดไป</li></ul><p class="mt-auto pt-3 border-top border-secondary text-secondary" style="font-size: 0.8rem;">พยาบาลตรวจการคือแกนหลักในการดูแลระบบ รักษามาตรฐาน และดูแลบุคลากรในผลัด</p></div></div>
+      </div>
+
+      <div class="mt-5 pt-4 print-page-break">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="bg-indigo text-white p-3 rounded-4 shadow-sm"><i class="fas fa-briefcase-medical fs-2"></i></div>
+          <div><h2 class="mb-0 fw-bold fs-3 text-dark">แนวทางนิติเวชคลินิก</h2><p class="mb-0 fw-bold" style="color: #4f46e5;">Clinical Forensic Medicine (Step-by-Step)</p></div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          <div class="col"><div class="ho-card theme-indigo"><div class="ho-step-badge bg-indigo">Step 1</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-file-signature"></i></div><div><h3 class="ho-title fs-5">เตรียมพร้อม & สิทธิ</h3><p class="ho-subtitle">Pre-exam & Consent</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>เคสส่งชันสูตร/แจ้งตำรวจ (ตายผิดธรรมชาติ):</b><br><span class="ho-mini-badge badge-indigo">ฆ่าตัวตาย</span> <span class="ho-mini-badge badge-indigo">ถูกทำร้าย</span><br><span class="ho-mini-badge badge-indigo">สัตว์ทำร้าย</span> <span class="ho-mini-badge badge-indigo">อุบัติเหตุ</span><br><span class="ho-mini-badge badge-indigo">ตายไม่ทราบสาเหตุ/ตายใน 24ชม.</span></div></li><li><div class="ho-bullet"></div><div><b>ขอ Consent:</b> ขอความยินยอมก่อนตรวจ/เก็บหลักฐาน/ถ่ายภาพ (ใบ Consent แยก)</div></li><li><div class="ho-bullet"></div><div><b>ความลับ:</b> ห้ามเปิดเผยข้อมูลถ้าไม่มีหนังสือราชการสั่ง</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Police</span><span class="ho-tag">Consent</span><span class="ho-tag">PDPA</span></div><div class="ho-alert-area alert-indigo"><i class="fas fa-ambulance me-1"></i> หากฉุกเฉิน: ชีวิตผู้ป่วยมาก่อน รักษาก่อนได้ทันทีไม่ต้องรอตำรวจ</div></div></div></div>
+          <div class="col"><div class="ho-card theme-cyan"><div class="ho-step-badge bg-cyan">Step 2</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-search"></i></div><div><h3 class="ho-title fs-5">ซักประวัติ & ตรวจร่างกาย</h3><p class="ho-subtitle">History & Physical Exam</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>บันทึกคำพูด:</b> บันทึกด้วยคำพูดตรงๆ (Verbatim) ของผู้ป่วย ห้ามตีความเอง</div></li><li><div class="ho-bullet"></div><div><b>เตรียมตรวจ:</b> ตรวจในห้องมิดชิด มีพยาน วางกระดาษขาวใต้ผู้ป่วยรองรับหลักฐานที่ร่วง</div></li><li><div class="ho-bullet"></div><div><b>ตรวจบาดแผล:</b> บรรยายขนาด (cm), รูปร่าง, ตำแหน่ง ลงใน Body Diagram</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Verbatim</span><span class="ho-tag">Head-to-Toe</span><span class="ho-tag">Body Diagram</span></div><div class="ho-alert-area alert-cyan"><i class="fas fa-ban me-1 text-danger"></i> ห้าม: ระบุอายุรอยช้ำจากสี และห้ามระบุรอยยิงเข้า/ออกเอง (หน้าที่นิติแพทย์)</div></div></div></div>
+          <div class="col"><div class="ho-card theme-emerald"><div class="ho-step-badge bg-emerald">Step 3</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-box"></i></div><div><h3 class="ho-title fs-5">การเก็บวัตถุพยาน</h3><p class="ho-subtitle">Evidence Collection</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>คดีทางเพศ:</b> <span class="text-success fw-bold">หากไม่มีชุด SAEK ให้ Refer ส่งแม่ข่ายทันที (< 72 ชม.)</span></div></li><li><div class="ho-bullet"></div><div><b>ถุงกระดาษ:</b> เสื้อผ้า/หลักฐานชีวภาพต้องใส่ 'ถุงกระดาษ' แยกชิ้น ห้ามพลาสติก</div></li><li><div class="ho-bullet"></div><div><b>DNA Swab:</b> ปล่อยให้แห้งในอากาศเย็นก่อนเก็บ ห้ามใช้ความร้อนเป่า</div></li><li><div class="ho-bullet"></div><div><b>เก็บเลือด:</b> เจาะก่อนให้สารน้ำ ห้ามใช้แอลกอฮอล์เช็ด (ใช้ Povidone-iodine แทน)</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Paper Bag</span><span class="ho-tag">DNA Swab</span><span class="ho-tag">Toxicology</span></div><div class="ho-alert-area alert-emerald"><i class="fas fa-tag me-1"></i> Label ทันที: ระบุชื่อ HN วันเวลา ผู้เก็บ และซีลปิดทับลายเซ็น</div></div></div></div>
+          <div class="col"><div class="ho-card theme-rose"><div class="ho-step-badge bg-rose">Step 4</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-camera"></i></div><div><h3 class="ho-title fs-5">ถ่ายภาพ & เวชระเบียน</h3><p class="ho-subtitle">Photo & Documentation</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>ถ่ายภาพ:</b> ถ่ายก่อนล้างแผลเสมอ ถ่าย 3 ระยะ: ภาพรวม &rarr; อ้างอิง &rarr; Close-up</div></li><li><div class="ho-bullet"></div><div><b>ใช้ Scale:</b> วางไม้บรรทัดระนาบเดียวกับแผล ถ่ายทั้งแบบมี/ไม่มี Scale คู่กัน</div></li><li><div class="ho-bullet"></div><div><b>บันทึก 5W1H:</b> ใคร ทำอะไร ที่ไหน เมื่อไหร่ อย่างไร บันทึกเฉพาะข้อเท็จจริง ห้ามเดา</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Scale Rule</span><span class="ho-tag">5W1H</span><span class="ho-tag">Metadata</span></div><div class="ho-alert-area alert-rose"><i class="fas fa-exclamation-circle me-1"></i> ถ่ายรูปก่อนรักษา: เพราะเมื่อเย็บแผลหรือล้างแล้ว ลักษณะแผลจะเปลี่ยนไป</div></div></div></div>
+          <div class="col"><div class="ho-card theme-fuchsia"><div class="ho-step-badge bg-fuchsia">Step 5</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-link"></i></div><div><h3 class="ho-title fs-5">ส่งมอบหลักฐาน & ศพ</h3><p class="ho-subtitle">Chain of Custody & Autopsy</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>บันทึกส่งมอบ:</b> ใช้ Chain of Custody Form ระบุผู้ส่ง-รับทุกครั้ง ห้ามวางทิ้งไว้</div></li><li><div class="ho-bullet"></div><div><b>การส่งต่อ:</b> ตรวจสอบ Seal ก่อนส่งมอบตำรวจ/Lab พร้อมเก็บสำเนาฟอร์ม</div></li><li><div class="ho-bullet"></div><div><b>ส่งชันสูตรศพ:</b> <span class="text-danger fw-bold">ตายผิดธรรมชาติ ห้ามล้างศพ ห้ามถอดสาย IV/Tube ผูกป้ายส่งชันสูตรทันที</span></div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Chain of Custody</span><span class="ho-tag">Autopsy</span><span class="ho-tag">Transfer Form</span></div><div class="ho-alert-area alert-fuchsia"><i class="fas fa-link me-1"></i> ห้ามขาดสาย: หาก Chain of Custody ขาด หลักฐานอาจถูกปฏิเสธในศาล</div></div></div></div>
+          <div class="col"><div class="ho-card text-white p-4 d-flex flex-column border-top-0" style="background: linear-gradient(135deg, #1e293b, #0f172a);"><div class="d-flex align-items-center gap-2 mb-4"><i class="fas fa-exclamation-circle fs-3 text-danger"></i><h2 class="fw-bold fs-5 mb-0">สิ่งที่ต้องจำเสมอ (Quick Ref)</h2></div><ul class="ho-list mb-0 flex-grow-1" style="font-size: 0.85rem; color: #cbd5e1;"><li><span class="text-danger fw-bold font-monospace">01</span> <span>ถ่ายรูปบาดแผล <b class="text-white">ก่อนล้าง/รักษาเสมอ</b></span></li><li><span class="text-danger fw-bold font-monospace">02</span> <span>หลักฐานชีวภาพใช้ <b class="text-white">ถุงกระดาษเท่านั้น</b></span></li><li><span class="text-danger fw-bold font-monospace">03</span> <span><b class="text-white">Label ทันที</b> หลังเก็บ ห้ามรอ</span></li><li><span class="text-danger fw-bold font-monospace">04</span> <span>ปล่อย DNA Swab ให้ <b class="text-white">แห้งก่อนปิด</b></span></li><li><span class="text-danger fw-bold font-monospace">05</span> <span>ห้ามใช้แอลกอฮอล์เช็ดผิวก่อนเจาะเลือด</span></li><li><span class="text-danger fw-bold font-monospace">06</span> <span>บันทึกคำพูด (Verbatim) ห้ามตีความเอง</span></li><li><span class="text-danger fw-bold font-monospace">07</span> <span><b class="text-white">อย่าขาดสาย</b> Chain of Custody</span></li><li><span class="text-danger fw-bold font-monospace">08</span> <span>ห้ามระบุรอยยิงเข้า/ออกเอง</span></li><li><span class="text-danger fw-bold font-monospace">09</span> <span>พบเด็กถูกทำร้าย <b class="text-white">ต้องรายงานตามกฎหมาย</b></span></li><li><span class="text-danger fw-bold font-monospace">10</span> <span>ตายผิดธรรมชาติ 5 แบบ <b class="text-white">แจ้งตำรวจ+ส่งชันสูตร</b></span></li></ul></div></div>
+        </div>
+      </div>
+      <div class="text-center mt-5 text-muted small d-none d-print-block">Generated by KSH SUPERVISOR SYSTEM for Community Hospital Nurse Supervisors</div>
+    </div>
+  </div>
+
+</div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -9,8 +568,11 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-  // 1. ตั้งค่า Firebase
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+  import { getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyCTrlAOISCyx7pOvtr1xKRyKwG-LmVI0HQ",
     authDomain: "spervks.firebaseapp.com",
@@ -20,364 +582,438 @@
     appId: "1:550022383315:web:8da32f4bfad4de14ea3626"
   };
 
-  // เริ่มต้นใช้งาน Firebase และ Firestore
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const collectionName = "supervisor_reports"; // ชื่อ Collection ที่จะเก็บข้อมูล
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
 
-  var allData = [];
-  var dashboardChart = null;
+  window.allData = [];
+  window.dropdownData = {};
 
   $(document).ready(function() { 
-    showDashboard(); 
-    loadTableData(); 
-    fetchDropdowns(); 
-    $('#filterDataSelect').select2({ theme: 'bootstrap-5', width: '100%', placeholder: 'พิมพ์ค้นหาหรือเลือกข้อมูล...' });
+    $('#dash_date').text(new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }));
+    signInAnonymously(auth).then(() => {
+        loadSettings();
+        loadTableData(); 
+        $('#filterDataSelect').select2({ theme: 'bootstrap-5', width: '100%' });
+    }).catch(err => Swal.fire('Error', 'เชื่อมต่อฐานข้อมูลไม่ได้: ' + err.message, 'error'));
   });
 
-  // 2. ดึงข้อมูล Dropdown (สามารถย้ายไปเก็บใน Firestore Collection 'settings' ในอนาคตได้)
-  async function fetchDropdowns() {
-    try {
-      // ตัวอย่างข้อมูลจำลองชั่วคราว คุณสามารถนำไปสร้างเป็น Document ใน Firestore เพื่อให้แก้ไขง่ายขึ้นได้
-      let data = {
-        supervisors: ["พยาบาล A", "พยาบาล B", "พยาบาล C"],
-        positions: ['พยาบาลวิชาชีพชำนาญการ', 'พยาบาลวิชาชีพปฏิบัติการ'],
-        doctors: ["นพ. A", "พญ. B"],
-        nurses: ["พย. 1", "พย. 2", "พย. 3"],
-        helpers: ["ผช. 1", "ผช. 2"]
-      };
+  window.updateShiftTime = function() {
+      const shift = $('#shiftSelect').val();
+      let start = "", end = "", display = "";
+      if (shift === 'ดึก') { start = "00:30"; end = "08:30"; display = "00.30 - 08.30 น."; }
+      else if (shift === 'เช้า') { start = "08:30"; end = "16:30"; display = "08.30 - 16.30 น."; }
+      else if (shift === 'บ่าย') { start = "16:30"; end = "24:00"; display = "16.30 - 24.00 น."; }
       
-      createOpts('supList', data.supervisors); 
-      createOpts('posList', data.positions); 
-      createOpts('docList1', data.doctors); 
-      createOpts('docList2', data.doctors); 
-      fillCls('nurse-list', data.nurses); 
-      fillCls('helper-list', data.helpers); 
-
-      $('.select2-input').select2({ theme: 'bootstrap-5', width: '100%' });
-    } catch(e) { console.log(e); }
-  }
-  
-  function createOpts(id, list) { 
-    let s = document.getElementById(id); 
-    if(s && list && list.length > 0) { 
-      s.innerHTML = '<option value="" disabled selected>เลือก...</option>'; 
-      list.forEach(v => s.add(new Option(v, v))); 
-    }
+      $('#StartTime').val(start);
+      $('#EndTime').val(end);
+      $('#shiftTimeDisplay').val(display);
   }
 
-  function fillCls(cName, list) {
-    let els = document.getElementsByClassName(cName);
-    if(list && list.length > 0) {
-      for(let i=0; i<els.length; i++) {
-        els[i].innerHTML = '<option value="" selected>เลือก...</option>';
-        list.forEach(v => els[i].add(new Option(v, v)));
+  function loadSettings() {
+    onSnapshot(doc(db, 'settings', 'dropdowns'), (docSnap) => {
+      if (!docSnap.exists()) {
+          const defaultSettings = {
+              supervisors: { 1: "คุณปิยณัฐ", 2: "คุณภูวนัย", 3: "คุณสุวนันท์", 4: "คุณสุรีย์พร", 5: "คุณพรพิมล", 6: "คุณปราณี" },
+              positions: { 1: "พยาบาลวิชาชีพชำนาญการพิเศษ", 2: "พยาบาลวิชาชีพชำนาญการ", 3: "พยาบาลวิชาชีพปฏิบัติการ" },
+              head: { 1: "หัวหน้ากลุ่มงานการพยาบาล|พยาบาลวิชาชีพชำนาญการพิเศษ" },
+              director: { 1: "ผู้อำนวยการโรงพยาบาล|นายแพทย์เชี่ยวชาญ" }
+          };
+          setDoc(doc(db, 'settings', 'dropdowns'), defaultSettings);
+          return; 
       }
-    }
-  }
 
-  function showDashboard() { hideAll(); $('#dashboardSection').show(); $('#btnTabDash').addClass('active'); updateDashboardCards(); renderChart(); window.scrollTo(0,0); }
-  function showForm() { hideAll(); $('#formSection').show(); $('#btnTabForm').addClass('active'); resizeCanvas(); window.scrollTo(0,0); }
-  function showTable() { hideAll(); $('#tableSection').show(); $('#btnTabTable').addClass('active'); loadTableData(); window.scrollTo(0,0); }
-  function showHandout() { hideAll(); $('#handoutSection').show(); $('#btnTabHandout').addClass('active'); window.scrollTo(0,0); }
-  
-  function hideAll() { $('#dashboardSection, #formSection, #tableSection, #handoutSection').hide(); $('.nav-link').removeClass('active'); }
-  
-  function resetForm() { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val('').trigger('change'); clearSignature(); }
-
-  function getShiftOrder(shiftName) {
-      if(shiftName === 'ดึก') return 1;
-      if(shiftName === 'เช้า') return 2;
-      if(shiftName === 'บ่าย') return 3;
-      return 99;
-  }
-
-  function formatDate(d) { 
-    if(!d) return ''; 
-    var dt=new Date(d); 
-    return dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2); 
-  }
-
-  function parseDateSafe(dateString) {
-      if(!dateString) return new Date();
-      if(String(dateString).includes('1899')) return new Date(); 
-      let parsed = new Date(dateString);
-      return isNaN(parsed.getTime()) ? new Date() : parsed;
-  }
-
-  function formatThaiDateCE(dateString) {
-      if(!dateString) return '';
-      const d = parseDateSafe(dateString);
-      if(isNaN(d.getTime())) return dateString;
-      const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-  }
-
-  // 3. บันทึกข้อมูลลง Firestore
-  async function handleFormSubmit(e) {
-    e.preventDefault(); 
-    $('#loadingOverlay').css('display', 'flex');
-    
-    let fd = {}; 
-    new FormData(e.target).forEach((v, k) => fd[k] = v);
-
-    if(fd.Shift === "ดึก") { fd.StartTime = "00:30"; fd.EndTime = "08:30"; }
-    else if(fd.Shift === "เช้า") { fd.StartTime = "08:30"; fd.EndTime = "16:30"; }
-    else { fd.StartTime = "16:30"; fd.EndTime = "00:30"; }
-    
-    $('#c_date').text(fd.ReportDate);
-    $('#c_time').text(`เวร${fd.Shift} (${fd.StartTime} - ${fd.EndTime} น.)`);
-    $('#c_sup').text(fd.SupervisorName || '-'); $('#c_pos').text(fd.Position || '-');
-    $('#c_docER').text(fd.DoctorER || '-'); $('#c_docWard').text(fd.DoctorWard || '-');
-    $('#c_stat_er').text(fd.StatER_Total || '0'); $('#c_stat_ipd3').text(fd.StatIPD3_Remain || '0');
-    $('#c_ref_sum').text(fd.Refer_Total || '0'); $('#c_prob_det').text(fd.Problem_Detail || '-');
-
-    if (!isCanvasBlank(canvas)) $('#c_sig_img').attr('src', canvas.toDataURL()).show(); else $('#c_sig_img').hide();
-
-    await new Promise(r => setTimeout(r, 500));
-    let capDiv = document.getElementById('captureArea');
-    capDiv.style.zIndex = '1000'; 
-
-    let capCanvas = await html2canvas(capDiv, { scale: 1.5, useCORS: true });
-    let imageBase64 = capCanvas.toDataURL("image/png");
-
-    let pdfOpt = { margin: 0.5, filename: 'Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
-    let pdfBase64 = await html2pdf().set(pdfOpt).from(capDiv).outputPdf('datauristring');
-    
-    capDiv.style.zIndex = '-1';
-
-    // เพิ่ม Timestamp สำหรับการเรียงลำดับใน Firestore
-    fd.timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    fd.imageBase64 = imageBase64;
-    fd.pdfBase64 = pdfBase64;
-
-    try {
-      if(fd.recId) {
-        // กรณีแก้ไขข้อมูล
-        await db.collection(collectionName).doc(fd.recId).update(fd);
-      } else {
-        // กรณีเพิ่มข้อมูลใหม่
-        await db.collection(collectionName).add(fd);
-      }
-      $('#loadingOverlay').hide();
-      Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อย', 'success'); 
-      resetForm(); 
-      showTable();
-    } catch (error) {
-      $('#loadingOverlay').hide();
-      console.error("Error writing document: ", error);
-      Swal.fire('Error', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาตรวจสอบสิทธิ์ของ Database', 'error'); 
-    }
-  }
-
-  // 4. ดึงข้อมูลประวัติจาก Firestore
-  async function loadTableData() {
-    try {
-      let snapshot = await db.collection(collectionName).orderBy("ReportDate", "desc").get();
-      allData = [];
+      window.dropdownData = docSnap.data() || {};
+      const categories = ['supervisors', 'positions', 'doctors', 'nurses', 'emt', 'helpers', 'porters', 'cardStaff', 'head', 'director'];
       
-      snapshot.forEach(doc => {
-        let data = doc.data();
-        data.id = doc.id;
-        allData.push(data);
-      });
-
-      let tbody = $('#dataTable tbody').empty();
-      if(allData.length === 0) tbody.append('<tr><td colspan="5" class="text-center text-muted">ไม่พบประวัติ</td></tr>'); 
-      
-      allData.forEach(r => {
-        let shiftVal = r.Shift || "-";
-        let order = getShiftOrder(shiftVal);
-        let ts = parseDateSafe(r.ReportDate).getTime(); 
-        let formattedDate = formatThaiDateCE(r.ReportDate);
-
-        let pdfLink = r.pdfBase64 ? `<a href="${r.pdfBase64}" download="Report_${r.ReportDate}.pdf" class="btn btn-sm btn-outline-danger me-1">PDF</a>` : '';
-        let imgLink = r.imageBase64 ? `<a href="${r.imageBase64}" download="Report_${r.ReportDate}.png" class="btn btn-sm btn-outline-primary">รูป</a>` : '';
+      categories.forEach(cat => {
+        const listDiv = $(`#list_${cat}`); listDiv.empty();
+        const items = window.dropdownData[cat] || {};
         
-        tbody.append(`<tr>
-          <td data-order="${ts}">${formattedDate}</td>
-          <td data-order="${order}"><span class="badge bg-info">เวร${shiftVal}</span></td>
-          <td>${r.SupervisorName || '-'}</td>
-          <td class="text-center">${pdfLink}${imgLink}</td>
-          <td class="text-end text-nowrap">
-            <button class="btn btn-sm btn-warning me-1" onclick="editRec('${r.id}')"><i class="fas fa-pen"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deleteRec('${r.id}')"><i class="fas fa-trash"></i></button>
-          </td>
-        </tr>`);
+        if(Object.keys(items).length === 0) listDiv.append('<div class="p-2 text-muted small text-center">ว่าง</div>');
+        else {
+           Object.keys(items).forEach(key => {
+             if (cat === 'head' || cat === 'director') {
+                const parts = items[key].split('|');
+                const name = parts[0] || ''; const pos = parts[1] || '';
+                listDiv.append(`<div class="setting-list-item"><div><strong>${name}</strong><br><small class="text-muted">${pos}</small></div><button class="btn btn-sm text-danger" onclick="deleteDropdownItem('${cat}', '${key}')"><i class="fas fa-times"></i></button></div>`);
+             } else {
+                listDiv.append(`<div class="setting-list-item"><span>${items[key]}</span><button class="btn btn-sm text-danger" onclick="deleteDropdownItem('${cat}', '${key}')"><i class="fas fa-times"></i></button></div>`);
+             }
+           });
+        }
+        
+        if (cat !== 'head' && cat !== 'director') {
+            const selects = $(`.list-${cat}`); selects.empty().append('<option value=""></option>');
+            Object.values(items).forEach(val => selects.append(new Option(val, val)));
+        }
+      });
+      $('.select2-input').select2({ theme: 'bootstrap-5', width: '100%', placeholder: 'เลือก...' });
+    });
+  }
+
+  window.addDropdownItem = async function(category) {
+      const input = $(`#add_${category}`); const val = input.val().trim();
+      if(!val) return;
+      try {
+          const id = Date.now().toString();
+          await setDoc(doc(db, 'settings', 'dropdowns'), { [category]: { [id]: val } }, { merge: true });
+          input.val(''); Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'เพิ่มข้อมูลแล้ว', showConfirmButton: false, timer: 1000 });
+      } catch(e) { Swal.fire('Error', e.message, 'error'); }
+  }
+
+  window.addDropdownItemComplex = async function(category) {
+      const nameInput = $(`#add_${category}_name`); const posInput = $(`#add_${category}_pos`);
+      const nameVal = nameInput.val().trim(); const posVal = posInput.val().trim();
+      if(!nameVal || !posVal) { Swal.fire('แจ้งเตือน', 'กรุณาระบุทั้งชื่อและตำแหน่ง', 'warning'); return; }
+      const val = nameVal + "|" + posVal;
+      try {
+          const id = Date.now().toString();
+          await setDoc(doc(db, 'settings', 'dropdowns'), { [category]: { [id]: val } }, { merge: true });
+          nameInput.val(''); posInput.val('');
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'เพิ่มข้อมูลเรียบร้อย', showConfirmButton: false, timer: 1000 });
+      } catch(err) { Swal.fire('Error', err.message, 'error'); }
+  }
+
+  window.deleteDropdownItem = (cat, key) => {
+      updateDoc(doc(db, 'settings', 'dropdowns'), { [`${cat}.${key}`]: deleteField() });
+  };
+  
+  $(document).on('keypress', '.setting-card input', function(e) { if(e.which == 13) { $(this).siblings('button').click(); } });
+
+  function populateCaptureArea(r) {
+        const j = (arr) => arr.filter(v => v).join(', ');
+        
+        $('#c_date').text(formatDateDisplay(r.ReportDate) + (r.Shift ? ` (เวร${r.Shift})` : '')); 
+        $('#c_time').text(r.ShiftTimeDisplay || `${r.StartTime||''} - ${r.EndTime||''}`);
+        $('#c_sup').text(r.SupervisorName||''); $('#c_pos').text(r.Position||'');
+        $('#c_docER').text(r.DoctorER||'-'); $('#c_docWard').text(r.DoctorWard||'-');
+        $('#c_nurse_er').text(j([r.NurseER1,r.NurseER2,r.NurseER3,r.NurseER4])||'-');
+        $('#c_emt').text(r.EMT||'-'); $('#c_helper_er').text(r.HelperER||'-');
+        $('#c_nurse_lr').text(j([r.NurseLR1,r.NurseLR2])||'-'); $('#c_helper_lr').text(r.HelperLR||'-');
+        $('#c_nurse_ipd2').text(j([r.NurseIPD2_1,r.NurseIPD2_2,r.NurseIPD2_3])||'-'); $('#c_helper_ipd2').text(r.HelperIPD2||'-');
+        $('#c_nurse_ipd3').text(j([r.NurseIPD3_1,r.NurseIPD3_2,r.NurseIPD3_3])||'-'); $('#c_helper_ipd3').text(r.HelperIPD3||'-');
+        $('#c_card').text(j([r.CardStaff1,r.CardStaff2])||'-'); $('#c_porter').text(j([r.Porter1,r.Porter2])||'-');
+        
+        $('#c_stat_er').text(`รวม ${r.StatER_Total||0} | Refer ${r.StatER_Refer||0} | EMS ${r.StatER_EMS||0} | Dead ${r.StatER_Dead||0} | ชันสูตร ${r.StatER_Autopsy||0}`);
+        $('#c_stat_lr').text(`ยกมา ${r.StatLR_Carry||0} | รับ ${r.StatLR_New||0} | ย้าย ${r.StatLR_Move||0} | Ref ${r.StatLR_Refer||0} | D/C ${r.StatLR_DC||0} | คลอด ${r.StatLR_Birth||0} | Dead ${r.StatLR_Dead||0} | คงเหลือ ${r.StatLR_Remain||0}`);
+        $('#c_stat_ipd2').text(`ยกมา ${r.StatIPD2_Carry||0} | รับ ${r.StatIPD2_New||0} | รับย้าย ${r.StatIPD2_RecMove||0} | ย้าย ${r.StatIPD2_Move||0} | Ref ${r.StatIPD2_Refer||0} | D/C ${r.StatIPD2_DC||0} | ปฏิเสธ ${r.StatIPD2_Refuse||0} | Dead ${r.StatIPD2_Dead||0} | คงเหลือ ${r.StatIPD2_Remain||0} | HW ${r.StatIPD2_HW||0}`);
+        $('#c_stat_ipd3').text(`ยกมา ${r.StatIPD3_Carry||0} | รับ ${r.StatIPD3_New||0} | รับย้าย ${r.StatIPD3_RecMove||0} | ย้าย ${r.StatIPD3_Move||0} | Ref ${r.StatIPD3_Refer||0} | D/C ${r.StatIPD3_DC||0} | ปฏิเสธ ${r.StatIPD3_Refuse||0} | Dead ${r.StatIPD3_Dead||0} | คงเหลือ ${r.StatIPD3_Remain||0} | HW ${r.StatIPD3_HW||0}`);
+        
+        var refDet = ""; [r.Ref1, r.Ref2, r.Ref3, r.Ref4, r.Ref5, r.Ref6].forEach((rx, i) => { if(rx) refDet += `รอบ ${i+1}: ${rx}\n`; });
+        $('#c_ref_sum').text(`${r.Refer_Total||0} (ชย:${r.Ref_CP||0}, ภข:${r.Ref_PK||0}, ชพ:${r.Ref_CP2||0}, ขก:${r.Ref_KK||0}, อื่นๆ:${r.Ref_Other||0} ${r.Ref_OtherName||''})`);
+        $('#c_ref_det').text(refDet||'-');
+        
+        var probs = []; for(var i=1; i<=9; i++) { if(r["Prob"+i] === "พบ") probs.push("ข้อ " + i); }
+        $('#c_prob_list').text(probs.length > 0 ? probs.join(", ") : "ไม่พบ");
+        $('#c_prob_det').text(r.Problem_Detail || '-');
+        $('#c_sec').text(r.Security||'-'); $('#c_other').text(r.Other_Detail||'-'); $('#c_comment').text(r.HeadNurse_Comment||'-');
+
+        $('#c_sup_name2').text(r.SupervisorName || '......................................');
+        $('#c_head_name').text(r.HeadNurseName || '......................................');
+        $('#c_head_pos').text(r.HeadNursePos || 'หัวหน้ากลุ่มงานการพยาบาลฯ');
+        $('#c_dir_name').text(r.DirectorName || '......................................');
+        $('#c_dir_pos').text(r.DirectorPos || 'ผู้อำนวยการโรงพยาบาล');
+        
+        if (r.signatureBase64) { $('#c_sig_img').attr('src', r.signatureBase64).show(); } 
+        else { $('#c_sig_img').hide().attr('src',''); }
+  }
+
+  function loadTableData() {
+    onSnapshot(collection(db, 'reports'), (snapshot) => {
+      const data = {};
+      snapshot.forEach(docSnap => {
+          data[docSnap.id] = docSnap.data();
       });
 
-      if ($.fn.DataTable.isDataTable('#dataTable')) $('#dataTable').DataTable().destroy();
-      $('#dataTable').DataTable({ order: [[0, 'desc'], [1, 'asc']], responsive: true });
-      updateDashboardCards(); 
-      renderChart();
-    } catch(e) { 
-      console.error("Table load error", e); 
+      window.allData = [];
+      if ($.fn.DataTable.isDataTable('#dataTable')) { $('#dataTable').DataTable().destroy(); }
+      var tbody = $('#dataTable tbody').empty();
+      if (Object.keys(data).length === 0) { tbody.append('<tr><td colspan="4" class="text-center text-muted py-4">ไม่พบข้อมูล</td></tr>'); updateDashboardCards(); return; }
+      
+      Object.keys(data).forEach(key => { let r = data[key]; r.id = key; window.allData.push(r); });
+      
+      window.allData.sort((a, b) => {
+          const dateA = new Date(a.ReportDate).getTime(); const dateB = new Date(b.ReportDate).getTime();
+          if (dateA !== dateB) return dateB - dateA;
+          const shiftWeight = { 'ดึก': 1, 'เช้า': 2, 'บ่าย': 3 };
+          return (shiftWeight[b.Shift] || 0) - (shiftWeight[a.Shift] || 0); 
+      });
+
+      window.allData.forEach(function(r) {
+        var shiftTxt = r.Shift ? ` <span class="badge bg-secondary ms-1">เวร${r.Shift}</span>` : '';
+        var imgBtn = `
+            <button class="btn btn-sm btn-outline-danger mb-1 me-1" onclick="downloadFromTable('${r.id}', 'pdf')" title="โหลด PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn btn-sm btn-outline-success mb-1" onclick="downloadFromTable('${r.id}', 'jpg')" title="โหลดรูป JPG"><i class="fas fa-image"></i> JPG</button>
+        `;
+        
+        tbody.append(`<tr><td class="text-nowrap">${formatDateDisplay(r.ReportDate)}${shiftTxt}</td><td>${r.SupervisorName || '-'}</td><td class="text-center text-nowrap">${imgBtn}</td><td class="text-end text-nowrap"><button class="btn btn-sm btn-warning me-1 mb-1" onclick="editRecord('${r.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light text-danger mb-1" onclick="deleteRecord('${r.id}')"><i class="fas fa-trash"></i></button></td></tr>`);
+      });
+      $('#dataTable').DataTable({ "order": [], "responsive": true, "language": { "search": "ค้นหา:" } });
+      updateDashboardCards(); renderChart();
+    });
+  }
+
+  // ===== FIX: ฟังก์ชัน captureAndDownload ใหม่ที่แก้ปัญหา PDF ขาว =====
+  async function captureAndDownload(format, filename) {
+    const capArea = document.getElementById('captureArea');
+
+    // ทำให้ element มองเห็นได้จริงๆ ใน DOM (ไม่ใช่แค่ position ออกนอกจอ)
+    capArea.style.position = 'fixed';
+    capArea.style.left = '0px';
+    capArea.style.top = '0px';
+    capArea.style.zIndex = '9999';
+    capArea.style.visibility = 'visible';
+    capArea.style.opacity = '1';
+    capArea.style.width = '794px';
+    capArea.style.background = 'white';
+    capArea.style.pointerEvents = 'none'; // ไม่ให้ user click โดนระหว่าง render
+
+    // รอให้ browser paint ก่อน
+    await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+    await new Promise(res => setTimeout(res, 500));
+
+    try {
+      if (format === 'jpg' || format === 'both') {
+        const canvas = await html2canvas(capArea, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          width: capArea.offsetWidth,
+          height: capArea.scrollHeight,
+          windowWidth: 794,
+        });
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const a = document.createElement('a');
+        a.href = imgData;
+        a.download = filename + '.jpg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        await new Promise(res => setTimeout(res, 300));
+      }
+
+      if (format === 'pdf' || format === 'both') {
+        const opt = {
+          margin: [10, 10, 10, 10],
+          filename: filename + '.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            width: capArea.offsetWidth,
+            windowWidth: 794,
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        await html2pdf().set(opt).from(capArea).save();
+        await new Promise(res => setTimeout(res, 300));
+      }
+
+    } finally {
+      // ซ่อน element กลับ
+      capArea.style.position = 'fixed';
+      capArea.style.left = '-9999px';
+      capArea.style.top = '0px';
+      capArea.style.zIndex = '-1';
+      capArea.style.visibility = 'hidden';
+      capArea.style.pointerEvents = 'auto';
     }
   }
 
-  function editRec(id) {
-    var record = allData.find(r => r.id == id); 
-    if (!record) return;
-    
-    resetForm(); 
-    var f = document.forms['mainForm'];
-    
-    $('#recId').val(record.id); 
-    f['ReportDate'].value = formatDate(record.ReportDate); 
-    f['Shift'].value = record.Shift;
-    
-    f['SupervisorName'].value = record.SupervisorName;
-    f['Position'].value = record.Position;
-    f['DoctorER'].value = record.DoctorER;
-    f['DoctorWard'].value = record.DoctorWard;
-    
-    f['NurseER1'].value = record.NurseER1;
-    f['NurseER2'].value = record.NurseER2;
-    f['NurseER3'].value = record.NurseER3;
-    f['NurseER4'].value = record.NurseER4;
-    f['EMT'].value = record.EMT;
-    f['HelperER'].value = record.HelperER;
-    
-    f['StatER_Total'].value = record.StatER_Total; 
-    f['StatIPD3_Remain'].value = record.StatIPD3_Remain; 
-    f['Refer_Total'].value = record.Refer_Total; 
-    f['Problem_Detail'].value = record.Problem_Detail;
+  window.downloadFromTable = async function(id, format) {
+      var r = window.allData.find(x => x.id === id);
+      if(!r) return;
+      
+      $('#loadingText').text(`กำลังสร้างไฟล์ ${format.toUpperCase()}...`);
+      $('#loadingOverlay').css('display', 'flex');
 
-    $('.select2-input').trigger('change');
-    
-    showForm(); 
-    Swal.fire({ title: 'โหมดแก้ไขข้อมูล', icon: 'info', timer: 2000, showConfirmButton: false });
-  }
+      populateCaptureArea(r);
 
-  function applyCustomSort() { $('#dataTable').DataTable().order([[0, $('#sortOrderSelect').val()], [1, 'asc']]).draw(); }
-  
-  // 5. ลบข้อมูลใน Firestore
-  function deleteRec(id) { 
-    Swal.fire({title:'ลบข้อมูลนี้?', icon:'warning', showCancelButton:true}).then(r=>{ 
-      if(r.isConfirmed){ 
-        $('#loadingOverlay').css('display', 'flex'); 
-        db.collection(collectionName).doc(id).delete().then(() => {
-          Swal.fire('ลบสำเร็จ', '', 'success');
-          loadTableData();
-        }).catch(err => {
-          console.error(err);
-          Swal.fire('Error', 'ไม่สามารถลบได้', 'error');
-        }).finally(() => $('#loadingOverlay').hide()); 
+      // รอให้ DOM update ก่อน capture
+      await new Promise(res => setTimeout(res, 200));
+      
+      try {
+          await captureAndDownload(format, `รายงานเวร_${r.ReportDate||'unknown'}_เวร${r.Shift||''}`);
+      } catch(e) {
+          console.error("Export Error", e);
+          Swal.fire('ข้อผิดพลาด', 'ดาวน์โหลดไฟล์ไม่สำเร็จ: ' + e.message, 'error');
       }
-    }); 
+      
+      $('#loadingOverlay').hide();
+      $('#loadingText').text('กำลังประมวลผล...');
   }
 
-  // 6. อัปเดตข้อมูล Dashboard จาก Object ของ Firestore โดยตรง
-  function updateDashboardCards() {
-    if(!allData || allData.length === 0) return;
-    let sortedData = [...allData].sort((a, b) => new Date(b.ReportDate) - new Date(a.ReportDate));
-    let latest = sortedData[0];
+  // ===== FIX: handleFormSubmit ไม่ใช้ event parameter และไม่ต้องการ required =====
+  window.handleFormSubmit = async function() {
+    $('#loadingText').text('กำลังบันทึกและดาวน์โหลดไฟล์...');
+    $('#loadingOverlay').css('display', 'flex'); 
     
-    let today = new Date();
-    $('#dash_date').text(today.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }));
-    $('#dash_refer').text(latest.Refer_Total || '0');
-    
-    let ipdTotal = Number(latest.StatIPD3_Remain) || 0; 
-    $('#dash_ipd').text(ipdTotal);
-    $('#dash_er').text(latest.StatER_Total || '0');
+    try {
+      // เก็บข้อมูลจากฟอร์มโดยตรง ไม่ต้องผ่าน submit event
+      var formEl = document.getElementById('mainForm');
+      var fd = {};
+      var formData = new FormData(formEl);
+      for (var [key, value] of formData.entries()) {
+        fd[key] = value;
+      }
+      
+      // เพิ่ม radio buttons ที่อาจไม่ถูก capture โดย FormData ถ้าไม่ได้ check
+      var radioNames = ['Prob1','Prob2','Prob3','Prob4','Prob5','Prob6','Prob7','Prob8','Prob9'];
+      radioNames.forEach(name => {
+        var checked = formEl.querySelector(`input[name="${name}"]:checked`);
+        if (checked) fd[name] = checked.value;
+        else fd[name] = 'ไม่พบ'; // default
+      });
+
+      let headStr = window.dropdownData && window.dropdownData['head'] ? Object.values(window.dropdownData['head'])[0] : '|';
+      let dirStr = window.dropdownData && window.dropdownData['director'] ? Object.values(window.dropdownData['director'])[0] : '|';
+      let [headName, headPos] = (headStr||'|').split('|'); 
+      let [dirName, dirPos] = (dirStr||'|').split('|');
+      fd.HeadNurseName = headName || ''; fd.HeadNursePos = headPos || 'หัวหน้ากลุ่มงานการพยาบาลฯ';
+      fd.DirectorName = dirName || ''; fd.DirectorPos = dirPos || 'ผู้อำนวยการโรงพยาบาล';
+
+      // ลายเซ็นเป็น optional
+      fd.signatureBase64 = isCanvasBlank(canvas) ? null : canvas.toDataURL("image/png");
+
+      populateCaptureArea(fd);
+
+      // รอให้ DOM อัปเดต
+      await new Promise(res => setTimeout(res, 200));
+
+      await captureAndDownload('both', `รายงานเวร_${fd.ReportDate||'unknown'}_เวร${fd.Shift||''}`);
+
+      const recordId = fd.recId || `KSH_${Date.now()}`;
+      const finalData = { ...fd, timestamp: new Date().toISOString() };
+      delete finalData.recId;
+      await setDoc(doc(db, 'reports', recordId), finalData);
+
+      $('#loadingOverlay').hide();
+      Swal.fire('สำเร็จ', 'บันทึกและดาวน์โหลดไฟล์สำเร็จ', 'success');
+      resetForm(); showSection('table');
+      $('#loadingText').text('กำลังประมวลผล...');
+    } catch (err) { 
+      $('#loadingOverlay').hide(); 
+      console.error(err);
+      Swal.fire('ข้อผิดพลาดในการบันทึก', err.message, 'error'); 
+      $('#loadingText').text('กำลังประมวลผล...');
+    }
   }
 
-  // 7. จัดการระบบกราฟให้รองรับโครงสร้าง Object ของ Firestore
-  function renderChart() {
-    if(!allData || allData.length === 0) return;
-    let startDate = $('#filterStartDate').val(); let endDate = $('#filterEndDate').val();
-    let selectedTypes = $('#filterDataSelect').val() || []; let chartType = $('#filterChartType').val();
+  window.deleteRecord = (id) => { 
+      Swal.fire({ title: 'ลบข้อมูล?', text: "ไม่สามารถกู้คืนได้", icon: 'warning', showCancelButton: true }).then(async r => { 
+          if(r.isConfirmed) await deleteDoc(doc(db, 'reports', id)); 
+      }); 
+  }
+  
+  window.editRecord = (id) => {
+    var r = window.allData.find(x => x.id === id); if (!r) return;
+    resetForm(); 
+    $('#recId').val(id); 
+    
+    Object.keys(r).forEach(k => { 
+        let $el = $(`[name="${k}"]`, '#mainForm');
+        if($el.length > 0) {
+            if($el.attr('type') === 'radio') {
+                $el.filter(`[value="${r[k]}"]`).prop('checked', true); 
+            } else if ($el.hasClass('select2-input') || $el.is('select')) {
+                $el.val(r[k]).trigger('change'); 
+            } else {
+                $el.val(r[k]);
+            }
+        }
+    });
+    
+    if(r.Shift) updateShiftTime();
+    showSection('form'); 
+    Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'ดึงข้อมูลเรียบร้อย', text: 'กรุณาตรวจสอบและกดบันทึก', showConfirmButton: false, timer: 3000 });
+  }
 
-    if (selectedTypes.length === 0) { if (dashboardChart) dashboardChart.destroy(); $('#dashTable tbody, #dashTable thead tr').empty(); return; }
+  window.exportDataPSV = () => {
+    const start = $('#exportStart').val(), end = $('#exportEnd').val();
+    if(!start || !end) return Swal.fire('ระบุวันที่','','warning');
+    const filtered = window.allData.filter(r => { let d = new Date(r.ReportDate); return d >= new Date(start) && d <= new Date(end); });
+    if(!filtered.length) return Swal.fire('ไม่พบข้อมูล','','info');
+    
+    const allKeys = ["ReportDate", "Shift", "StartTime", "EndTime", "SupervisorName", "Position", "DoctorER", "DoctorWard", "NurseER1", "NurseER2", "NurseER3", "NurseER4", "EMT", "HelperER", "StatER_Total", "StatER_Refer", "StatER_EMS", "StatER_Dead", "StatER_Autopsy", "NurseLR1", "NurseLR2", "HelperLR", "StatLR_Carry", "StatLR_New", "StatLR_Move", "StatLR_Refer", "StatLR_DC", "StatLR_Birth", "StatLR_Dead", "StatLR_Remain", "NurseIPD2_1", "NurseIPD2_2", "NurseIPD2_3", "HelperIPD2", "StatIPD2_Carry", "StatIPD2_New", "StatIPD2_RecMove", "StatIPD2_Move", "StatIPD2_Refer", "StatIPD2_DC", "StatIPD2_Refuse", "StatIPD2_Dead", "StatIPD2_Remain", "StatIPD2_HW", "NurseIPD3_1", "NurseIPD3_2", "NurseIPD3_3", "HelperIPD3", "StatIPD3_Carry", "StatIPD3_New", "StatIPD3_RecMove", "StatIPD3_Move", "StatIPD3_Refer", "StatIPD3_DC", "StatIPD3_Refuse", "StatIPD3_Dead", "StatIPD3_Remain", "StatIPD3_HW", "CardStaff1", "CardStaff2", "Porter1", "Porter2", "Refer_Total", "Ref_CP", "Ref_CP2", "Ref_PK", "Ref_KK", "Ref_Other", "Ref_OtherName", "Ref1", "Ref2", "Ref3", "Ref4", "Ref5", "Ref6", "Prob1", "Prob2", "Prob3", "Prob4", "Prob5", "Prob6", "Prob7", "Prob8", "Prob9", "Problem_Detail", "Security", "Other_Detail", "HeadNurse_Comment", "HeadNurseName", "DirectorName"];
+    let content = allKeys.join("|") + "\n"; 
+    filtered.forEach(r => {
+        const row = allKeys.map(k => (r[k] ? String(r[k]) : "").replace(/(\r\n|\n|\r)/gm, " ").replace(/\|/g, "/"));
+        content += row.join("|") + "\n";
+    });
+    
+    const blob = new Blob(["\ufeff" + content], { type: 'text/psv;charset=utf-8;' });
+    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `KSH_Export.psv`; link.click();
+  }
 
-    let filteredData = allData.filter(r => {
-      let rDate = new Date(r.ReportDate); rDate.setHours(0,0,0,0);
-      return (startDate ? rDate >= new Date(startDate) : true) && (endDate ? rDate <= new Date(endDate) : true);
+  window.updateDashboardCards = () => {
+    $('#dash_date').text(new Date().toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric' }));
+    if(window.allData.length){
+        let l = window.allData[0]; $('#dash_refer').text(l.Refer_Total || 0); $('#dash_er').text(l.StatER_Total || 0); $('#dash_ipd').text((Number(l.StatIPD2_Remain)||0)+(Number(l.StatIPD3_Remain)||0));
+    }
+  }
+
+  window.renderChart = () => {
+    if(!window.allData.length) return;
+    let start = $('#filterStartDate').val(), end = $('#filterEndDate').val(), types = $('#filterDataSelect').val() || [], cType = $('#filterChartType').val();
+    if (!types.length) { if(window.dashboardChart) window.dashboardChart.destroy(); return; }
+
+    let fData = window.allData.filter(r => {
+      let d = new Date(r.ReportDate); d.setHours(0,0,0,0);
+      return (start ? d >= new Date(start) : true) && (end ? d <= new Date(end) : true);
     });
 
-    let timeSeriesTypes = ['er_total', 'refer_total', 'ipd_total'];
-    let countTypes = ['supervisor_count', 'doc_er_count', 'problem_count', 'all_staff_count'];
-    let isTimeMode = selectedTypes.some(t => timeSeriesTypes.includes(t));
-    let isCountMode = selectedTypes.some(t => countTypes.includes(t));
+    let tsTypes = ['er_total', 'refer_total', 'ipd_total'], cTypes = ['supervisor_count', 'problem_count'];
+    let isTime = types.some(t => tsTypes.includes(t)), isCount = types.some(t => cTypes.includes(t));
+    let labels = [], datasets = [];
 
-    let labels = []; let datasets = []; const getOptionText = (val) => $(`#filterDataSelect option[value='${val}']`).text();
-
-    if (isTimeMode) {
-      filteredData.sort((a, b) => new Date(a.ReportDate) - new Date(b.ReportDate));
-      labels = [...new Set(filteredData.map(r => r.ReportDate))];
-      let colors = ['#1e3c72', '#ff9966', '#11998e'];
-      selectedTypes.filter(t => timeSeriesTypes.includes(t)).forEach((type, index) => {
-        let dataPoints = labels.map(lbl => {
-          let sum = 0;
-          filteredData.filter(r => r.ReportDate === lbl).forEach(r => {
-            if(type === 'er_total') sum += Number(r.StatER_Total) || 0;
-            if(type === 'refer_total') sum += Number(r.Refer_Total) || 0;
-            if(type === 'ipd_total') sum += Number(r.StatIPD3_Remain) || 0;
-          });
-          return sum;
+    if (isTime) {
+      fData.sort((a,b) => new Date(a.ReportDate) - new Date(b.ReportDate));
+      labels = [...new Set(fData.map(r => formatDateDisplay(r.ReportDate)))];
+      types.filter(t => tsTypes.includes(t)).forEach((t, i) => {
+        let dp = labels.map(l => {
+          let sum=0; fData.filter(r => formatDateDisplay(r.ReportDate)===l).forEach(r => {
+            if(t==='er_total') sum += Number(r.StatER_Total)||0;
+            if(t==='refer_total') sum += Number(r.Refer_Total)||0;
+            if(t==='ipd_total') sum += (Number(r.StatIPD2_Remain)||0) + (Number(r.StatIPD3_Remain)||0);
+          }); return sum;
         });
-        datasets.push({ label: getOptionText(type), data: dataPoints, backgroundColor: chartType === 'line' ? colors[index % colors.length] + '33' : colors[index % colors.length], borderColor: colors[index % colors.length], borderWidth: 1, fill: chartType === 'line' });
+        datasets.push({ label: $(`#filterDataSelect option[value='${t}']`).text(), data: dp, backgroundColor: ['#1e3c72','#ff9966','#11998e'][i%3]+'33', borderColor: ['#1e3c72','#ff9966','#11998e'][i%3] });
       });
-    } else if (isCountMode) {
+    } else if (isCount) {
       let counts = {};
-      filteredData.forEach(r => {
-        let items = [];
-        if(selectedTypes.includes('supervisor_count')) items.push(r.SupervisorName);
-        if(selectedTypes.includes('doc_er_count')) items.push(r.DoctorER);
-        if(selectedTypes.includes('problem_count')) { 
-            if(r.Problem_Detail && r.Problem_Detail.trim() !== "") items.push("พบปัญหา"); 
-        }
-        if(selectedTypes.includes('all_staff_count')) { 
-            [r.NurseER1, r.NurseER2, r.NurseER3, r.NurseER4, r.EMT, r.HelperER].forEach(staff => {
-                if(staff) items.push(staff);
-            }); 
-        }
-        items.forEach(item => { if(item && item.trim() !== '' && item.trim() !== '-') counts[item] = (counts[item] || 0) + 1; });
+      fData.forEach(r => {
+        if(types.includes('supervisor_count') && r.SupervisorName) counts[r.SupervisorName] = (counts[r.SupervisorName]||0)+1;
+        if(types.includes('problem_count')) for(let i=1;i<=9;i++) if(r["Prob"+i]==="พบ") counts["ข้อ "+i] = (counts["ข้อ "+i]||0)+1;
       });
-      let sortedCounts = Object.keys(counts).map(k => ({name: k, count: counts[k]})).sort((a,b) => b.count - a.count);
-      sortedCounts.forEach(c => { labels.push(c.name); datasets.push(c.count); });
-      let dataPoints = sortedCounts.map(c => c.count);
-      datasets = [{ label: "จำนวน/ความถี่ (ครั้ง)", data: dataPoints, backgroundColor: chartType === 'pie' ? ['#1e3c72', '#ff9966', '#7F00FF', '#11998e', '#f1c40f', '#e74c3c', '#3498db', '#9b59b6', '#34495e', '#16a085'] : 'rgba(111, 66, 193, 0.7)', borderColor: chartType === 'pie' ? '#fff' : '#6f42c1', borderWidth: 1 }];
+      Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).forEach(k => { labels.push(k); datasets.push(counts[k]); });
+      datasets = [{ label: "ครั้ง", data: datasets, backgroundColor: cType==='pie'?['#1e3c72','#ff9966','#7F00FF','#11998e','#f1c40f']:'rgba(111,66,193,0.7)' }];
     }
 
-    if(chartType === 'table') {
-      $('#mainDashboardChart').hide(); $('#dashboardTableArea').show();
-      let tbody = $('#dashTable tbody').empty(); let thead = $('#dashTable thead tr').empty();
-      if (isTimeMode) {
-        thead.append('<th>วันที่</th>'); datasets.forEach(ds => thead.append(`<th class="text-end">${ds.label}</th>`));
-        if(labels.length === 0) tbody.append(`<tr><td colspan="${datasets.length+1}" class="text-center">ไม่มีข้อมูล</td></tr>`);
-        else labels.forEach((lbl, i) => { let tr = `<tr><td>${formatThaiDateCE(lbl)}</td>`; datasets.forEach(ds => tr += `<td class="text-end fw-bold text-primary">${ds.data[i]}</td>`); tr += `</tr>`; tbody.append(tr); });
-      } else if (isCountMode) {
-        thead.append('<th>รายชื่อ/รายการ</th><th class="text-end">ความถี่ (ครั้ง)</th>');
-        if(labels.length === 0) tbody.append(`<tr><td colspan="2" class="text-center">ไม่มีข้อมูล</td></tr>`);
-        else labels.forEach((lbl, i) => { tbody.append(`<tr><td>${lbl}</td><td class="text-end fw-bold text-primary">${datasets[0].data[i]}</td></tr>`); });
-      }
-      return;
-    }
-
-    $('#dashboardTableArea').hide(); $('#mainDashboardChart').show();
-    if (dashboardChart) { dashboardChart.destroy(); }
-    let ctx = document.getElementById('mainDashboardChart').getContext('2d');
-    dashboardChart = new Chart(ctx, { type: chartType, data: { labels: labels, datasets: datasets }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: chartType === 'pie' || chartType === 'line' || datasets.length > 1 } }, scales: chartType === 'pie' ? {} : { y: { beginAtZero: true, ticks: { precision: 0 } } } } });
+    if (window.dashboardChart) window.dashboardChart.destroy();
+    window.dashboardChart = new Chart(document.getElementById('mainDashboardChart'), { type: cType, data: {labels, datasets}, options: {responsive: true, maintainAspectRatio: false} });
   }
 
-  function exportDashboardPDF() {
-    var element = document.getElementById('pdfDashboardArea');
-    var opt = { margin: 0.5, filename: 'Dashboard_KSH_SUPERVISOR.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } };
-    $('#loadingOverlay').css('display', 'flex'); html2pdf().set(opt).from(element).save().then(() => { $('#loadingOverlay').fadeOut(); });
-  }
+  window.showSection = (id) => { $('.section-content').hide(); $('.nav-link').removeClass('active'); $(`#${id}Section`).fadeIn(); let btnId = id.charAt(0).toUpperCase()+id.slice(1); $(`#btnTab${btnId}`).addClass('active'); if(id==='form') resizeCanvas(); window.scrollTo(0,0); }
+  function formatDateDisplay(d) { if(!d) return ''; let dt=new Date(d); return dt.getDate()+'/'+(dt.getMonth()+1)+'/'+(dt.getFullYear()+543); }
+  window.resetForm = () => { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val(null).trigger('change'); $('#shiftTimeDisplay').val(''); clearSignature(); }
 
   var canvas = document.getElementById('signaturePad'), ctx = canvas.getContext('2d'), drawing = false;
-  function resizeCanvas() { var ratio = Math.max(window.devicePixelRatio || 1, 1); canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio; ctx.scale(ratio, ratio); ctx.lineWidth = 2.5; ctx.strokeStyle = "#000080"; ctx.lineCap = "round"; }
-  window.addEventListener("resize", resizeCanvas);
-  function getMousePos(canvas, evt) { var rect = canvas.getBoundingClientRect(); return { x: (evt.clientX || evt.touches[0].clientX) - rect.left, y: (evt.clientY || evt.touches[0].clientY) - rect.top }; }
-  function startDrawing(e) { drawing = true; var pos = getMousePos(canvas, e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); e.preventDefault(); }
-  function draw(e) { if (!drawing) return; var pos = getMousePos(canvas, e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault(); }
-  function stopDrawing(e) { drawing = false; ctx.closePath(); }
-  canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDrawing); canvas.addEventListener('mouseout', stopDrawing);
-  canvas.addEventListener('touchstart', startDrawing, {passive: false}); canvas.addEventListener('touchmove', draw, {passive: false}); canvas.addEventListener('touchend', stopDrawing);
-  function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); }
-  function isCanvasBlank(c) { var b = document.createElement('canvas'); b.width = c.width; b.height = c.height; return c.toDataURL() === b.toDataURL(); }
+  window.resizeCanvas = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth = 2.5; ctx.strokeStyle = "#000"; ctx.lineCap = "round"; }
+  canvas.addEventListener('mousedown', (e) => { drawing=true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
+  canvas.addEventListener('mousemove', (e) => { if(drawing){ ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }});
+  canvas.addEventListener('mouseup', () => drawing=false);
+  canvas.addEventListener('touchstart', (e) => { e.preventDefault(); drawing=true; let r=canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.touches[0].clientX-r.left, e.touches[0].clientY-r.top); });
+  canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if(drawing){ let r=canvas.getBoundingClientRect(); ctx.lineTo(e.touches[0].clientX-r.left, e.touches[0].clientY-r.top); ctx.stroke(); }});
+  canvas.addEventListener('touchend', () => drawing=false);
+  window.clearSignature = () => { ctx.clearRect(0,0,canvas.width,canvas.height); $('#c_sig_img').hide().attr('src',''); }
+  window.isCanvasBlank = (c) => { let b=document.createElement('canvas'); b.width=c.width; b.height=c.height; return c.toDataURL()===b.toDataURL(); }
 </script>
 </body>
 </html>
