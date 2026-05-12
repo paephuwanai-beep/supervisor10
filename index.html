@@ -117,7 +117,7 @@
     .stat-title { font-size: 0.85rem; font-weight: bold; color: #666; margin-bottom: 8px; display: block; }
     .btn-gradient { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px; font-weight: 600; font-size: 1.1rem; border-radius: 12px; box-shadow: 0 6px 15px rgba(111, 66, 193, 0.25); transition: transform 0.2s; width: 100%;}
     
-    #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.85); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+    #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     
     #captureArea { position: absolute; left: -9999px; top: 0; width: 800px; background: white; padding: 40px; font-family: 'Sarabun'; color: #333; line-height: 1.6; z-index: 1000; }
     .snap-header { text-align: center; border-bottom: 3px solid var(--primary-color); padding-bottom: 15px; margin-bottom: 25px; }
@@ -181,6 +181,7 @@
 <div id="loadingOverlay">
   <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem;"></div>
   <h5 class="mt-3 text-primary fw-bold" id="loadingText">กำลังประมวลผล...</h5>
+  <p class="text-muted small mt-1">กรุณารอสักครู่ ห้ามปิดหน้าจอ</p>
 </div>
 
 <div id="captureArea" class="print-hide">
@@ -216,12 +217,12 @@
   </div>
 </div>
 
-<div class="app-header text-center print-hide">
+<div class="app-header text-center print-hide" id="mainHeader">
   <h2 class="mb-2"><i class="fas fa-user-shield"></i> KSH SUPERVISOR SYSTEM</h2>
   <p class="mb-0 opacity-75">ระบบดิจิทัลรายงานเวรพยาบาลตรวจการนอกเวลา</p>
 </div>
 
-<div class="container-main">
+<div class="container-main" id="mainContentArea">
 
   <ul class="nav nav-pills nav-fill mb-3 d-flex flex-row print-hide" id="mainNav">
     <li class="nav-item"><button class="nav-link active" onclick="showSection('dashboard')" id="btnTabDash"><i class="fas fa-home"></i> Home</button></li>
@@ -305,7 +306,7 @@
       <input type="hidden" name="recId" id="recId">
 
       <div class="custom-card"><div class="card-title-bar"><i class="fas fa-user-clock"></i> 1. ข้อมูลทั่วไป</div><div class="card-body-custom"><div class="row g-3">
-        <!-- เอา required ออก เพื่อให้กดบันทึกได้ทันที -->
+        <!-- ปลด required ออก -->
         <div class="col-12 col-md-4"><label class="form-label">วันที่</label><input type="date" class="form-control" name="ReportDate"></div>
         <div class="col-6 col-md-4">
             <label class="form-label">เวรปฏิบัติงาน</label>
@@ -730,35 +731,35 @@
     });
   }
 
-  // --- อัปเดตฟังก์ชัน captureAndDownload ด้วยเทคนิค Clone Node (แก้ปัญหาหน้าขาว) ---
+  // --- อัปเดตฟังก์ชันแคปภาพ: นำชิ้นส่วนมาโชว์กลางจอจริงๆ แล้วแคป ก่อนจะซ่อนกลับไป ---
   async function captureAndDownload(format, filename) {
-      const originalArea = document.getElementById('captureArea');
+      const capArea = document.getElementById('captureArea');
+      const mainContent = document.getElementById('mainContentArea');
+      const header = document.getElementById('mainHeader');
       
-      // 1. สร้างร่างโคลนขึ้นมา เพื่อบังคับให้เบราว์เซอร์ Render ภาพบนหน้าจอชั่วคราว
-      const clone = originalArea.cloneNode(true);
-      clone.id = 'tempCaptureArea';
-      clone.style.position = 'absolute';
-      clone.style.left = '0px';
-      clone.style.top = '0px';
-      clone.style.width = '800px'; 
-      clone.style.backgroundColor = '#ffffff';
-      clone.style.zIndex = '9000'; // ซ่อนอยู่ใต้ Loading Overlay
-      clone.style.display = 'block';
-      clone.classList.remove('print-hide'); 
+      // 1. ซ่อน UI หลักทั้งหมด เพื่อไม่ให้รกจอ (จะถูกบังด้วยจอโหลดสีขาวอยู่แล้ว)
+      if (mainContent) mainContent.style.display = 'none';
+      if (header) header.style.display = 'none';
+      document.body.style.background = 'white'; 
       
-      document.body.appendChild(clone);
+      // 2. ดึงหน้าจอรายงาน (captureArea) กลับมาแสดงผลกลางหน้าจอจริงๆ
+      capArea.style.position = 'relative';
+      capArea.style.left = '0px';
+      capArea.style.margin = '0 auto';
+      capArea.classList.remove('print-hide');
+      
       window.scrollTo(0, 0);
       
-      // ให้เวลาเบราว์เซอร์เตรียมความพร้อมก่อนจับภาพ
-      await new Promise(res => setTimeout(res, 1500)); 
+      // ให้เวลาเบราว์เซอร์ Render ภาพแบบเต็ม 100%
+      await new Promise(res => setTimeout(res, 1000)); 
       
       try {
           if (format === 'jpg' || format === 'both') {
-              const canvas = await html2canvas(clone, { 
+              const canvas = await html2canvas(capArea, { 
                   scale: 2, 
                   useCORS: true, 
                   logging: false,
-                  windowWidth: 800 
+                  windowWidth: capArea.scrollWidth
               });
               const imgData = canvas.toDataURL("image/jpeg", 0.95);
               const dlLink = document.createElement("a");
@@ -778,22 +779,27 @@
                       scale: 2, 
                       useCORS: true, 
                       logging: false,
-                      windowWidth: 800 
+                      windowWidth: capArea.scrollWidth
                   }, 
-                  jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                  pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
               };
               
-              await html2pdf().set(opt).from(clone).save();
+              await html2pdf().set(opt).from(capArea).save();
           }
       } catch (error) {
           console.error("Export Error:", error);
           throw new Error("เกิดข้อผิดพลาดในการสร้างไฟล์: " + error.message);
       } finally {
-          // ลบร่างโคลนทิ้งเมื่อทำงานเสร็จ
-          const tempNode = document.getElementById('tempCaptureArea');
-          if (tempNode) {
-              document.body.removeChild(tempNode);
-          }
+          // 3. คืนค่าทุกอย่างกลับเป็นเหมือนเดิม
+          capArea.style.position = 'absolute';
+          capArea.style.left = '-9999px';
+          capArea.style.margin = '0';
+          capArea.classList.add('print-hide');
+          
+          if (mainContent) mainContent.style.display = 'block';
+          if (header) header.style.display = 'block';
+          document.body.style.background = ''; // คืนค่าพื้นหลังเดิม
       }
   }
 
