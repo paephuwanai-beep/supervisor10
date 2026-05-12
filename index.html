@@ -119,35 +119,14 @@
     
     #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.85); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
     
-    /* ===== FIX: captureArea ต้องซ่อนแบบที่ html2canvas ยังอ่านได้ ===== */
-    #captureArea {
-      position: fixed;
-      left: -9999px;
-      top: 0;
-      width: 794px; /* A4 at 96dpi */
-      background: white;
-      padding: 40px;
-      font-family: 'Sarabun', sans-serif;
-      color: #333;
-      line-height: 1.6;
-      z-index: -1;
-      visibility: hidden;
-    }
-    /* เมื่อต้องการ render ให้ใช้ class นี้ */
-    #captureArea.ready-to-capture {
-      left: 0;
-      top: 0;
-      z-index: 9999;
-      visibility: visible;
-    }
-
+    #captureArea { position: absolute; left: -9999px; top: 0; width: 800px; background: white; padding: 40px; font-family: 'Sarabun'; color: #333; line-height: 1.6; z-index: 1000; }
     .snap-header { text-align: center; border-bottom: 3px solid var(--primary-color); padding-bottom: 15px; margin-bottom: 25px; }
     .snap-header h2 { color: var(--primary-color); font-weight: bold; margin: 0; }
     .snap-header p { margin: 5px 0 0; color: #666; }
     .snap-section { margin-bottom: 20px; page-break-inside: avoid; }
     .snap-h3 { font-size: 18px; font-weight: bold; color: var(--accent-color); border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; }
     .snap-row { display: flex; margin-bottom: 8px; }
-    .snap-label { font-weight: 600; width: 180px; color: #555; flex-shrink: 0; }
+    .snap-label { font-weight: 600; width: 180px; color: #555; }
     .snap-value { flex: 1; font-weight: 500; }
     .snap-block { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
 
@@ -204,8 +183,7 @@
   <h5 class="mt-3 text-primary fw-bold" id="loadingText">กำลังประมวลผล...</h5>
 </div>
 
-<!-- ===== captureArea: เนื้อหาที่จะถูก capture เป็น PDF/JPG ===== -->
-<div id="captureArea">
+<div id="captureArea" class="print-hide">
   <div class="snap-header"><h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2><p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p></div>
   <div class="snap-section">
     <div class="snap-row"><span class="snap-label">วันที่:</span> <span class="snap-value" id="c_date"></span></div>
@@ -323,12 +301,11 @@
   </div>
 
   <div id="formSection" class="section-content" style="display:none;">
-    <!-- ===== FIX: ลบ onsubmit และใช้ novalidate เพื่อไม่บังคับ required ===== -->
-    <form id="mainForm" novalidate>
+    <form id="mainForm" onsubmit="handleFormSubmit(event)">
       <input type="hidden" name="recId" id="recId">
 
       <div class="custom-card"><div class="card-title-bar"><i class="fas fa-user-clock"></i> 1. ข้อมูลทั่วไป</div><div class="card-body-custom"><div class="row g-3">
-        <!-- ===== FIX: ลบ required ออกทั้งหมด ===== -->
+        <!-- ลบ required ออกจาก input วันที่และเวรปฏิบัติงาน -->
         <div class="col-12 col-md-4"><label class="form-label">วันที่</label><input type="date" class="form-control" name="ReportDate"></div>
         <div class="col-6 col-md-4">
             <label class="form-label">เวรปฏิบัติงาน</label>
@@ -477,12 +454,12 @@
       </div></div>
 
       <div class="custom-card border-primary">
-        <div class="card-title-bar text-bg-primary text-white"><i class="fas fa-file-signature"></i> 11. ลายมือชื่อผู้รายงาน (ไม่บังคับ)</div>
+        <div class="card-title-bar text-bg-primary text-white"><i class="fas fa-file-signature"></i> 11. ลายมือชื่อผู้รายงาน</div>
         <div class="card-body-custom">
            <div class="alert alert-secondary small mb-3 border-0">
-             <i class="fas fa-info-circle"></i> รายชื่อผู้อำนวยการ และ หัวหน้ากลุ่มงาน จะถูกประทับลงในเอกสาร PDF และ JPG อัตโนมัติ ตามที่ได้ระบุไว้ในเมนู 'ตั้งค่า' | <strong>ลายเซ็นเป็นตัวเลือก ไม่บังคับกรอก</strong>
+             <i class="fas fa-info-circle"></i> รายชื่อผู้อำนวยการ และ หัวหน้ากลุ่มงาน จะถูกประทับลงในเอกสาร PDF และ JPG อัตโนมัติ ตามที่ได้ระบุไว้ในเมนู 'ตั้งค่า'
            </div>
-           <label class="form-label text-primary"><i class="fas fa-pen-nib me-1"></i> เซ็นชื่อ (ถ้ามี) — วาดในกรอบด้านล่าง</label>
+           <label class="form-label text-primary"><i class="fas fa-pen-nib me-1"></i> กรุณาเซ็นชื่อในกรอบด้านล่าง (ผู้ตรวจการเวร)</label>
            <div class="signature-wrapper mb-2">
              <button type="button" class="btn btn-sm btn-light border btn-clear-sig" onclick="clearSignature()"><i class="fas fa-eraser"></i> ลบ/เขียนใหม่</button>
              <canvas id="signaturePad"></canvas>
@@ -490,9 +467,8 @@
         </div>
       </div>
 
-      <!-- ===== FIX: ปุ่มบันทึกใช้ onclick แทน submit ===== -->
       <div class="d-grid gap-2 mb-5">
-        <button type="button" class="btn btn-gradient text-white" onclick="handleFormSubmit()">
+        <button type="submit" class="btn btn-gradient text-white">
           <i class="fas fa-save me-2"></i> บันทึกข้อมูลและสร้างไฟล์รายงานอัตโนมัติ
         </button>
       </div>
@@ -685,8 +661,8 @@
         const j = (arr) => arr.filter(v => v).join(', ');
         
         $('#c_date').text(formatDateDisplay(r.ReportDate) + (r.Shift ? ` (เวร${r.Shift})` : '')); 
-        $('#c_time').text(r.ShiftTimeDisplay || `${r.StartTime||''} - ${r.EndTime||''}`);
-        $('#c_sup').text(r.SupervisorName||''); $('#c_pos').text(r.Position||'');
+        $('#c_time').text(r.ShiftTimeDisplay || `${r.StartTime || '-'} - ${r.EndTime || '-'}`);
+        $('#c_sup').text(r.SupervisorName); $('#c_pos').text(r.Position);
         $('#c_docER').text(r.DoctorER||'-'); $('#c_docWard').text(r.DoctorWard||'-');
         $('#c_nurse_er').text(j([r.NurseER1,r.NurseER2,r.NurseER3,r.NurseER4])||'-');
         $('#c_emt').text(r.EMT||'-'); $('#c_helper_er').text(r.HelperER||'-');
@@ -716,7 +692,7 @@
         $('#c_dir_pos').text(r.DirectorPos || 'ผู้อำนวยการโรงพยาบาล');
         
         if (r.signatureBase64) { $('#c_sig_img').attr('src', r.signatureBase64).show(); } 
-        else { $('#c_sig_img').hide().attr('src',''); }
+        else { $('#c_sig_img').hide(); }
   }
 
   function loadTableData() {
@@ -754,77 +730,64 @@
     });
   }
 
-  // ===== FIX: ฟังก์ชัน captureAndDownload ใหม่ที่แก้ปัญหา PDF ขาว =====
   async function captureAndDownload(format, filename) {
-    const capArea = document.getElementById('captureArea');
-
-    // ทำให้ element มองเห็นได้จริงๆ ใน DOM (ไม่ใช่แค่ position ออกนอกจอ)
-    capArea.style.position = 'fixed';
-    capArea.style.left = '0px';
-    capArea.style.top = '0px';
-    capArea.style.zIndex = '9999';
-    capArea.style.visibility = 'visible';
-    capArea.style.opacity = '1';
-    capArea.style.width = '794px';
-    capArea.style.background = 'white';
-    capArea.style.pointerEvents = 'none'; // ไม่ให้ user click โดนระหว่าง render
-
-    // รอให้ browser paint ก่อน
-    await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
-    await new Promise(res => setTimeout(res, 500));
-
-    try {
-      if (format === 'jpg' || format === 'both') {
-        const canvas = await html2canvas(capArea, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          width: capArea.offsetWidth,
-          height: capArea.scrollHeight,
-          windowWidth: 794,
-        });
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        const a = document.createElement('a');
-        a.href = imgData;
-        a.download = filename + '.jpg';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        await new Promise(res => setTimeout(res, 300));
-      }
-
-      if (format === 'pdf' || format === 'both') {
-        const opt = {
-          margin: [10, 10, 10, 10],
-          filename: filename + '.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff',
-            logging: false,
-            width: capArea.offsetWidth,
-            windowWidth: 794,
-          },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-        await html2pdf().set(opt).from(capArea).save();
-        await new Promise(res => setTimeout(res, 300));
-      }
-
-    } finally {
-      // ซ่อน element กลับ
-      capArea.style.position = 'fixed';
-      capArea.style.left = '-9999px';
+      const capArea = document.getElementById('captureArea');
+      
+      // ปรับปรุงเป็น position absolute และใส่ display block ป้องกัน PDF ตัดขาด
+      capArea.style.left = '0px';
       capArea.style.top = '0px';
-      capArea.style.zIndex = '-1';
-      capArea.style.visibility = 'hidden';
-      capArea.style.pointerEvents = 'auto';
-    }
+      capArea.style.zIndex = '9000'; 
+      capArea.style.position = 'absolute';
+      capArea.style.background = 'white';
+      capArea.style.display = 'block'; 
+      
+      window.scrollTo(0, 0); 
+      
+      await new Promise(res => setTimeout(res, 1500)); 
+      
+      try {
+          if (format === 'jpg' || format === 'both') {
+              const canvas = await html2canvas(capArea, { 
+                  scale: 2, 
+                  useCORS: true, 
+                  logging: false,
+                  scrollY: 0, 
+                  windowWidth: 800 
+              });
+              const imgData = canvas.toDataURL("image/jpeg", 0.95);
+              const dlLink = document.createElement("a");
+              dlLink.href = imgData;
+              dlLink.download = filename + '.jpg';
+              document.body.appendChild(dlLink);
+              dlLink.click();
+              document.body.removeChild(dlLink);
+          }
+          
+          if (format === 'pdf' || format === 'both') {
+              const opt = { 
+                  margin: [0.3, 0.3, 0.3, 0.3], 
+                  filename: filename + '.pdf', 
+                  image: { type: 'jpeg', quality: 0.98 }, 
+                  html2canvas: { 
+                      scale: 2, 
+                      useCORS: true, 
+                      letterRendering: true,
+                      scrollY: 0, 
+                      windowWidth: 800 
+                  }, 
+                  jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                  pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+              };
+              
+              await html2pdf().set(opt).from(capArea).save();
+          }
+      } catch (error) {
+          console.error("Export Error:", error);
+          throw new Error("เกิดข้อผิดพลาดในการสร้างไฟล์: " + error.message);
+      } finally {
+          capArea.style.left = '-9999px';
+          capArea.style.position = 'absolute';
+      }
   }
 
   window.downloadFromTable = async function(id, format) {
@@ -835,59 +798,47 @@
       $('#loadingOverlay').css('display', 'flex');
 
       populateCaptureArea(r);
-
-      // รอให้ DOM update ก่อน capture
-      await new Promise(res => setTimeout(res, 200));
       
       try {
-          await captureAndDownload(format, `รายงานเวร_${r.ReportDate||'unknown'}_เวร${r.Shift||''}`);
+          await captureAndDownload(format, `รายงานเวร_${r.ReportDate}_เวร${r.Shift}`);
       } catch(e) {
           console.error("Export Error", e);
-          Swal.fire('ข้อผิดพลาด', 'ดาวน์โหลดไฟล์ไม่สำเร็จ: ' + e.message, 'error');
+          Swal.fire('ข้อผิดพลาด', 'ดาวน์โหลดไฟล์ไม่สำเร็จ', 'error');
       }
       
       $('#loadingOverlay').hide();
       $('#loadingText').text('กำลังประมวลผล...');
   }
 
-  // ===== FIX: handleFormSubmit ไม่ใช้ event parameter และไม่ต้องการ required =====
-  window.handleFormSubmit = async function() {
+  window.handleFormSubmit = async function(e) {
+    e.preventDefault();
     $('#loadingText').text('กำลังบันทึกและดาวน์โหลดไฟล์...');
     $('#loadingOverlay').css('display', 'flex'); 
     
     try {
-      // เก็บข้อมูลจากฟอร์มโดยตรง ไม่ต้องผ่าน submit event
-      var formEl = document.getElementById('mainForm');
-      var fd = {};
-      var formData = new FormData(formEl);
-      for (var [key, value] of formData.entries()) {
-        fd[key] = value;
+      var fd = Object.fromEntries(new FormData(e.target).entries());
+      
+      // ดักจับกรณีผู้ใช้ไม่ได้กรอกวันที่ ให้ใช้วันที่ปัจจุบันแทน
+      if (!fd.ReportDate) {
+          let tzoffset = (new Date()).getTimezoneOffset() * 60000;
+          fd.ReportDate = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+      }
+      // ดักจับกรณีไม่ได้เลือกเวร
+      if (!fd.Shift) {
+          fd.Shift = "-";
       }
       
-      // เพิ่ม radio buttons ที่อาจไม่ถูก capture โดย FormData ถ้าไม่ได้ check
-      var radioNames = ['Prob1','Prob2','Prob3','Prob4','Prob5','Prob6','Prob7','Prob8','Prob9'];
-      radioNames.forEach(name => {
-        var checked = formEl.querySelector(`input[name="${name}"]:checked`);
-        if (checked) fd[name] = checked.value;
-        else fd[name] = 'ไม่พบ'; // default
-      });
-
       let headStr = window.dropdownData && window.dropdownData['head'] ? Object.values(window.dropdownData['head'])[0] : '|';
       let dirStr = window.dropdownData && window.dropdownData['director'] ? Object.values(window.dropdownData['director'])[0] : '|';
-      let [headName, headPos] = (headStr||'|').split('|'); 
-      let [dirName, dirPos] = (dirStr||'|').split('|');
+      let [headName, headPos] = headStr.split('|'); let [dirName, dirPos] = dirStr.split('|');
       fd.HeadNurseName = headName || ''; fd.HeadNursePos = headPos || 'หัวหน้ากลุ่มงานการพยาบาลฯ';
       fd.DirectorName = dirName || ''; fd.DirectorPos = dirPos || 'ผู้อำนวยการโรงพยาบาล';
 
-      // ลายเซ็นเป็น optional
       fd.signatureBase64 = isCanvasBlank(canvas) ? null : canvas.toDataURL("image/png");
 
       populateCaptureArea(fd);
 
-      // รอให้ DOM อัปเดต
-      await new Promise(res => setTimeout(res, 200));
-
-      await captureAndDownload('both', `รายงานเวร_${fd.ReportDate||'unknown'}_เวร${fd.Shift||''}`);
+      await captureAndDownload('both', `รายงานเวร_${fd.ReportDate}_เวร${fd.Shift}`);
 
       const recordId = fd.recId || `KSH_${Date.now()}`;
       const finalData = { ...fd, timestamp: new Date().toISOString() };
@@ -932,7 +883,7 @@
     
     if(r.Shift) updateShiftTime();
     showSection('form'); 
-    Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'ดึงข้อมูลเรียบร้อย', text: 'กรุณาตรวจสอบและกดบันทึก', showConfirmButton: false, timer: 3000 });
+    Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'ดึงข้อมูลเรียบร้อย', text: 'กรุณาตรวจสอบและเซ็นชื่อใหม่ก่อนกดบันทึก', showConfirmButton: false, timer: 3000 });
   }
 
   window.exportDataPSV = () => {
