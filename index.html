@@ -659,6 +659,9 @@
   $(document).on('keypress', '.setting-card input', function(e) { if(e.which == 13) { $(this).siblings('button').click(); } });
 
   function populateCaptureArea(r) {
+        // บรรทัดนี้สำคัญมาก! ล้างร่างโคลนในหน้าต่างพรีวิวทิ้งก่อนทุกครั้ง ป้องกันบั๊ก ID ซ้ำซ้อน
+        $('#previewModalBody').empty();
+        
         const j = (arr) => arr.filter(v => v).join(', ');
         
         $('#c_date').text(formatDateDisplay(r.ReportDate) + (r.Shift ? ` (เวร${r.Shift})` : '')); 
