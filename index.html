@@ -174,6 +174,13 @@
       .print-page-break { page-break-before: always; }
       .ho-card { break-inside: avoid; margin-bottom: 15px;}
     }
+
+    /* Modal Preview Fixes */
+    #previewModalBody #previewClone {
+        width: 100% !important;
+        padding: 20px !important;
+        height: auto !important;
+    }
   </style>
 </head>
 <body>
@@ -184,6 +191,22 @@
   <p class="text-muted small mt-1">กรุณารอสักครู่ ห้ามปิดหน้าจอ</p>
 </div>
 
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-primary"><i class="fas fa-eye"></i> ตัวอย่างรายงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body bg-light" id="previewModalBody" style="max-height: 80vh; overflow-y: auto;">
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="captureArea" class="print-hide">
   <div class="snap-header"><h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2><p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p></div>
   <div class="snap-section">
@@ -192,12 +215,16 @@
   </div>
   <div class="snap-section"><div class="snap-h3">1. ข้อมูลทั่วไป</div><div class="snap-row"><span class="snap-label">ผู้ตรวจการ:</span> <span class="snap-value"><span id="c_sup"></span> (<span id="c_pos"></span>)</span></div><div class="snap-row"><span class="snap-label">แพทย์เวร ER:</span> <span class="snap-value" id="c_docER"></span></div><div class="snap-row"><span class="snap-label">แพทย์เวร Ward:</span> <span class="snap-value" id="c_docWard"></span></div></div>
   <div class="snap-section"><div class="snap-h3">2. อัตรากำลัง</div><div class="snap-row"><span class="snap-label">ER:</span> <span class="snap-value" id="c_nurse_er"></span></div><div class="snap-row"><span class="snap-label">EMT:</span> <span class="snap-value" id="c_emt"></span></div> <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ ER:</span> <span class="snap-value" id="c_helper_er"></span></div><div class="snap-row"><span class="snap-label">LR:</span> <span class="snap-value" id="c_nurse_lr"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ LR:</span> <span class="snap-value" id="c_helper_lr"></span></div><div class="snap-row"><span class="snap-label">IPD หญิง:</span> <span class="snap-value" id="c_nurse_ipd2"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD2:</span> <span class="snap-value" id="c_helper_ipd2"></span></div><div class="snap-row"><span class="snap-label">IPD ชาย:</span> <span class="snap-value" id="c_nurse_ipd3"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD3:</span> <span class="snap-value" id="c_helper_ipd3"></span></div><div class="snap-row"><span class="snap-label">สนับสนุน:</span> <span class="snap-value">ห้องบัตร <span id="c_card"></span> | เปล <span id="c_porter"></span></span></div></div>
-  <div class="snap-section"><div class="snap-h3">3. สถิติผู้ป่วย</div><div class="snap-block"><div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div><div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div><div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div><div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div></div></div>
+  
+  <div class="html2pdf__page-break" style="page-break-before: always; margin-top: 50px;"></div>
+  <div class="snap-section pt-4"><div class="snap-h3">3. สถิติผู้ป่วย</div><div class="snap-block"><div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div><div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div><div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div><div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div></div></div>
   <div class="snap-section"><div class="snap-h3">4. การส่งต่อ (Refer)</div><div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div></div>
   <div class="snap-section"><div class="snap-h3">5. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div></div>
-  <div class="snap-section"><div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div><div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div><div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div></div>
   
-  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 60px; padding: 0 10px; page-break-inside: avoid;">
+  <div class="html2pdf__page-break" style="page-break-before: always; margin-top: 50px;"></div>
+  <div class="snap-section pt-4"><div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div><div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div><div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div></div>
+  
+  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 100px; padding: 0 10px; page-break-inside: avoid;">
       <div style="width: 30%;">
           <p style="margin-bottom: 5px;">ลงชื่อ............................................</p>
           <img id="c_sig_img" src="" style="max-height: 50px; display: none; margin-bottom: 5px; margin-left: auto; margin-right: auto;">
@@ -234,7 +261,7 @@
 
   <div id="dashboardSection" class="section-content">
     <div id="pdfDashboardArea">
-      <div class="row g-2 mb-4 print-hide">
+      <div class="row g-2 mb-4 print-hide d-md-none">
         <div class="col-3"><button class="quick-menu-btn text-center px-1" onclick="showSection('form')"><i class="fas fa-plus-circle text-primary" style="font-size: 1.5rem;"></i><span class="d-block" style="font-size: 0.75rem;">บันทึกเวร</span></button></div>
         <div class="col-3"><button class="quick-menu-btn text-center px-1" onclick="showSection('table')"><i class="fas fa-list-ul text-primary" style="font-size: 1.5rem;"></i><span class="d-block" style="font-size: 0.75rem;">ประวัติ</span></button></div>
         <div class="col-3"><button class="quick-menu-btn text-center px-1" onclick="showSection('handout')"><i class="fas fa-book-medical text-primary" style="font-size: 1.5rem;"></i><span class="d-block" style="font-size: 0.75rem;">คู่มือ</span></button></div>
@@ -306,7 +333,6 @@
       <input type="hidden" name="recId" id="recId">
 
       <div class="custom-card"><div class="card-title-bar"><i class="fas fa-user-clock"></i> 1. ข้อมูลทั่วไป</div><div class="card-body-custom"><div class="row g-3">
-        <!-- ปลด required ออก -->
         <div class="col-12 col-md-4"><label class="form-label">วันที่</label><input type="date" class="form-control" name="ReportDate"></div>
         <div class="col-6 col-md-4">
             <label class="form-label">เวรปฏิบัติงาน</label>
@@ -340,9 +366,18 @@
       <div class="stats-container mt-3"><span class="stat-title text-danger"><i class="fas fa-chart-line me-1"></i> สถิติผู้ป่วย ER</span><div class="row g-2">
         <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_Total" placeholder="ยอดรวม"></div>
         <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_Refer" placeholder="Refer"></div>
-        <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_EMS" placeholder="EMS"></div>
+        <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_EMS" placeholder="EMS" id="input_EMS"></div>
         <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Dead" placeholder="Dead"></div>
-        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Autopsy" placeholder="ชันสูตร"></div>
+        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Autopsy" placeholder="ชันสูตร" id="input_Autopsy"></div>
+        
+        <div class="col-12 mt-2" id="box_EMS_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคส EMS</label>
+            <input type="text" class="form-control" name="EMS_Detail" placeholder="ระบุรายละเอียดเคส EMS...">
+        </div>
+        <div class="col-12 mt-2" id="box_Autopsy_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคสชันสูตร</label>
+            <input type="text" class="form-control" name="Autopsy_Detail" placeholder="ระบุรายละเอียดเคสชันสูตร...">
+        </div>
       </div></div></div></div>
 
       <div class="custom-card"><div class="card-title-bar" style="color:#d63384;"><i class="fas fa-baby-carriage"></i> 3. ห้องคลอด (LR)</div><div class="card-body-custom"><div class="row g-3">
@@ -480,7 +515,7 @@
     <div class="custom-card card-body-custom">
       <div class="table-responsive">
         <table id="dataTable" class="table table-hover align-middle w-100">
-          <thead class="table-light"><tr><th style="min-width:120px;">วันที่/เวร</th><th>ผู้ตรวจการ</th><th class="text-center" style="min-width:160px;">ดาวน์โหลด</th><th class="text-end" style="min-width:90px;">จัดการ</th></tr></thead>
+          <thead class="table-light"><tr><th style="min-width:120px;">วันที่/เวร</th><th>ผู้ตรวจการ</th><th class="text-center" style="min-width:210px;">การจัดการไฟล์</th><th class="text-end" style="min-width:90px;">แก้ไข</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -488,53 +523,7 @@
   </div>
 
   <div id="handoutSection" class="section-content" style="display:none;">
-    <div class="ho-bg pb-5">
-      <div class="ho-header">
-        <div class="d-flex align-items-center gap-3">
-          <i class="fas fa-heartbeat fa-3x"></i>
-          <div>
-            <h1 class="mb-0 fw-bold fs-3">คู่มือพยาบาลตรวจการ</h1>
-            <p class="mb-0 opacity-75 fs-5">Nurse Supervisor Guide — โรงพยาบาลชุมชน</p>
-          </div>
-        </div>
-        <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
-          <div class="text-end d-none d-md-block">
-            <p class="mb-0 fw-bold fs-5">5 ความรู้หลัก</p>
-            <p class="mb-0 fs-6 opacity-75">ที่ต้องมีในเวรตรวจการ</p>
-          </div>
-          <button onclick="window.print()" class="btn btn-light rounded-circle print-hide shadow-sm" style="width:50px; height:50px;" title="พิมพ์ Infographic">
-            <i class="fas fa-print fs-5 text-primary"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <div class="col"><div class="ho-card theme-blue"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-users"></i></div><div><div class="ho-module-badge">Module 01</div><h3 class="ho-title">การบริหารอัตรากำลัง</h3><p class="ho-subtitle">Human Resource Management</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>ประเมินก่อนรับเวร:</b> IPD ผู้ป่วยหนัก สัดส่วนพยาบาลไม่เกิน 1:4 / ER ไม่เกิน 1:3</div></li><li><div class="ho-bullet"></div><div><b>Patient Acuity:</b> ประเมิน Level 1-3, ผู้ป่วย on vent / drip / post-op</div></li><li><div class="ho-bullet"></div><div><b>Float Staff:</b> เกลี่ยคนเมื่อขาด &rarr; บันทึก Float Log &rarr; แจ้งหัวหน้า/ตาม On-call</div></li><li><div class="ho-bullet"></div><div><b>ติดตามผล:</b> บันทึก Supervisor Log และรายงานตอนส่งเวร</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Float Policy</span><span class="ho-tag">On-call List</span><span class="ho-tag">Acuity Tool</span><span class="ho-tag">Supervisor Log</span></div><div class="ho-alert-area alert-blue"><i class="fas fa-exclamation-triangle me-1"></i> ห้ามหอผู้ป่วยวิกฤตมีพยาบาลคนเดียวเด็ดขาด ขาดคนต้องแจ้งผู้บริหารทันที</div></div></div></div>
-        <div class="col"><div class="ho-card theme-orange"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-exclamation-triangle"></i></div><div><div class="ho-module-badge">Module 02</div><h3 class="ho-title">ฉุกเฉินและอุบัติภัยหมู่</h3><p class="ho-subtitle">Emergency & MCI</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>ประเมินขนาด:</b> แยก 'ฉุกเฉินปกติ' กับ 'MCI' (ผู้บาดเจ็บ > ทรัพยากร)</div></li><li><div class="ho-bullet"></div><div><b>ประกาศรหัส:</b> Code Disaster &rarr; ตาม Key Person &rarr; เปิด Command Post</div></li><li><div class="ho-bullet"></div><div><b>START Triage:</b> <br>🔴 ด่วนมาก (Immediate) 🟡 ปานกลาง (Delayed)<br>🟢 เล็กน้อย (Minor) ⚫ เสียชีวิต (Expectant)</div></li><li><div class="ho-bullet"></div><div><b>Surge Management:</b> จัด Zone &rarr; D/C เคส stable &rarr; เตรียม Supplies/EMS</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">START Triage</span><span class="ho-tag">Code Disaster</span><span class="ho-tag">Command Post</span><span class="ho-tag">Surge Plan</span></div><div class="ho-alert-area alert-orange"><i class="fas fa-lightbulb me-1"></i> หลัก MCI: Greatest Good for Greatest Number ช่วยผู้ที่มีโอกาสรอดก่อน</div></div></div></div>
-        <div class="col"><div class="ho-card theme-teal"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-ambulance"></i></div><div><div class="ho-module-badge">Module 03</div><h3 class="ho-title">ระบบการส่งต่อผู้ป่วย</h3><p class="ho-subtitle">Patient Referral System</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>เคสที่ต้อง Refer:</b><br><span class="ho-mini-badge badge-rose">ผ่าตัดเฉพาะทาง</span> <span class="ho-mini-badge badge-rose">ต้องการ ICU จริง</span><br><span class="ho-mini-badge badge-rose">CT/MRI ฉุกเฉิน</span> <span class="ho-mini-badge badge-rose">ขาดแพทย์เฉพาะทาง</span></div></li><li><div class="ho-bullet"></div><div><b>รายงาน ISBAR:</b> Identify / Situation / Background / Assessment / Recommend</div></li><li><div class="ho-bullet"></div><div><b>เตรียมผู้ป่วย:</b> Stabilize V/S &rarr; เตรียมเอกสาร &rarr; ขอ Consent &rarr; ให้การรักษาต่อ</div></li><li><div class="ho-bullet"></div><div><b>ประสาน EMS:</b> จัดรถพร้อม Escort &rarr; ส่งมอบข้อมูลให้ทีม</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">ISBAR</span><span class="ho-tag">Transfer Decision</span><span class="ho-tag">EMS</span><span class="ho-tag">Referral Audit</span></div><div class="ho-alert-area alert-teal"><i class="fas fa-clock me-1"></i> เป้าหมาย: Door-to-Door สำหรับผู้ป่วยวิกฤตไม่ควรเกิน 30 นาที</div></div></div></div>
-        <div class="col"><div class="ho-card theme-green"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-shield-alt"></i></div><div><div class="ho-module-badge">Module 04</div><h3 class="ho-title">คุณภาพและความปลอดภัย</h3><p class="ho-subtitle">HA & 2P Safety Goals</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>จัดการทันที:</b> เมื่อเกิดเหตุ (เช่น ตกเตียง) ให้รักษา Situation/ความปลอดภัยผู้ป่วยก่อน</div></li><li><div class="ho-bullet"></div><div><b>Incident Report:</b> บันทึก IR ภายในเวร ระบุข้อเท็จจริง ห้ามซ่อน/ห้ามแก้</div></li><li><div class="ho-bullet"></div><div><b>SIMPLE Goals:</b> Safe Surgery, Infection Control, Med Error, Process, Line, Emergency</div></li><li><div class="ho-bullet"></div><div><b>IC & Med Error:</b> ดู Hand Hygiene / ให้ยาผิดต้องหยุดยา, แจ้งแพทย์, เขียน IR</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">SIMPLE Goals</span><span class="ho-tag">Incident Report</span><span class="ho-tag">Hand Hygiene</span><span class="ho-tag">Open Disclosure</span></div><div class="ho-alert-area alert-green"><i class="fas fa-check-circle me-1"></i> วัฒนธรรม 'Just Culture': รายงานเพื่อเรียนรู้และป้องกัน ไม่ใช่เพื่อลงโทษ</div></div></div></div>
-        <div class="col"><div class="ho-card theme-purple"><div class="ho-card-header"><div class="ho-icon-box"><i class="fas fa-balance-scale"></i></div><div><div class="ho-module-badge">Module 05</div><h3 class="ho-title">กฎหมายและสิทธิผู้ป่วย</h3><p class="ho-subtitle">Law & Conflict Resolution</p></div></div><div class="ho-card-body"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>รับมือร้องเรียน:</b> พาไปห้องเงียบ &rarr; ฟังไม่ขัด &rarr; อธิบายข้อเท็จจริง &rarr; ไม่โต้เถียง</div></li><li><div class="ho-bullet"></div><div><b>Violence:</b> เอาบุคลากรออกก่อน &rarr; แจ้ง รปภ./ตำรวจ &rarr; ดูแล Second Victim</div></li><li><div class="ho-bullet"></div><div><b>สิทธิผู้ป่วย:</b> รับทราบข้อมูล / ปฏิเสธ (AMA) / ความลับ (PDPA) / มีผู้ดูแล</div></li><li><div class="ho-bullet"></div><div><b>จัดการศพ & นิติเวช:</b> ตายผิดธรรมชาติ &rarr; แจ้งตำรวจ &rarr; อย่าทิ้งหลักฐาน</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Patient Rights</span><span class="ho-tag">AMA Form</span><span class="ho-tag">PDPA</span><span class="ho-tag">Medicolegal</span></div><div class="ho-alert-area alert-purple"><i class="fas fa-gavel me-1"></i> หลักทอง: ไม่แน่ใจกฎหมาย อย่าทำคนเดียว ให้ปรึกษาผู้บริหารทันที</div></div></div></div>
-        <div class="col"><div class="ho-card text-white p-4 d-flex flex-column justify-content-center border-top-0" style="background: linear-gradient(135deg, #1e293b, #334155);"><div class="d-flex align-items-center gap-2 mb-4"><i class="fas fa-clipboard-check fa-3x mb-3 text-secondary opacity-50"></i><h2 class="fw-bold fs-4 mb-3">Checklist ก่อนส่งเวร</h2></div><ul class="ho-list mt-2 mb-4" style="font-size: 0.95rem;"><li><i class="far fa-square text-secondary"></i> บันทึก Supervisor Log ครบถ้วน</li><li><i class="far fa-square text-secondary"></i> รายงาน Incident Report เรียบร้อย</li><li><i class="far fa-square text-secondary"></i> เคลียร์เคส Refer เรียบร้อย / ดำเนินการอยู่</li><li><i class="far fa-square text-secondary"></i> จัดเตรียมอัตรากำลังของเวรถัดไป</li></ul><p class="mt-auto pt-3 border-top border-secondary text-secondary" style="font-size: 0.8rem;">พยาบาลตรวจการคือแกนหลักในการดูแลระบบ รักษามาตรฐาน และดูแลบุคลากรในผลัด</p></div></div>
-      </div>
-
-      <div class="mt-5 pt-4 print-page-break">
-        <div class="d-flex align-items-center gap-3 mb-4">
-          <div class="bg-indigo text-white p-3 rounded-4 shadow-sm"><i class="fas fa-briefcase-medical fs-2"></i></div>
-          <div><h2 class="mb-0 fw-bold fs-3 text-dark">แนวทางนิติเวชคลินิก</h2><p class="mb-0 fw-bold" style="color: #4f46e5;">Clinical Forensic Medicine (Step-by-Step)</p></div>
-        </div>
-
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-          <div class="col"><div class="ho-card theme-indigo"><div class="ho-step-badge bg-indigo">Step 1</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-file-signature"></i></div><div><h3 class="ho-title fs-5">เตรียมพร้อม & สิทธิ</h3><p class="ho-subtitle">Pre-exam & Consent</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>เคสส่งชันสูตร/แจ้งตำรวจ (ตายผิดธรรมชาติ):</b><br><span class="ho-mini-badge badge-indigo">ฆ่าตัวตาย</span> <span class="ho-mini-badge badge-indigo">ถูกทำร้าย</span><br><span class="ho-mini-badge badge-indigo">สัตว์ทำร้าย</span> <span class="ho-mini-badge badge-indigo">อุบัติเหตุ</span><br><span class="ho-mini-badge badge-indigo">ตายไม่ทราบสาเหตุ/ตายใน 24ชม.</span></div></li><li><div class="ho-bullet"></div><div><b>ขอ Consent:</b> ขอความยินยอมก่อนตรวจ/เก็บหลักฐาน/ถ่ายภาพ (ใบ Consent แยก)</div></li><li><div class="ho-bullet"></div><div><b>ความลับ:</b> ห้ามเปิดเผยข้อมูลถ้าไม่มีหนังสือราชการสั่ง</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Police</span><span class="ho-tag">Consent</span><span class="ho-tag">PDPA</span></div><div class="ho-alert-area alert-indigo"><i class="fas fa-ambulance me-1"></i> หากฉุกเฉิน: ชีวิตผู้ป่วยมาก่อน รักษาก่อนได้ทันทีไม่ต้องรอตำรวจ</div></div></div></div>
-          <div class="col"><div class="ho-card theme-cyan"><div class="ho-step-badge bg-cyan">Step 2</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-search"></i></div><div><h3 class="ho-title fs-5">ซักประวัติ & ตรวจร่างกาย</h3><p class="ho-subtitle">History & Physical Exam</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>บันทึกคำพูด:</b> บันทึกด้วยคำพูดตรงๆ (Verbatim) ของผู้ป่วย ห้ามตีความเอง</div></li><li><div class="ho-bullet"></div><div><b>เตรียมตรวจ:</b> ตรวจในห้องมิดชิด มีพยาน วางกระดาษขาวใต้ผู้ป่วยรองรับหลักฐานที่ร่วง</div></li><li><div class="ho-bullet"></div><div><b>ตรวจบาดแผล:</b> บรรยายขนาด (cm), รูปร่าง, ตำแหน่ง ลงใน Body Diagram</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Verbatim</span><span class="ho-tag">Head-to-Toe</span><span class="ho-tag">Body Diagram</span></div><div class="ho-alert-area alert-cyan"><i class="fas fa-ban me-1 text-danger"></i> ห้าม: ระบุอายุรอยช้ำจากสี และห้ามระบุรอยยิงเข้า/ออกเอง (หน้าที่นิติแพทย์)</div></div></div></div>
-          <div class="col"><div class="ho-card theme-emerald"><div class="ho-step-badge bg-emerald">Step 3</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-box"></i></div><div><h3 class="ho-title fs-5">การเก็บวัตถุพยาน</h3><p class="ho-subtitle">Evidence Collection</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>คดีทางเพศ:</b> <span class="text-success fw-bold">หากไม่มีชุด SAEK ให้ Refer ส่งแม่ข่ายทันที (< 72 ชม.)</span></div></li><li><div class="ho-bullet"></div><div><b>ถุงกระดาษ:</b> เสื้อผ้า/หลักฐานชีวภาพต้องใส่ 'ถุงกระดาษ' แยกชิ้น ห้ามพลาสติก</div></li><li><div class="ho-bullet"></div><div><b>DNA Swab:</b> ปล่อยให้แห้งในอากาศเย็นก่อนเก็บ ห้ามใช้ความร้อนเป่า</div></li><li><div class="ho-bullet"></div><div><b>เก็บเลือด:</b> เจาะก่อนให้สารน้ำ ห้ามใช้แอลกอฮอล์เช็ด (ใช้ Povidone-iodine แทน)</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Paper Bag</span><span class="ho-tag">DNA Swab</span><span class="ho-tag">Toxicology</span></div><div class="ho-alert-area alert-emerald"><i class="fas fa-tag me-1"></i> Label ทันที: ระบุชื่อ HN วันเวลา ผู้เก็บ และซีลปิดทับลายเซ็น</div></div></div></div>
-          <div class="col"><div class="ho-card theme-rose"><div class="ho-step-badge bg-rose">Step 4</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-camera"></i></div><div><h3 class="ho-title fs-5">ถ่ายภาพ & เวชระเบียน</h3><p class="ho-subtitle">Photo & Documentation</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>ถ่ายภาพ:</b> ถ่ายก่อนล้างแผลเสมอ ถ่าย 3 ระยะ: ภาพรวม &rarr; อ้างอิง &rarr; Close-up</div></li><li><div class="ho-bullet"></div><div><b>ใช้ Scale:</b> วางไม้บรรทัดระนาบเดียวกับแผล ถ่ายทั้งแบบมี/ไม่มี Scale คู่กัน</div></li><li><div class="ho-bullet"></div><div><b>บันทึก 5W1H:</b> ใคร ทำอะไร ที่ไหน เมื่อไหร่ อย่างไร บันทึกเฉพาะข้อเท็จจริง ห้ามเดา</div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Scale Rule</span><span class="ho-tag">5W1H</span><span class="ho-tag">Metadata</span></div><div class="ho-alert-area alert-rose"><i class="fas fa-exclamation-circle me-1"></i> ถ่ายรูปก่อนรักษา: เพราะเมื่อเย็บแผลหรือล้างแล้ว ลักษณะแผลจะเปลี่ยนไป</div></div></div></div>
-          <div class="col"><div class="ho-card theme-fuchsia"><div class="ho-step-badge bg-fuchsia">Step 5</div><div class="ho-card-header pt-4"><div class="ho-icon-box"><i class="fas fa-link"></i></div><div><h3 class="ho-title fs-5">ส่งมอบหลักฐาน & ศพ</h3><p class="ho-subtitle">Chain of Custody & Autopsy</p></div></div><div class="ho-card-body pt-2"><ul class="ho-list"><li><div class="ho-bullet"></div><div><b>บันทึกส่งมอบ:</b> ใช้ Chain of Custody Form ระบุผู้ส่ง-รับทุกครั้ง ห้ามวางทิ้งไว้</div></li><li><div class="ho-bullet"></div><div><b>การส่งต่อ:</b> ตรวจสอบ Seal ก่อนส่งมอบตำรวจ/Lab พร้อมเก็บสำเนาฟอร์ม</div></li><li><div class="ho-bullet"></div><div><b>ส่งชันสูตรศพ:</b> <span class="text-danger fw-bold">ตายผิดธรรมชาติ ห้ามล้างศพ ห้ามถอดสาย IV/Tube ผูกป้ายส่งชันสูตรทันที</span></div></li></ul></div><div class="mt-auto"><div class="ho-tags-area"><span class="ho-tag">Chain of Custody</span><span class="ho-tag">Autopsy</span><span class="ho-tag">Transfer Form</span></div><div class="ho-alert-area alert-fuchsia"><i class="fas fa-link me-1"></i> ห้ามขาดสาย: หาก Chain of Custody ขาด หลักฐานอาจถูกปฏิเสธในศาล</div></div></div></div>
-          <div class="col"><div class="ho-card text-white p-4 d-flex flex-column border-top-0" style="background: linear-gradient(135deg, #1e293b, #0f172a);"><div class="d-flex align-items-center gap-2 mb-4"><i class="fas fa-exclamation-circle fs-3 text-danger"></i><h2 class="fw-bold fs-5 mb-0">สิ่งที่ต้องจำเสมอ (Quick Ref)</h2></div><ul class="ho-list mb-0 flex-grow-1" style="font-size: 0.85rem; color: #cbd5e1;"><li><span class="text-danger fw-bold font-monospace">01</span> <span>ถ่ายรูปบาดแผล <b class="text-white">ก่อนล้าง/รักษาเสมอ</b></span></li><li><span class="text-danger fw-bold font-monospace">02</span> <span>หลักฐานชีวภาพใช้ <b class="text-white">ถุงกระดาษเท่านั้น</b></span></li><li><span class="text-danger fw-bold font-monospace">03</span> <span><b class="text-white">Label ทันที</b> หลังเก็บ ห้ามรอ</span></li><li><span class="text-danger fw-bold font-monospace">04</span> <span>ปล่อย DNA Swab ให้ <b class="text-white">แห้งก่อนปิด</b></span></li><li><span class="text-danger fw-bold font-monospace">05</span> <span>ห้ามใช้แอลกอฮอล์เช็ดผิวก่อนเจาะเลือด</span></li><li><span class="text-danger fw-bold font-monospace">06</span> <span>บันทึกคำพูด (Verbatim) ห้ามตีความเอง</span></li><li><span class="text-danger fw-bold font-monospace">07</span> <span><b class="text-white">อย่าขาดสาย</b> Chain of Custody</span></li><li><span class="text-danger fw-bold font-monospace">08</span> <span>ห้ามระบุรอยยิงเข้า/ออกเอง</span></li><li><span class="text-danger fw-bold font-monospace">09</span> <span>พบเด็กถูกทำร้าย <b class="text-white">ต้องรายงานตามกฎหมาย</b></span></li><li><span class="text-danger fw-bold font-monospace">10</span> <span>ตายผิดธรรมชาติ 5 แบบ <b class="text-white">แจ้งตำรวจ+ส่งชันสูตร</b></span></li></ul></div></div>
-        </div>
-      </div>
-      <div class="text-center mt-5 text-muted small d-none d-print-block">Generated by KSH SUPERVISOR SYSTEM for Community Hospital Nurse Supervisors</div>
     </div>
-  </div>
 
 </div>
 
@@ -568,6 +557,17 @@
 
   $(document).ready(function() { 
     $('#dash_date').text(new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }));
+    
+    // ตั้งค่าให้แสดงช่องรายละเอียดเมื่อมีการกรอกค่า EMS และ ชันสูตร มากกว่า 0
+    $('#input_EMS').on('input', function() {
+        if (parseInt($(this).val()) >= 1) $('#box_EMS_Detail').slideDown();
+        else $('#box_EMS_Detail').slideUp();
+    });
+    $('#input_Autopsy').on('input', function() {
+        if (parseInt($(this).val()) >= 1) $('#box_Autopsy_Detail').slideDown();
+        else $('#box_Autopsy_Detail').slideUp();
+    });
+
     signInAnonymously(auth).then(() => {
         loadSettings();
         loadTableData(); 
@@ -672,7 +672,13 @@
         $('#c_nurse_ipd3').text(j([r.NurseIPD3_1,r.NurseIPD3_2,r.NurseIPD3_3])||'-'); $('#c_helper_ipd3').text(r.HelperIPD3||'-');
         $('#c_card').text(j([r.CardStaff1,r.CardStaff2])||'-'); $('#c_porter').text(j([r.Porter1,r.Porter2])||'-');
         
-        $('#c_stat_er').text(`รวม ${r.StatER_Total||0} | Refer ${r.StatER_Refer||0} | EMS ${r.StatER_EMS||0} | Dead ${r.StatER_Dead||0} | ชันสูตร ${r.StatER_Autopsy||0}`);
+        let emsText = `EMS ${r.StatER_EMS||0}`;
+        if(r.StatER_EMS >= 1 && r.EMS_Detail) emsText += ` (${r.EMS_Detail})`;
+        let autopsyText = `ชันสูตร ${r.StatER_Autopsy||0}`;
+        if(r.StatER_Autopsy >= 1 && r.Autopsy_Detail) autopsyText += ` (${r.Autopsy_Detail})`;
+
+        $('#c_stat_er').text(`รวม ${r.StatER_Total||0} | Refer ${r.StatER_Refer||0} | ${emsText} | Dead ${r.StatER_Dead||0} | ${autopsyText}`);
+        
         $('#c_stat_lr').text(`ยกมา ${r.StatLR_Carry||0} | รับ ${r.StatLR_New||0} | ย้าย ${r.StatLR_Move||0} | Ref ${r.StatLR_Refer||0} | D/C ${r.StatLR_DC||0} | คลอด ${r.StatLR_Birth||0} | Dead ${r.StatLR_Dead||0} | คงเหลือ ${r.StatLR_Remain||0}`);
         $('#c_stat_ipd2').text(`ยกมา ${r.StatIPD2_Carry||0} | รับ ${r.StatIPD2_New||0} | รับย้าย ${r.StatIPD2_RecMove||0} | ย้าย ${r.StatIPD2_Move||0} | Ref ${r.StatIPD2_Refer||0} | D/C ${r.StatIPD2_DC||0} | ปฏิเสธ ${r.StatIPD2_Refuse||0} | Dead ${r.StatIPD2_Dead||0} | คงเหลือ ${r.StatIPD2_Remain||0} | HW ${r.StatIPD2_HW||0}`);
         $('#c_stat_ipd3').text(`ยกมา ${r.StatIPD3_Carry||0} | รับ ${r.StatIPD3_New||0} | รับย้าย ${r.StatIPD3_RecMove||0} | ย้าย ${r.StatIPD3_Move||0} | Ref ${r.StatIPD3_Refer||0} | D/C ${r.StatIPD3_DC||0} | ปฏิเสธ ${r.StatIPD3_Refuse||0} | Dead ${r.StatIPD3_Dead||0} | คงเหลือ ${r.StatIPD3_Remain||0} | HW ${r.StatIPD3_HW||0}`);
@@ -720,6 +726,7 @@
       window.allData.forEach(function(r) {
         var shiftTxt = r.Shift ? ` <span class="badge bg-secondary ms-1">เวร${r.Shift}</span>` : '';
         var imgBtn = `
+            <button class="btn btn-sm btn-outline-primary mb-1 me-1" onclick="previewRecord('${r.id}')" title="ดูตัวอย่าง"><i class="fas fa-eye"></i> ดูตัวอย่าง</button>
             <button class="btn btn-sm btn-outline-danger mb-1 me-1" onclick="downloadFromTable('${r.id}', 'pdf')" title="โหลด PDF"><i class="fas fa-file-pdf"></i> PDF</button>
             <button class="btn btn-sm btn-outline-success mb-1" onclick="downloadFromTable('${r.id}', 'jpg')" title="โหลดรูป JPG"><i class="fas fa-image"></i> JPG</button>
         `;
@@ -731,18 +738,33 @@
     });
   }
 
-  // --- อัปเดตฟังก์ชันแคปภาพ: นำชิ้นส่วนมาโชว์กลางจอจริงๆ แล้วแคป ก่อนจะซ่อนกลับไป ---
+  // ฟังก์ชันพรีวิวรายงาน
+  window.previewRecord = function(id) {
+      var r = window.allData.find(x => x.id === id);
+      if(!r) return;
+      populateCaptureArea(r);
+      
+      var clone = document.getElementById('captureArea').cloneNode(true);
+      clone.id = 'previewClone';
+      clone.style.position = 'relative';
+      clone.style.left = '0';
+      clone.classList.remove('print-hide');
+      
+      $('#previewModalBody').empty().append(clone);
+      
+      var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+      previewModal.show();
+  }
+
   async function captureAndDownload(format, filename) {
       const capArea = document.getElementById('captureArea');
       const mainContent = document.getElementById('mainContentArea');
       const header = document.getElementById('mainHeader');
       
-      // 1. ซ่อน UI หลักทั้งหมด เพื่อไม่ให้รกจอ (จะถูกบังด้วยจอโหลดสีขาวอยู่แล้ว)
       if (mainContent) mainContent.style.display = 'none';
       if (header) header.style.display = 'none';
       document.body.style.background = 'white'; 
       
-      // 2. ดึงหน้าจอรายงาน (captureArea) กลับมาแสดงผลกลางหน้าจอจริงๆ
       capArea.style.position = 'relative';
       capArea.style.left = '0px';
       capArea.style.margin = '0 auto';
@@ -750,7 +772,6 @@
       
       window.scrollTo(0, 0);
       
-      // ให้เวลาเบราว์เซอร์ Render ภาพแบบเต็ม 100%
       await new Promise(res => setTimeout(res, 1000)); 
       
       try {
@@ -791,7 +812,6 @@
           console.error("Export Error:", error);
           throw new Error("เกิดข้อผิดพลาดในการสร้างไฟล์: " + error.message);
       } finally {
-          // 3. คืนค่าทุกอย่างกลับเป็นเหมือนเดิม
           capArea.style.position = 'absolute';
           capArea.style.left = '-9999px';
           capArea.style.margin = '0';
@@ -799,7 +819,7 @@
           
           if (mainContent) mainContent.style.display = 'block';
           if (header) header.style.display = 'block';
-          document.body.style.background = ''; // คืนค่าพื้นหลังเดิม
+          document.body.style.background = ''; 
       }
   }
 
@@ -831,15 +851,11 @@
     try {
       var fd = Object.fromEntries(new FormData(e.target).entries());
       
-      // ดักจับกรณีผู้ใช้ไม่ได้กรอกวันที่ ให้ใช้วันที่ปัจจุบันแทน
       if (!fd.ReportDate) {
           let tzoffset = (new Date()).getTimezoneOffset() * 60000;
           fd.ReportDate = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
       }
-      // ดักจับกรณีไม่ได้เลือกเวร
-      if (!fd.Shift) {
-          fd.Shift = "-";
-      }
+      if (!fd.Shift) { fd.Shift = "-"; }
       
       let headStr = window.dropdownData && window.dropdownData['head'] ? Object.values(window.dropdownData['head'])[0] : '|';
       let dirStr = window.dropdownData && window.dropdownData['director'] ? Object.values(window.dropdownData['director'])[0] : '|';
@@ -894,6 +910,10 @@
         }
     });
     
+    // ตรวจสอบข้อมูล EMS และ Autopsy เพื่อแสดงช่องกรอกรายละเอียดตอนกดแก้ไข
+    if (r.StatER_EMS >= 1) $('#box_EMS_Detail').show();
+    if (r.StatER_Autopsy >= 1) $('#box_Autopsy_Detail').show();
+
     if(r.Shift) updateShiftTime();
     showSection('form'); 
     Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'ดึงข้อมูลเรียบร้อย', text: 'กรุณาตรวจสอบและเซ็นชื่อใหม่ก่อนกดบันทึก', showConfirmButton: false, timer: 3000 });
@@ -905,7 +925,8 @@
     const filtered = window.allData.filter(r => { let d = new Date(r.ReportDate); return d >= new Date(start) && d <= new Date(end); });
     if(!filtered.length) return Swal.fire('ไม่พบข้อมูล','','info');
     
-    const allKeys = ["ReportDate", "Shift", "StartTime", "EndTime", "SupervisorName", "Position", "DoctorER", "DoctorWard", "NurseER1", "NurseER2", "NurseER3", "NurseER4", "EMT", "HelperER", "StatER_Total", "StatER_Refer", "StatER_EMS", "StatER_Dead", "StatER_Autopsy", "NurseLR1", "NurseLR2", "HelperLR", "StatLR_Carry", "StatLR_New", "StatLR_Move", "StatLR_Refer", "StatLR_DC", "StatLR_Birth", "StatLR_Dead", "StatLR_Remain", "NurseIPD2_1", "NurseIPD2_2", "NurseIPD2_3", "HelperIPD2", "StatIPD2_Carry", "StatIPD2_New", "StatIPD2_RecMove", "StatIPD2_Move", "StatIPD2_Refer", "StatIPD2_DC", "StatIPD2_Refuse", "StatIPD2_Dead", "StatIPD2_Remain", "StatIPD2_HW", "NurseIPD3_1", "NurseIPD3_2", "NurseIPD3_3", "HelperIPD3", "StatIPD3_Carry", "StatIPD3_New", "StatIPD3_RecMove", "StatIPD3_Move", "StatIPD3_Refer", "StatIPD3_DC", "StatIPD3_Refuse", "StatIPD3_Dead", "StatIPD3_Remain", "StatIPD3_HW", "CardStaff1", "CardStaff2", "Porter1", "Porter2", "Refer_Total", "Ref_CP", "Ref_CP2", "Ref_PK", "Ref_KK", "Ref_Other", "Ref_OtherName", "Ref1", "Ref2", "Ref3", "Ref4", "Ref5", "Ref6", "Prob1", "Prob2", "Prob3", "Prob4", "Prob5", "Prob6", "Prob7", "Prob8", "Prob9", "Problem_Detail", "Security", "Other_Detail", "HeadNurse_Comment", "HeadNurseName", "DirectorName"];
+    // เพิ่ม EMS_Detail และ Autopsy_Detail ในอาร์เรย์ตอนส่งออกด้วย
+    const allKeys = ["ReportDate", "Shift", "StartTime", "EndTime", "SupervisorName", "Position", "DoctorER", "DoctorWard", "NurseER1", "NurseER2", "NurseER3", "NurseER4", "EMT", "HelperER", "StatER_Total", "StatER_Refer", "StatER_EMS", "EMS_Detail", "StatER_Dead", "StatER_Autopsy", "Autopsy_Detail", "NurseLR1", "NurseLR2", "HelperLR", "StatLR_Carry", "StatLR_New", "StatLR_Move", "StatLR_Refer", "StatLR_DC", "StatLR_Birth", "StatLR_Dead", "StatLR_Remain", "NurseIPD2_1", "NurseIPD2_2", "NurseIPD2_3", "HelperIPD2", "StatIPD2_Carry", "StatIPD2_New", "StatIPD2_RecMove", "StatIPD2_Move", "StatIPD2_Refer", "StatIPD2_DC", "StatIPD2_Refuse", "StatIPD2_Dead", "StatIPD2_Remain", "StatIPD2_HW", "NurseIPD3_1", "NurseIPD3_2", "NurseIPD3_3", "HelperIPD3", "StatIPD3_Carry", "StatIPD3_New", "StatIPD3_RecMove", "StatIPD3_Move", "StatIPD3_Refer", "StatIPD3_DC", "StatIPD3_Refuse", "StatIPD3_Dead", "StatIPD3_Remain", "StatIPD3_HW", "CardStaff1", "CardStaff2", "Porter1", "Porter2", "Refer_Total", "Ref_CP", "Ref_CP2", "Ref_PK", "Ref_KK", "Ref_Other", "Ref_OtherName", "Ref1", "Ref2", "Ref3", "Ref4", "Ref5", "Ref6", "Prob1", "Prob2", "Prob3", "Prob4", "Prob5", "Prob6", "Prob7", "Prob8", "Prob9", "Problem_Detail", "Security", "Other_Detail", "HeadNurse_Comment", "HeadNurseName", "DirectorName"];
     let content = allKeys.join("|") + "\n"; 
     filtered.forEach(r => {
         const row = allKeys.map(k => (r[k] ? String(r[k]) : "").replace(/(\r\n|\n|\r)/gm, " ").replace(/\|/g, "/"));
@@ -966,7 +987,7 @@
 
   window.showSection = (id) => { $('.section-content').hide(); $('.nav-link').removeClass('active'); $(`#${id}Section`).fadeIn(); let btnId = id.charAt(0).toUpperCase()+id.slice(1); $(`#btnTab${btnId}`).addClass('active'); if(id==='form') resizeCanvas(); window.scrollTo(0,0); }
   function formatDateDisplay(d) { if(!d) return ''; let dt=new Date(d); return dt.getDate()+'/'+(dt.getMonth()+1)+'/'+(dt.getFullYear()+543); }
-  window.resetForm = () => { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val(null).trigger('change'); $('#shiftTimeDisplay').val(''); clearSignature(); }
+  window.resetForm = () => { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val(null).trigger('change'); $('#shiftTimeDisplay').val(''); $('#box_EMS_Detail, #box_Autopsy_Detail').hide(); clearSignature(); }
 
   var canvas = document.getElementById('signaturePad'), ctx = canvas.getContext('2d'), drawing = false;
   window.resizeCanvas = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth = 2.5; ctx.strokeStyle = "#000"; ctx.lineCap = "round"; }
