@@ -820,53 +820,41 @@
     const mainContent = document.getElementById('mainContentArea');
     const header = document.getElementById('mainHeader');
     
-    // 1. ซ่อน UI หลักทั้งหมด เพื่อไม่ให้เกะกะและแย่งพื้นที่ตอนแคปรูป
+    // 1. ซ่อน UI อื่นๆ เพื่อไม่ให้ดัน Layout เพี้ยน
     if (mainContent) mainContent.style.display = 'none';
     if (header) header.style.display = 'none';
     
-    // 2. ดึงหน้ากระดาษกลับเข้ามาใน Flow ปกติ (อยู่ใต้หน้าต่าง Loading)
+    // 2. ยกเลิกการซ่อนและจัดพิกัดให้เป็น 0,0 เป๊ะๆ
+    const originalCssText = capArea.style.cssText;
     capArea.classList.remove('print-hide');
-    const originalCssText = capArea.style.cssText; // เก็บค่า CSS เดิมเอาไว้คืนค่าตอนจบ
-    
-    // บังคับให้กระดาษกางออกเต็ม 800px ตรงมุมซ้ายบนเป๊ะๆ
     capArea.style.cssText = `
-        position: relative !important;
+        position: absolute !important;
         left: 0 !important;
         top: 0 !important;
         width: 800px !important;
-        max-width: 800px !important;
-        background-color: white !important;
+        background: white !important;
+        z-index: 1000 !important;
         display: block !important;
-        z-index: 1 !important;
-        overflow: visible !important;
-        margin: 0 !important;
     `;
     
-    // ปลดล็อก overflow ที่ตัว Body และ HTML ป้องกันการถูกตัดขอบบนหน้าจอมือถือ
-    document.body.style.overflow = 'visible';
-    document.documentElement.style.overflow = 'visible';
-    
-    // เลื่อนจอไปบนสุดเสมอ เพื่อป้องกันแกน Y เพี้ยน (สาเหตุที่ทำให้ด้านบนแหว่ง)
+    // เลื่อน Scroll ไปบนสุดเสมอ
     window.scrollTo(0, 0);
     
-    // รอเวลาให้บราวเซอร์มือถือ Render หน้าจอ 800px ให้เสร็จสมบูรณ์ (เพิ่มเวลาเป็น 1.2 วิ)
-    await new Promise(res => setTimeout(res, 1200)); 
+    // รอ Reflow เล็กน้อยให้บราวเซอร์วาดหน้าจอเสร็จ
+    await new Promise(res => setTimeout(res, 500));
     
     try {
-        // ตั้งค่า Option สำหรับการแคป
         const opt = { 
-            margin: 0,
+            margin: 10,
             filename: filename + '.pdf', 
             image: { type: 'jpeg', quality: 1.0 }, 
             html2canvas: { 
-                scale: 2, 
+                scale: 2, // สเกล 2 เหมาะกับจอ Mac
                 useCORS: true, 
                 logging: false,
-                width: 800,          // บังคับความกว้างกล่อง
-                windowWidth: 800,    // หลอกบราวเซอร์ว่าหน้าจอกว้าง 800px 
-                scrollX: 0,
-                scrollY: 0,
-                backgroundColor: '#ffffff'
+                width: 800,
+                x: 0, // บังคับให้แคปจากขอบซ้ายสุด 
+                y: 0  // บังคับให้แคปจากขอบบนสุด
             }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
@@ -894,11 +882,9 @@
             alert('ไม่สามารถสร้างไฟล์ได้: ' + error.message);
         }
     } finally {
-        // 3. คืนค่าทุกอย่างกลับสภาพเดิมทันที
+        // 3. คืนค่า CSS กลับไปซ่อน (-9999px) เหมือนเดิม
         capArea.style.cssText = originalCssText;
         capArea.classList.add('print-hide');
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
         
         if (mainContent) mainContent.style.display = 'block';
         if (header) header.style.display = 'block';
