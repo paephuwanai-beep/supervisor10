@@ -816,63 +816,61 @@
   }
 
   async function captureAndDownload(format, filename) {
-    const originalElement = document.getElementById('captureArea');
-    if (!originalElement) return;
-
-    // 1. สร้างพื้นที่จำลอง (Off-screen Container) ที่ไม่ถูกกวนโดยขนาดหน้าจอจริง (Mac/Mobile)
-    const offScreenContainer = document.createElement('div');
-    offScreenContainer.style.cssText = `
-        position: fixed !important;
-        top: 0 !important;
-        left: -9999px !important; /* ซ่อนพื้นที่จำลองไว้ทางซ้ายนอกจอ */
-        width: 800px !important;  /* ล็อกความกว้างมาตรฐานเอกสาร */
-        background-color: white !important;
-        z-index: 9999 !important;
-        overflow: visible !important;
-    `;
-
-    // 2. โคลนเนื้อหามาใส่พื้นที่จำลองและจัดการ CSS ให้คงที่
-    const clone = originalElement.cloneNode(true);
-    clone.id = 'captureClone';
-    clone.classList.remove('print-hide');
-    clone.style.cssText = `
+    const capArea = document.getElementById('captureArea');
+    const mainContent = document.getElementById('mainContentArea');
+    const header = document.getElementById('mainHeader');
+    
+    // 1. เปิดหน้าจอ Loading ทับไว้ก่อน (ผู้ใช้จะไม่เห็นความเปลี่ยนแปลงด้านหลัง)
+    $('#loadingText').text('กำลังสร้างเอกสาร (Mac Optimization)...');
+    $('#loadingOverlay').css('display', 'flex');
+    
+    // 2. ซ่อนเนื้อหาหลักของเว็บ เพื่อไม่ให้รบกวนพื้นที่กระดาษ
+    if (mainContent) mainContent.style.display = 'none';
+    if (header) header.style.display = 'none';
+    
+    // 3. ปลดล็อกกระดาษให้กลายเป็น Element ปกติในหน้าเว็บ
+    const originalCssText = capArea.style.cssText;
+    capArea.classList.remove('print-hide');
+    
+    // ล้างค่า absolute และ -9999px ทิ้ง บังคับให้แสดงผลตรงๆ แบบ relative กลางจอ
+    capArea.style.cssText = `
         position: relative !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        margin: 0 !important;
+        width: 800px !important;
+        margin: 0 auto !important;
+        background-color: white !important;
+        display: block !important;
         padding: 40px !important;
         box-sizing: border-box !important;
-        transform: none !important;
+        z-index: 1000 !important;
     `;
-
-    offScreenContainer.appendChild(clone);
-    document.body.appendChild(offScreenContainer);
-
-    // รอเวลาให้บราวเซอร์ของอุปกรณ์นั้นๆ จัดเรียง Layout ในพื้นที่จำลองให้สมบูรณ์
+    
+    // ปลดล็อก overflow เพื่อให้บราวเซอร์ของ Mac วาดภาพเต็มขอบได้
+    document.body.style.overflow = 'visible';
+    
+    // บังคับเลื่อนจอไปจุดบนสุดเสมอ ป้องกันปัญหาแกน Y เพี้ยนเวลาเลื่อนจอลงมาลึกๆ
+    window.scrollTo(0, 0);
+    
+    // ให้เวลา Mac (Retina Display) ในการประมวลผลการจัดเรียง Layout ใหม่
     await new Promise(resolve => setTimeout(resolve, 800));
-
+    
     try {
         const opt = { 
             margin: 0,
             filename: filename + '.pdf', 
             image: { type: 'jpeg', quality: 1.0 }, 
             html2canvas: { 
-                scale: 2, // สเกล 2 จัดการความคมชัดบนจอ Retina ของ Mac/iOS
+                scale: 2, // รักษาความคมชัดบนจอ Retina
                 useCORS: true, 
                 logging: false,
-                width: 800,       // บังคับความกว้างในการแคป
-                windowWidth: 800, // บังคับขนาดหน้าต่างเสมือนให้คงที่
-                scrollX: 0,       // ล็อกพิกัด X เริ่มที่ 0 เสมอ (แก้แหว่งซ้าย)
-                scrollY: 0,       // ล็อกพิกัด Y เริ่มที่ 0 เสมอ (แก้แหว่งบน)
-                backgroundColor: '#ffffff'
+                width: 800,
+                scrollX: 0, // บังคับให้แกน X เริ่มจาก 0 เสมอ (แก้ปัญหาแหว่งซ้าย)
+                scrollY: 0
             }, 
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
         if (format === 'jpg' || format === 'both') {
-            const canvas = await html2canvas(offScreenContainer, opt.html2canvas);
+            const canvas = await html2canvas(capArea, opt.html2canvas);
             const imgData = canvas.toDataURL("image/jpeg", 1.0);
             const dlLink = document.createElement("a");
             dlLink.href = imgData;
@@ -883,7 +881,7 @@
         }
         
         if (format === 'pdf' || format === 'both') {
-            await html2pdf().set(opt).from(offScreenContainer).save();
+            await html2pdf().set(opt).from(capArea).save();
         }
     } catch (error) {
         console.error("Export Error:", error);
@@ -893,10 +891,17 @@
             alert('ไม่สามารถสร้างไฟล์ได้: ' + error.message);
         }
     } finally {
-        // 3. ทำลายพื้นที่จำลองทิ้ง เพื่อไม่ให้รก DOM
-        if (offScreenContainer && offScreenContainer.parentNode) {
-            offScreenContainer.parentNode.removeChild(offScreenContainer);
-        }
+        // 4. นำทุกอย่างกลับสู่สภาพเดิม ซ่อนกระดาษและแสดง UI ปกติ
+        capArea.style.cssText = originalCssText;
+        capArea.classList.add('print-hide');
+        document.body.style.overflow = '';
+        
+        if (mainContent) mainContent.style.display = 'block';
+        if (header) header.style.display = 'block';
+        
+        // รีเซ็ตข้อความ Loading เผื่อใช้งานครั้งต่อไป
+        $('#loadingText').text('กำลังประมวลผล...');
+        $('#loadingOverlay').hide();
     }
 }
   window.downloadFromTable = async function(id, format) {
