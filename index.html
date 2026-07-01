@@ -817,90 +817,59 @@
 
   async function captureAndDownload(format, filename) {
     const capArea = document.getElementById('captureArea');
-    const mainContent = document.getElementById('mainContentArea');
-    const header = document.getElementById('mainHeader');
     
-    // 1. เปิดหน้าจอ Loading ทับไว้ก่อน (ผู้ใช้จะไม่เห็นความเปลี่ยนแปลงด้านหลัง)
-    $('#loadingText').text('กำลังสร้างเอกสาร (Mac Optimization)...');
+    // แสดง Overlay โหลดดิ้ง
     $('#loadingOverlay').css('display', 'flex');
     
-    // 2. ซ่อนเนื้อหาหลักของเว็บ เพื่อไม่ให้รบกวนพื้นที่กระดาษ
-    if (mainContent) mainContent.style.display = 'none';
-    if (header) header.style.display = 'none';
-    
-    // 3. ปลดล็อกกระดาษให้กลายเป็น Element ปกติในหน้าเว็บ
-    const originalCssText = capArea.style.cssText;
+    // ตั้งค่า CSS ให้กระดาษ A4 อยู่ในตำแหน่งที่บราวเซอร์ยอมวาด
+    const originalStyle = capArea.getAttribute('style');
     capArea.classList.remove('print-hide');
-    
-    // ล้างค่า absolute และ -9999px ทิ้ง บังคับให้แสดงผลตรงๆ แบบ relative กลางจอ
     capArea.style.cssText = `
         position: relative !important;
-        width: 800px !important;
+        width: 794px !important;
         margin: 0 auto !important;
-        background-color: white !important;
         display: block !important;
-        padding: 40px !important;
-        box-sizing: border-box !important;
-        z-index: 1000 !important;
+        background: white !important;
     `;
-    
-    // ปลดล็อก overflow เพื่อให้บราวเซอร์ของ Mac วาดภาพเต็มขอบได้
-    document.body.style.overflow = 'visible';
-    
-    // บังคับเลื่อนจอไปจุดบนสุดเสมอ ป้องกันปัญหาแกน Y เพี้ยนเวลาเลื่อนจอลงมาลึกๆ
-    window.scrollTo(0, 0);
-    
-    // ให้เวลา Mac (Retina Display) ในการประมวลผลการจัดเรียง Layout ใหม่
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
+
+    // ให้เวลา 1 วินาที เพื่อให้ Browser ปรับจูน Layout (สำคัญมากสำหรับ Mac)
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const opt = {
+        margin: 0,
+        filename: filename + '.pdf',
+        image: { type: 'jpeg', quality: 1.0 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            width: 794,
+            windowWidth: 794,
+            scrollX: 0,
+            scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
     try {
-        const opt = { 
-            margin: 0,
-            filename: filename + '.pdf', 
-            image: { type: 'jpeg', quality: 1.0 }, 
-            html2canvas: { 
-                scale: 2, // รักษาความคมชัดบนจอ Retina
-                useCORS: true, 
-                logging: false,
-                width: 800,
-                scrollX: 0, // บังคับให้แกน X เริ่มจาก 0 เสมอ (แก้ปัญหาแหว่งซ้าย)
-                scrollY: 0
-            }, 
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        
         if (format === 'jpg' || format === 'both') {
             const canvas = await html2canvas(capArea, opt.html2canvas);
-            const imgData = canvas.toDataURL("image/jpeg", 1.0);
-            const dlLink = document.createElement("a");
-            dlLink.href = imgData;
-            dlLink.download = filename + '.jpg';
-            document.body.appendChild(dlLink);
-            dlLink.click();
-            document.body.removeChild(dlLink);
+            const link = document.createElement('a');
+            link.download = filename + '.jpg';
+            link.href = canvas.toDataURL("image/jpeg", 1.0);
+            link.click();
         }
         
         if (format === 'pdf' || format === 'both') {
+            // ใช้ความสามารถของ html2pdf ให้โหลดข้อมูลโดยตรงจาก Element
             await html2pdf().set(opt).from(capArea).save();
         }
-    } catch (error) {
-        console.error("Export Error:", error);
-        if (typeof Swal !== 'undefined') {
-            Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ได้: ' + error.message, 'error');
-        } else {
-            alert('ไม่สามารถสร้างไฟล์ได้: ' + error.message);
-        }
+    } catch (err) {
+        console.error(err);
+        alert('เกิดข้อผิดพลาดในการสร้างไฟล์');
     } finally {
-        // 4. นำทุกอย่างกลับสู่สภาพเดิม ซ่อนกระดาษและแสดง UI ปกติ
-        capArea.style.cssText = originalCssText;
+        // คืนค่าให้เหมือนเดิม
+        capArea.setAttribute('style', originalStyle || '');
         capArea.classList.add('print-hide');
-        document.body.style.overflow = '';
-        
-        if (mainContent) mainContent.style.display = 'block';
-        if (header) header.style.display = 'block';
-        
-        // รีเซ็ตข้อความ Loading เผื่อใช้งานครั้งต่อไป
-        $('#loadingText').text('กำลังประมวลผล...');
         $('#loadingOverlay').hide();
     }
 }
