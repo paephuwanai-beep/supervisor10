@@ -221,23 +221,75 @@
 </div>
 
 <div id="captureArea" class="print-hide">
-  <div class="snap-header"><h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2><p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p></div>
+  <!-- ================= หน้า 1 ================= -->
+  <div class="snap-header">
+    <h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2>
+    <p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p>
+  </div>
+  
   <div class="snap-section">
     <div class="snap-row"><span class="snap-label">วันที่:</span> <span class="snap-value" id="c_date"></span></div>
     <div class="snap-row"><span class="snap-label">เวลาปฏิบัติงาน:</span> <span class="snap-value" id="c_time"></span></div>
   </div>
-  <div class="snap-section"><div class="snap-h3">1. ข้อมูลทั่วไป</div><div class="snap-row"><span class="snap-label">ผู้ตรวจการ:</span> <span class="snap-value"><span id="c_sup"></span> (<span id="c_pos"></span>)</span></div><div class="snap-row"><span class="snap-label">แพทย์เวร ER:</span> <span class="snap-value" id="c_docER"></span></div><div class="snap-row"><span class="snap-label">แพทย์เวร Ward:</span> <span class="snap-value" id="c_docWard"></span></div></div>
-  <div class="snap-section"><div class="snap-h3">2. อัตรากำลัง</div><div class="snap-row"><span class="snap-label">ER:</span> <span class="snap-value" id="c_nurse_er"></span></div><div class="snap-row"><span class="snap-label">EMT:</span> <span class="snap-value" id="c_emt"></span></div> <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ ER:</span> <span class="snap-value" id="c_helper_er"></span></div><div class="snap-row"><span class="snap-label">LR:</span> <span class="snap-value" id="c_nurse_lr"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ LR:</span> <span class="snap-value" id="c_helper_lr"></span></div><div class="snap-row"><span class="snap-label">IPD หญิง:</span> <span class="snap-value" id="c_nurse_ipd2"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD2:</span> <span class="snap-value" id="c_helper_ipd2"></span></div><div class="snap-row"><span class="snap-label">IPD ชาย:</span> <span class="snap-value" id="c_nurse_ipd3"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD3:</span> <span class="snap-value" id="c_helper_ipd3"></span></div><div class="snap-row"><span class="snap-label">สนับสนุน:</span> <span class="snap-value">ห้องบัตร <span id="c_card"></span> | เปล <span id="c_porter"></span></span></div></div>
   
-  <div class="html2pdf__page-break" style="page-break-before: always; margin-top: 50px;"></div>
-  <div class="snap-section pt-4"><div class="snap-h3">3. สถิติผู้ป่วย</div><div class="snap-block"><div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div><div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div><div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div><div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div></div></div>
-  <div class="snap-section"><div class="snap-h3">4. การส่งต่อ (Refer)</div><div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div></div>
-  <div class="snap-section"><div class="snap-h3">5. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div></div>
+  <div class="snap-section">
+    <div class="snap-h3">1. ข้อมูลทั่วไป</div>
+    <div class="snap-row"><span class="snap-label">ผู้ตรวจการ:</span> <span class="snap-value"><span id="c_sup"></span> (<span id="c_pos"></span>)</span></div>
+    <div class="snap-row"><span class="snap-label">แพทย์เวร ER:</span> <span class="snap-value" id="c_docER"></span></div>
+    <div class="snap-row"><span class="snap-label">แพทย์เวร Ward:</span> <span class="snap-value" id="c_docWard"></span></div>
+  </div>
   
-  <div class="html2pdf__page-break" style="page-break-before: always; margin-top: 50px;"></div>
-  <div class="snap-section pt-4"><div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div><div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div><div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div></div>
+  <div class="snap-section">
+    <div class="snap-h3">2. อัตรากำลัง</div>
+    <div class="snap-row"><span class="snap-label">ER:</span> <span class="snap-value" id="c_nurse_er"></span></div>
+    <div class="snap-row"><span class="snap-label">EMT:</span> <span class="snap-value" id="c_emt"></span></div>
+    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ ER:</span> <span class="snap-value" id="c_helper_er"></span></div>
+    <div class="snap-row"><span class="snap-label">LR:</span> <span class="snap-value" id="c_nurse_lr"></span></div>
+    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ LR:</span> <span class="snap-value" id="c_helper_lr"></span></div>
+    <div class="snap-row"><span class="snap-label">IPD หญิง:</span> <span class="snap-value" id="c_nurse_ipd2"></span></div>
+    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD2:</span> <span class="snap-value" id="c_helper_ipd2"></span></div>
+    <div class="snap-row"><span class="snap-label">IPD ชาย:</span> <span class="snap-value" id="c_nurse_ipd3"></span></div>
+    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD3:</span> <span class="snap-value" id="c_helper_ipd3"></span></div>
+    <div class="snap-row"><span class="snap-label">สนับสนุน:</span> <span class="snap-value">ห้องบัตร <span id="c_card"></span> | เปล <span id="c_porter"></span></span></div>
+  </div>
+
+  <div class="snap-section pt-4">
+    <div class="snap-h3">3. สถิติผู้ป่วย</div>
+    <div class="snap-block">
+      <div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div>
+      <div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div>
+      <div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div>
+      <div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div>
+    </div>
+  </div>
+
+  <!-- ================= ตัวแบ่งหน้า (Page Break) ================= -->
+  <div class="html2pdf__page-break"></div>
+
+  <!-- ================= หน้า 2 ================= -->
+  <div style="margin-top: 20px;"></div> <!-- เว้นระยะห่างด้านบนหน้า 2 เล็กน้อย -->
   
-  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 100px; padding: 0 10px; page-break-inside: avoid;">
+  <div class="snap-section">
+    <div class="snap-h3">4. การส่งต่อ (Refer)</div>
+    <div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div>
+    <div class="snap-row"><span class="snap-label">รายละเอียด:</span></div>
+    <div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div>
+  </div>
+  
+  <div class="snap-section">
+    <div class="snap-h3">5. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div>
+    <div class="snap-row"><span class="snap-label">รายละเอียด:</span></div>
+    <div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div>
+  </div>
+  
+  <div class="snap-section pt-4">
+    <div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div>
+    <div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div>
+    <div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div>
+    <div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div>
+  </div>
+  
+  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 80px; padding: 0 10px; page-break-inside: avoid;">
       <div style="width: 30%;">
           <p style="margin-bottom: 5px;">ลงชื่อ............................................</p>
           <img id="c_sig_img" src="" style="max-height: 50px; display: none; margin-bottom: 5px; margin-left: auto; margin-right: auto;">
@@ -821,33 +873,35 @@
     // แสดง Overlay โหลดดิ้ง
     $('#loadingOverlay').css('display', 'flex');
     
-    // ตั้งค่า CSS ให้กระดาษ A4 อยู่ในตำแหน่งที่บราวเซอร์ยอมวาด
-    const originalStyle = capArea.getAttribute('style');
+    // แก้ไขปัญหาหน้าว่าง โดยบังคับให้ Layout วาดอยู่ในหน้าจอจริงๆ (แต่ซ่อนไว้ข้างหลัง)
+    const originalStyle = capArea.getAttribute('style') || '';
     capArea.classList.remove('print-hide');
     capArea.style.cssText = `
-        position: relative !important;
-        width: 794px !important;
-        margin: 0 auto !important;
-        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 800px !important;
         background: white !important;
+        z-index: -9999 !important;
+        display: block !important;
     `;
 
-    // ให้เวลา 1 วินาที เพื่อให้ Browser ปรับจูน Layout (สำคัญมากสำหรับ Mac)
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // ให้เวลา 0.5 วินาที เพื่อให้ Browser ปรับจูน Layout ก่อนแคปเจอร์
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     const opt = {
-        margin: 0,
+        margin: [10, 0, 10, 0], // ขอบกระดาษ [บน, ซ้าย, ล่าง, ขวา]
         filename: filename + '.pdf',
-        image: { type: 'jpeg', quality: 1.0 },
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
             scale: 2,
             useCORS: true,
-            width: 794,
-            windowWidth: 794,
-            scrollX: 0,
+            width: 800,
+            windowWidth: 800,
             scrollY: 0
         },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] } // บังคับตัดหน้าตามคลาส .html2pdf__page-break
     };
 
     try {
@@ -860,19 +914,18 @@
         }
         
         if (format === 'pdf' || format === 'both') {
-            // ใช้ความสามารถของ html2pdf ให้โหลดข้อมูลโดยตรงจาก Element
             await html2pdf().set(opt).from(capArea).save();
         }
     } catch (err) {
         console.error(err);
-        alert('เกิดข้อผิดพลาดในการสร้างไฟล์');
+        Swal.fire('ข้อผิดพลาด', 'เกิดข้อผิดพลาดในการสร้างไฟล์', 'error');
     } finally {
-        // คืนค่าให้เหมือนเดิม
-        capArea.setAttribute('style', originalStyle || '');
+        // คืนค่าให้เหมือนเดิม เพื่อซ่อน Element กลับไป
+        capArea.setAttribute('style', originalStyle);
         capArea.classList.add('print-hide');
         $('#loadingOverlay').hide();
     }
-}
+  }
   window.downloadFromTable = async function(id, format) {
       var r = window.allData.find(x => x.id === id);
       if(!r) return;
