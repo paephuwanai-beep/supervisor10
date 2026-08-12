@@ -219,7 +219,28 @@
     </div>
   </div>
 </div>
-
+<!-- Modal ป็อปอัพแสดงเมื่อบันทึกข้อมูลสำเร็จ -->
+<div class="modal fade" id="afterSaveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color: #10B981;">
+        <h5 class="modal-title fw-bold"><i class="fas fa-check-circle"></i> บันทึกข้อมูลสำเร็จ</h5>
+      </div>
+      <div class="modal-body bg-light text-center" id="afterSaveModalBody" style="max-height: 70vh; overflow-y: auto;">
+        <!-- รูปภาพตัวอย่างจะถูกนำมาแสดงตรงนี้ -->
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btnDownloadJpg">
+            <i class="fas fa-download me-2"></i> บันทึกรูปภาพลงเครื่อง
+        </button>
+        <button type="button" class="btn btn-secondary px-4 py-2 fw-bold shadow-sm" id="btnCloseAfterSave">
+            <i class="fas fa-times me-2"></i> ปิดและไปหน้าประวัติ
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+  
 <div id="captureArea" style="position: absolute; left: -9999px; top: 0; width: 850px; background-color: #FFFFFF; z-index: -10;">
   
   <!-- ================= หน้า 1 ================= -->
@@ -946,7 +967,7 @@
 
   window.handleFormSubmit = async function(e) {
     e.preventDefault();
-    $('#loadingText').text('กำลังบันทึกและดาวน์โหลดไฟล์...');
+    $('#loadingText').text('กำลังบันทึกและสร้างรูปภาพ...');
     $('#loadingOverlay').css('display', 'flex'); 
     
     try {
@@ -966,19 +987,104 @@
 
       fd.signatureBase64 = isCanvasBlank(canvas) ? null : canvas.toDataURL("image/png");
 
+      // 1. นำข้อมูลลงฟอร์มเพื่อเตรียมถ่ายภาพ
       populateCaptureArea(fd);
 
-      await captureAndDownload('both', `รายงานเวร_${fd.ReportDate}_เวร${fd.Shift}`);
+      // 2. จัดการ Layout สำหรับแคปเจอร์
+      const capArea = document.getElementById('captureArea');
+      const originalStyle = capArea.getAttribute('style') || '';
+      capArea.classList.remove('print-hide');
+      capArea.style.cssText = `
+          position: absolute !important;
+          left: 0 !important;
+          top: 0 !important;
+          width: 800px !important;
+          background: white !important;
+          z-index: -9999 !important;
+          display: block !important;
+      `;
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
 
+      let htmlImgs = '';
+      
+      // 3. ใช้ html2canvas ถ่ายภาพทั้ง 2 หน้า
+      for (let i = 1; i <= 2; i++) {
+          const pageElement = document.getElementById('print-page-' + i);
+          const canvasRender = await html2canvas(pageElement, { 
+              scale: 2, 
+              useCORS: true, 
+              backgroundColor: '#FFFFFF' 
+          });
+          
+          const imgData = canvasRender.toDataURL('image/jpeg', 0.95);
+          htmlImgs += `<img src="${imgData}" class="saved-preview-img" style="width:100%; max-width:800px; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">`;
+      }
+
+      // 4. ซ่อน Layout กลับเหมือนเดิม
+      capArea.setAttribute('style', originalStyle);
+      capArea.classList.add('print-hide');
+
+      // 5. บันทึกข้อมูลลงฐานข้อมูล Firebase
       const recordId = fd.recId || `KSH_${Date.now()}`;
       const finalData = { ...fd, timestamp: new Date().toISOString() };
       delete finalData.recId;
       await setDoc(doc(db, 'reports', recordId), finalData);
 
       $('#loadingOverlay').hide();
-      Swal.fire('สำเร็จ', 'บันทึกและดาวน์โหลดไฟล์สำเร็จ', 'success');
-      resetForm(); showSection('table');
-      $('#loadingText').text('กำลังประมวลผล...');
+
+      // 6. นำรูปภาพที่ถ่ายเสร็จไปโชว์ในป็อปอัพ
+      $('#afterSaveModalBody').html(htmlImgs);
+      let afterSaveModal = new bootstrap.Modal(document.getElementById('afterSaveModal'));
+      afterSaveModal.show();
+
+      // 7. จัดการปุ่ม "บันทึกรูปลงเครื่อง"
+      $('#btnDownloadJpg').off('click').on('click', async function() {
+          const filename = `รายงานเวร_${fd.ReportDate}_เวร${fd.Shift}`;
+          let shareFiles = [];
+          let srcArray = [];
+          
+          $('.saved-preview-img').each(function() { 
+              srcArray.push($(this).attr('src')); 
+          });
+          
+          try {
+              // แปลงรูปภาพให้พร้อมสำหรับการแชร์ลงมือถือ
+              for(let i=0; i<srcArray.length; i++) {
+                   let res = await fetch(srcArray[i]);
+                   let blob = await res.blob();
+                   shareFiles.push(new File([blob], `${filename}_หน้า${i+1}.jpg`, {type: 'image/jpeg'}));
+              }
+              
+              // ตรวจสอบว่าเบราว์เซอร์รองรับการแชร์แบบ Native (มือถือ) หรือไม่
+              if (navigator.canShare && navigator.canShare({ files: shareFiles })) {
+                   await navigator.share({ files: shareFiles, title: filename });
+              } else {
+                   // กรณีเปิดในคอมพิวเตอร์ ให้ดาวน์โหลดไฟล์ลงเครื่องปกติ
+                   srcArray.forEach((src, i) => {
+                       let link = document.createElement('a');
+                       link.download = `${filename}_หน้า${i+1}.jpg`;
+                       link.href = src;
+                       link.click();
+                   });
+              }
+          } catch(e) {
+              console.log('ปิดหน้าต่างบันทึกรูป หรือไม่รองรับ');
+          }
+      });
+
+      // 8. จัดการปุ่ม "ปิดและไปหน้าประวัติ"
+      $('#btnCloseAfterSave').off('click').on('click', function() {
+          afterSaveModal.hide();
+          
+          // หน่วงเวลาเล็กน้อยให้ป็อปอัพปิดสนิทก่อนสลับหน้า
+          setTimeout(() => {
+              resetForm(); 
+              showSection('table');
+              $('#loadingText').text('กำลังประมวลผล...'); 
+          }, 300);
+      });
+
     } catch (err) { 
       $('#loadingOverlay').hide(); 
       console.error(err);
