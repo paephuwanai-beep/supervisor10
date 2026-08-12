@@ -809,18 +809,42 @@
   window.previewRecord = function(id) {
       var r = window.allData.find(x => x.id === id);
       if(!r) return;
+      
+      // 1. นำข้อมูลลงฟอร์ม (ที่ซ่อนอยู่)
       populateCaptureArea(r);
       
-      var clone = document.getElementById('captureArea').cloneNode(true);
-      clone.id = 'previewClone';
-      clone.style.position = 'relative';
-      clone.style.left = '0';
-      clone.classList.remove('print-hide');
-      
-      $('#previewModalBody').empty().append(clone);
+      // 2. เปิด Modal และแสดงสถานะกำลังโหลด
+      $('#previewModalBody').html(`
+          <div class="text-center p-5">
+              <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+              <p class="mt-3 fw-bold text-primary">กำลังสร้างภาพตัวอย่าง...</p>
+          </div>
+      `);
       
       var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
       previewModal.show();
+
+      // 3. ใช้ html2canvas ถ่ายภาพทั้ง 2 หน้ามาโชว์ใน Modal
+      setTimeout(async () => {
+          try {
+              let htmlImgs = '<div style="text-align:center; background:#F1F5F9; padding:15px; border-radius:10px;">';
+              
+              // แคปเจอร์หน้า 1
+              const canvas1 = await html2canvas(document.getElementById('print-page-1'), { scale: 1.5, useCORS: true, backgroundColor: '#FFFFFF' });
+              htmlImgs += `<img src="${canvas1.toDataURL('image/jpeg', 0.95)}" style="width:100%; max-width:800px; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">`;
+              
+              // แคปเจอร์หน้า 2
+              const canvas2 = await html2canvas(document.getElementById('print-page-2'), { scale: 1.5, useCORS: true, backgroundColor: '#FFFFFF' });
+              htmlImgs += `<img src="${canvas2.toDataURL('image/jpeg', 0.95)}" style="width:100%; max-width:800px; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">`;
+              
+              htmlImgs += '</div>';
+
+              // 4. เอาภาพที่ได้ไปใส่แทนที่ไอคอนโหลดดิ้งใน Modal
+              $('#previewModalBody').html(htmlImgs);
+          } catch(e) {
+              $('#previewModalBody').html(`<p class="text-danger text-center fw-bold mt-4">เกิดข้อผิดพลาดในการสร้างภาพ: ${e}</p>`);
+          }
+      }, 500); // หน่วงเวลาเล็กน้อยให้ DOM อัปเดตข้อมูลเสร็จก่อนแคปเจอร์
   }
 
   async function captureAndDownload(format, filename) {
@@ -1033,7 +1057,7 @@
   }
 
   window.showSection = (id) => { $('.section-content').hide(); $('.nav-link').removeClass('active'); $(`#${id}Section`).fadeIn(); let btnId = id.charAt(0).toUpperCase()+id.slice(1); $(`#btnTab${btnId}`).addClass('active'); if(id==='form') resizeCanvas(); window.scrollTo(0,0); }
-  function formatDateDisplay(d) { if(!d) return ''; let dt=new Date(d); return dt.getDate()+'/'+(dt.getMonth()+1)+'/'+(dt.getFullYear()+543); }
+  function formatDateDisplay(d) { if(!d) return ''; let dt = new Date(d); const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']; return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + (dt.getFullYear() + 543); }
   window.resetForm = () => { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val(null).trigger('change'); $('#shiftTimeDisplay').val(''); $('#box_EMS_Detail, #box_Autopsy_Detail').hide(); clearSignature(); }
 
   var canvas = document.getElementById('signaturePad'), ctx = canvas.getContext('2d'), drawing = false;
