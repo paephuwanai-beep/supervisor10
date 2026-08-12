@@ -14,9 +14,9 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
   
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     :root { --primary-color: #1e3c72; --secondary-color: #2a5298; --accent-color: #6f42c1; }
@@ -220,92 +220,48 @@
   </div>
 </div>
 
-<div id="captureArea" class="print-hide">
+<div id="captureArea" style="position: absolute; left: -9999px; top: 0; width: 850px; background-color: #FFFFFF; z-index: -10;">
+  
   <!-- ================= หน้า 1 ================= -->
-  <div class="snap-header">
-    <h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2>
-    <p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p>
-  </div>
-  
-  <div class="snap-section">
-    <div class="snap-row"><span class="snap-label">วันที่:</span> <span class="snap-value" id="c_date"></span></div>
-    <div class="snap-row"><span class="snap-label">เวลาปฏิบัติงาน:</span> <span class="snap-value" id="c_time"></span></div>
-  </div>
-  
-  <div class="snap-section">
-    <div class="snap-h3">1. ข้อมูลทั่วไป</div>
-    <div class="snap-row"><span class="snap-label">ผู้ตรวจการ:</span> <span class="snap-value"><span id="c_sup"></span> (<span id="c_pos"></span>)</span></div>
-    <div class="snap-row"><span class="snap-label">แพทย์เวร ER:</span> <span class="snap-value" id="c_docER"></span></div>
-    <div class="snap-row"><span class="snap-label">แพทย์เวร Ward:</span> <span class="snap-value" id="c_docWard"></span></div>
-  </div>
-  
-  <div class="snap-section">
-    <div class="snap-h3">2. อัตรากำลัง</div>
-    <div class="snap-row"><span class="snap-label">ER:</span> <span class="snap-value" id="c_nurse_er"></span></div>
-    <div class="snap-row"><span class="snap-label">EMT:</span> <span class="snap-value" id="c_emt"></span></div>
-    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ ER:</span> <span class="snap-value" id="c_helper_er"></span></div>
-    <div class="snap-row"><span class="snap-label">LR:</span> <span class="snap-value" id="c_nurse_lr"></span></div>
-    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ LR:</span> <span class="snap-value" id="c_helper_lr"></span></div>
-    <div class="snap-row"><span class="snap-label">IPD หญิง:</span> <span class="snap-value" id="c_nurse_ipd2"></span></div>
-    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD2:</span> <span class="snap-value" id="c_helper_ipd2"></span></div>
-    <div class="snap-row"><span class="snap-label">IPD ชาย:</span> <span class="snap-value" id="c_nurse_ipd3"></span></div>
-    <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD3:</span> <span class="snap-value" id="c_helper_ipd3"></span></div>
-    <div class="snap-row"><span class="snap-label">สนับสนุน:</span> <span class="snap-value">ห้องบัตร <span id="c_card"></span> | เปล <span id="c_porter"></span></span></div>
-  </div>
-
-  <div class="snap-section pt-4">
-    <div class="snap-h3">3. สถิติผู้ป่วย</div>
-    <div class="snap-block">
-      <div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div>
-      <div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div>
-      <div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div>
-      <div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div>
+  <div id="print-page-1" style="width: 850px; min-height: 1202px; background-color: #FFFFFF !important; padding: 40px; box-sizing: border-box; position: relative;">
+    <div class="snap-header"><h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2><p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p></div>
+    <div class="snap-section">
+      <div class="snap-row"><span class="snap-label">วันที่:</span> <span class="snap-value" id="c_date"></span></div>
+      <div class="snap-row"><span class="snap-label">เวลาปฏิบัติงาน:</span> <span class="snap-value" id="c_time"></span></div>
     </div>
+    <div class="snap-section"><div class="snap-h3">1. ข้อมูลทั่วไป</div><div class="snap-row"><span class="snap-label">ผู้ตรวจการ:</span> <span class="snap-value"><span id="c_sup"></span> (<span id="c_pos"></span>)</span></div><div class="snap-row"><span class="snap-label">แพทย์เวร ER:</span> <span class="snap-value" id="c_docER"></span></div><div class="snap-row"><span class="snap-label">แพทย์เวร Ward:</span> <span class="snap-value" id="c_docWard"></span></div></div>
+    <div class="snap-section"><div class="snap-h3">2. อัตรากำลัง</div><div class="snap-row"><span class="snap-label">ER:</span> <span class="snap-value" id="c_nurse_er"></span></div><div class="snap-row"><span class="snap-label">EMT:</span> <span class="snap-value" id="c_emt"></span></div> <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ ER:</span> <span class="snap-value" id="c_helper_er"></span></div><div class="snap-row"><span class="snap-label">LR:</span> <span class="snap-value" id="c_nurse_lr"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ LR:</span> <span class="snap-value" id="c_helper_lr"></span></div><div class="snap-row"><span class="snap-label">IPD หญิง:</span> <span class="snap-value" id="c_nurse_ipd2"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD2:</span> <span class="snap-value" id="c_helper_ipd2"></span></div><div class="snap-row"><span class="snap-label">IPD ชาย:</span> <span class="snap-value" id="c_nurse_ipd3"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD3:</span> <span class="snap-value" id="c_helper_ipd3"></span></div><div class="snap-row"><span class="snap-label">สนับสนุน:</span> <span class="snap-value">ห้องบัตร <span id="c_card"></span> | เปล <span id="c_porter"></span></span></div></div>
+    <div class="snap-section pt-4"><div class="snap-h3">3. สถิติผู้ป่วย</div><div class="snap-block"><div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div><div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div><div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div><div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div></div></div>
   </div>
-
-  <!-- ================= ตัวแบ่งหน้า (Page Break) ================= -->
-  <div class="html2pdf__page-break"></div>
 
   <!-- ================= หน้า 2 ================= -->
-  <div style="margin-top: 20px;"></div> <!-- เว้นระยะห่างด้านบนหน้า 2 เล็กน้อย -->
-  
-  <div class="snap-section">
-    <div class="snap-h3">4. การส่งต่อ (Refer)</div>
-    <div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div>
-    <div class="snap-row"><span class="snap-label">รายละเอียด:</span></div>
-    <div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div>
-  </div>
-  
-  <div class="snap-section">
-    <div class="snap-h3">5. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div>
-    <div class="snap-row"><span class="snap-label">รายละเอียด:</span></div>
-    <div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div>
-  </div>
-  
-  <div class="snap-section pt-4">
-    <div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div>
-    <div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div>
-    <div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div>
-    <div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div>
-  </div>
-  
-  <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 80px; padding: 0 10px; page-break-inside: avoid;">
-      <div style="width: 30%;">
-          <p style="margin-bottom: 5px;">ลงชื่อ............................................</p>
-          <img id="c_sig_img" src="" style="max-height: 50px; display: none; margin-bottom: 5px; margin-left: auto; margin-right: auto;">
-          <p style="margin-bottom: 0;">(<span id="c_sup_name2"></span>)</p>
-          <p>ผู้รายงาน (พยาบาลตรวจการ)</p>
-      </div>
-      <div style="width: 30%;">
-          <p style="margin-bottom: 30px;">ลงชื่อ............................................</p>
-          <p style="margin-bottom: 0;">(<span id="c_head_name"></span>)</p>
-          <p id="c_head_pos">หัวหน้ากลุ่มงานการพยาบาลฯ</p>
-      </div>
-      <div style="width: 30%;">
-          <p style="margin-bottom: 30px;">ลงชื่อ............................................</p>
-          <p style="margin-bottom: 0;">(<span id="c_dir_name"></span>)</p>
-          <p id="c_dir_pos">ผู้อำนวยการโรงพยาบาล</p>
-      </div>
+  <div id="print-page-2" style="width: 850px; min-height: 1202px; background-color: #FFFFFF !important; padding: 40px; box-sizing: border-box; position: relative;">
+    <div class="snap-header"><h2>รายงานประจำเวรพยาบาลตรวจการนอกเวลา</h2><p>โรงพยาบาลคอนสาร จังหวัดชัยภูมิ</p></div>
+    <div class="snap-section">
+      <div class="snap-row"><span class="snap-label">วันที่:</span> <span class="snap-value" id="c_date_p2"></span></div>
+    </div>
+    <div class="snap-section pt-4"><div class="snap-h3">4. การส่งต่อ (Refer)</div><div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div></div>
+    <div class="snap-section"><div class="snap-h3">5. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div></div>
+    <div class="snap-section pt-4"><div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div><div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div><div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div></div>
+    
+    <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 80px; padding: 0 10px;">
+        <div style="width: 30%;">
+            <p style="margin-bottom: 5px;">ลงชื่อ............................................</p>
+            <img id="c_sig_img" src="" style="max-height: 50px; display: none; margin-bottom: 5px; margin-left: auto; margin-right: auto;">
+            <p style="margin-bottom: 0;">(<span id="c_sup_name2"></span>)</p>
+            <p>ผู้รายงาน (พยาบาลตรวจการ)</p>
+        </div>
+        <div style="width: 30%;">
+            <p style="margin-bottom: 30px;">ลงชื่อ............................................</p>
+            <p style="margin-bottom: 0;">(<span id="c_head_name"></span>)</p>
+            <p id="c_head_pos">หัวหน้ากลุ่มงานการพยาบาลฯ</p>
+        </div>
+        <div style="width: 30%;">
+            <p style="margin-bottom: 30px;">ลงชื่อ............................................</p>
+            <p style="margin-bottom: 0;">(<span id="c_dir_name"></span>)</p>
+            <p id="c_dir_pos">ผู้อำนวยการโรงพยาบาล</p>
+        </div>
+    </div>
   </div>
 </div>
 
@@ -868,74 +824,53 @@
   }
 
   async function captureAndDownload(format, filename) {
-    const capArea = document.getElementById('captureArea');
-    
-    // 1. แสดง Overlay โหลดดิ้ง
-    $('#loadingOverlay').css('display', 'flex');
-    
-    // 2. จำตำแหน่ง Scroll เดิม และเลื่อนหน้าต่างกลับไปบนสุด (แก้ปัญหา PDF หน้าขาว)
-    const currentScroll = window.scrollY;
-    window.scrollTo(0, 0);
+      $('#loadingOverlay').css('display', 'flex');
+      
+      try {
+          const { jsPDF } = window.jspdf; 
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          
+          // วนลูป 2 หน้า (หน้า 1 และ หน้า 2)
+          for (let i = 1; i <= 2; i++) {
+              const pageElement = document.getElementById('print-page-' + i);
+              
+              // ใช้ html2canvas แคปเจอร์ทีละหน้า
+              const canvas = await html2canvas(pageElement, { 
+                  scale: 2, 
+                  useCORS: true, 
+                  backgroundColor: '#FFFFFF' 
+              });
+              
+              const imgData = canvas.toDataURL('image/jpeg', 1.0);
+              const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+              
+              // 1. ถ้าเซฟเป็นภาพ (JPG) ให้ดาวน์โหลดแยกไฟล์ หน้า 1 กับ หน้า 2
+              if (format === 'jpg' || format === 'both') {
+                  const link = document.createElement('a');
+                  link.download = `${filename}_หน้า${i}.jpg`;
+                  link.href = imgData;
+                  link.click();
+              }
 
-    // 3. ปรับ Style ให้กรอบรายงานแสดงขึ้นมาบนจอ เพื่อให้ไลบรารีมองเห็น
-    const originalStyle = capArea.getAttribute('style') || '';
-    capArea.classList.remove('print-hide');
-    
-    // ใช้ Object.assign เพื่อหลีกเลี่ยงการไปล้างค่า CSS เดิมที่ตั้งไว้
-    Object.assign(capArea.style, {
-        position: 'absolute',
-        left: '0px',
-        top: '0px',
-        width: '800px',
-        display: 'block',
-        backgroundColor: '#ffffff',
-        zIndex: '1000' 
-    });
-
-    // ให้เวลา 0.8 วินาที เพื่อให้ Browser ปรับเรนเดอร์ Layout และรูปภาพให้เสร็จ
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    // 4. ตั้งค่าเพื่อรองรับการตัดหน้าและการแคปเจอร์แบบ Fix ตำแหน่ง
-    const opt = {
-        margin: [10, 0, 10, 0], // ขอบกระดาษ บน ซ้าย ล่าง ขวา
-        filename: filename + '.pdf',
-        image: { type: 'jpeg', quality: 1.0 },
-        html2canvas: {
-            scale: 2,
-            useCORS: true,
-            width: 800,
-            windowWidth: 800,
-            x: 0,
-            y: 0,
-            scrollY: 0,
-            scrollX: 0
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'] } // ตรวจจับ <div class="html2pdf__page-break"></div> เพื่อตัดหน้า
-    };
-
-    try {
-        if (format === 'jpg' || format === 'both') {
-            const canvas = await html2canvas(capArea, opt.html2canvas);
-            const link = document.createElement('a');
-            link.download = filename + '.jpg';
-            link.href = canvas.toDataURL("image/jpeg", 1.0);
-            link.click();
-        }
-        
-        if (format === 'pdf' || format === 'both') {
-            await html2pdf().set(opt).from(capArea).save();
-        }
-    } catch (err) {
-        console.error(err);
-        Swal.fire('ข้อผิดพลาด', 'เกิดข้อผิดพลาดในการสร้างไฟล์', 'error');
-    } finally {
-        // 5. คืนค่าการแสดงผลทุกอย่างกลับเป็นเหมือนเดิม
-        capArea.setAttribute('style', originalStyle);
-        capArea.classList.add('print-hide');
-        window.scrollTo(0, currentScroll); // เลื่อนจอกลับมาจุดที่กดปุ่ม
-        $('#loadingOverlay').hide();
-    }
+              // 2. ถ้าเซฟเป็น PDF ให้นำภาพแปะลงกระดาษ
+              if (format === 'pdf' || format === 'both') {
+                  if (i > 1) pdf.addPage();
+                  pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+              }
+          }
+          
+          // บันทึกไฟล์ PDF ออกมา
+          if (format === 'pdf' || format === 'both') {
+              pdf.save(filename + '.pdf');
+          }
+          
+      } catch (err) {
+          console.error(err);
+          Swal.fire('ข้อผิดพลาด', 'เกิดข้อผิดพลาดในการสร้างไฟล์: ' + err, 'error');
+      } finally {
+          $('#loadingOverlay').hide();
+      }
   }
   window.downloadFromTable = async function(id, format) {
       var r = window.allData.find(x => x.id === id);
