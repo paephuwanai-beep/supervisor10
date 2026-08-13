@@ -155,6 +155,9 @@
     .bg-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
     .filter-box { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.6); }
 
+    .clickable-card { cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .clickable-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important; }
+
     .setting-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;}
     .setting-card { background: rgba(255, 255, 255, 0.6); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: none; height: 100%;}
     .setting-header { background: rgba(248, 249, 250, 0.8); padding: 10px 15px; font-weight: 600; border-radius: 10px 10px 0 0; color: var(--primary-color);}
@@ -326,7 +329,8 @@
       </div>
 
       <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3"><div class="dash-card bg-blue-light"><i class="fas fa-calendar-alt bg-icon"></i><div class="title small">วันที่ปัจจุบัน</div><div class="value" id="dash_date" style="font-size: 1.4rem;">-</div></div></div>
+        <!-- เพิ่ม class clickable-card และ onclick ไปที่หน้าฟอร์ม -->
+        <div class="col-6 col-md-3"><div class="dash-card bg-blue-light clickable-card" onclick="showSection('form')" title="คลิกเพื่อบันทึกเวร"><i class="fas fa-calendar-alt bg-icon"></i><div class="title small">วันที่ปัจจุบัน</div><div class="value" id="dash_date" style="font-size: 1.4rem;">-</div></div></div>
         <div class="col-6 col-md-3"><div class="dash-card bg-orange"><i class="fas fa-ambulance bg-icon"></i><div class="title small">Refer (ล่าสุด)</div><div class="value"><span id="dash_refer">0</span> <span class="unit">ราย</span></div></div></div>
         <div class="col-6 col-md-3"><div class="dash-card bg-green"><i class="fas fa-bed bg-icon"></i><div class="title small">IPD รวม (ล่าสุด)</div><div class="value"><span id="dash_ipd">0</span> <span class="unit">ราย</span></div></div></div>
         <div class="col-6 col-md-3"><div class="dash-card bg-purple"><i class="fas fa-user-injured bg-icon"></i><div class="title small">ER (ล่าสุด)</div><div class="value"><span id="dash_er">0</span> <span class="unit">ราย</span></div></div></div>
@@ -363,6 +367,40 @@
       </div>
 
       <div class="custom-card card-body-custom mt-3"><canvas id="mainDashboardChart" style="max-height: 350px;"></canvas></div>
+
+      <!-- สมุดโทรศัพท์หน่วยงานภายนอก Interactive -->
+      <div class="custom-card border-0 mt-4 print-hide" style="background: rgba(255,255,255,0.9);">
+        <div class="card-title-bar text-bg-dark text-white rounded-top" style="border-radius: 15px 15px 0 0;"><i class="fas fa-address-book"></i> สมุดโทรศัพท์และสายด่วนฉุกเฉิน (คลิกเพื่อโทร)</div>
+        <div class="card-body-custom p-4">
+          
+          <!-- ฝั่งฉุกเฉิน -->
+          <h5 class="fw-bold text-danger mb-3 border-bottom pb-2"><i class="fas fa-ambulance me-2"></i>1. งานฉุกเฉิน / กู้ชีพ / เหตุด่วน</h5>
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-6 col-lg-3"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">ศูนย์กู้ชีพทั่วไทย</div><div class="text-muted small mb-2">เจ็บป่วยฉุกเฉิน วิ่งเหตุรับผู้ป่วย</div><a href="tel:1669" class="btn btn-danger btn-sm w-100 fw-bold fs-6"><i class="fas fa-phone-alt me-1"></i> 1669</a></div></div>
+            <div class="col-12 col-md-6 col-lg-3"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">เหตุด่วนเหตุร้าย (ตำรวจ)</div><div class="text-muted small mb-2">แจ้งเหตุคดี อาชญากรรม อุบัติเหตุ</div><a href="tel:191" class="btn btn-danger btn-sm w-100 fw-bold fs-6"><i class="fas fa-phone-alt me-1"></i> 191</a></div></div>
+            <div class="col-12 col-md-6 col-lg-3"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">ศูนย์พิษวิทยา</div><div class="text-muted small mb-2">ปรึกษาสารพิษ ยาเกินขนาด สัตว์พิษ</div><a href="tel:1367" class="btn btn-warning btn-sm w-100 fw-bold fs-6 text-dark"><i class="fas fa-phone-alt me-1"></i> 1367</a></div></div>
+            <div class="col-12 col-md-6 col-lg-3"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">สายด่วนสุขภาพจิต</div><div class="text-muted small mb-2">ปรึกษาความเครียด ทำร้ายตัวเอง</div><a href="tel:1323" class="btn btn-warning btn-sm w-100 fw-bold fs-6 text-dark"><i class="fas fa-phone-alt me-1"></i> 1323</a></div></div>
+  
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">สภ.คอนสาร / ห้วยยาง</div><div class="text-muted small mb-2">Facebook: สถานีตำรวจภูธรคอนสาร</div><div class="d-flex gap-2"><a href="tel:044876686" class="btn btn-outline-danger btn-sm w-100"><i class="fas fa-phone me-1"></i> คอนสาร</a><a href="tel:044876223" class="btn btn-outline-danger btn-sm w-100"><i class="fas fa-phone me-1"></i> ห้วยยาง</a></div></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">ห้องฉุกเฉิน รพ.ภูเขียวฯ</div><div class="text-muted small mb-2">เบอร์ รพ. 044-861700</div><div class="d-flex gap-2"><a href="tel:0958480540" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-mobile-alt me-1"></i> ER 1</a><a href="tel:0610276364" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-mobile-alt me-1"></i> ER 2</a></div></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">ห้องฉุกเฉิน รพ.ชัยภูมิ</div><div class="text-muted small mb-2">เบอร์ รพ. 044-104610</div><a href="tel:044822364" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-phone-alt me-1"></i> เบอร์ตรง ER</a></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">ห้องฉุกเฉิน รพ.ชุมแพ</div><div class="text-muted small mb-2">เบอร์ รพ. 043-311044</div><a href="tel:043311162" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-phone-alt me-1"></i> เบอร์ตรง ER</a></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">ห้องฉุกเฉิน รพ.ขอนแก่น</div><div class="text-muted small mb-2">เบอร์ รพ. 043-009900</div><a href="tel:043236544" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-phone-alt me-1"></i> ศูนย์กู้ชีพ ER</a></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold">ห้องฉุกเฉิน รพ.ศรีนครินทร์</div><div class="text-muted small mb-2">เบอร์ รพ. 043-348888</div><div class="d-flex gap-2"><a href="tel:043363191" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-phone me-1"></i> ER 1</a><a href="tel:043202419" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-phone me-1"></i> ER 2</a></div></div></div>
+          </div>
+  
+          <!-- ฝั่งนิติเวช -->
+          <h5 class="fw-bold text-primary mb-3 border-bottom pb-2"><i class="fas fa-microscope me-2"></i>2. งานนิติเวช (ปรึกษาการส่งศพ / ตรวจทางคดี / ข้อกฎหมาย)</h5>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold text-indigo">นิติเวชศาสตร์ รพ.ศรีนครินทร์ (มข.)</div><div class="text-muted small mb-2">แจ้ง จนท. ว่า "เป็นแพทย์/พยาบาล ขอสายปรึกษาอาจารย์แพทย์เวร หรือแพทย์ประจำบ้านนิติเวช"</div><div class="d-flex gap-2"><a href="tel:043363559" class="btn btn-outline-dark btn-sm w-100"><i class="fas fa-phone me-1"></i> ธุรการ/DNA</a><a href="tel:043363386" class="btn btn-outline-dark btn-sm w-100"><i class="fas fa-phone me-1"></i> ชันสูตรศพ</a></div></div></div>
+            <div class="col-12 col-lg-6"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold text-indigo">กลุ่มงานนิติเวช รพ.ขอนแก่น</div><div class="text-muted small mb-2">ปรึกษาเรื่องการส่งศพผ่าชันสูตรในเขตสุขภาพ และการออกใบรายงานบาดแผล/รายงานศพ (แจ้งโอเปอเรเตอร์ขอต่อ "กลุ่มงานนิติเวช")</div><a href="tel:043009900" class="btn btn-outline-dark btn-sm w-100"><i class="fas fa-phone me-1"></i> 043-009900</a></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold text-indigo">กลุ่มงานนิติเวช รพ.ชัยภูมิ</div><div class="text-muted small mb-2">ปรึกษาเคสนิติเวชและขั้นตอนในเขตจังหวัดชัยภูมิ</div><a href="tel:044104610" class="btn btn-outline-dark btn-sm w-100"><i class="fas fa-phone me-1"></i> 044-104610</a></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold text-indigo">สถาบันนิติเวชวิทยา รพ.ตำรวจ</div><div class="text-muted small mb-2">ศูนย์กลางหลัก ปรึกษาข้อกฎหมาย/ศพคดีซับซ้อน</div><a href="tel:022076108" class="btn btn-outline-dark btn-sm w-100"><i class="fas fa-phone me-1"></i> 02-2076108</a></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="border rounded p-3 bg-white h-100 shadow-sm"><div class="fw-bold text-indigo">สถาบันนิติวิทยาศาสตร์</div><div class="text-muted small mb-2">หน่วยงานอิสระ ปรึกษาเคสญาติร้องเรียน/คลางแคลงใจ</div><a href="tel:021423456" class="btn btn-outline-dark btn-sm w-100"><i class="fas fa-phone me-1"></i> 02-142-3456</a></div></div>
+          </div>
+  
+        </div>
+      </div>
     </div>
   </div>
 
@@ -380,7 +418,6 @@
       <div class="col-md-6"><div class="setting-card"><div class="setting-header">พนักงานเปล</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_porters" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('porters')">เพิ่ม</button></div><div id="list_porters" class="bg-light rounded"></div></div></div></div>
       <div class="col-md-6"><div class="setting-card"><div class="setting-header">ห้องบัตร</div><div class="card-body-custom"><div class="input-group mb-2"><input type="text" id="add_cardStaff" class="form-control" placeholder="ระบุชื่อ..."><button class="btn btn-primary" onclick="addDropdownItem('cardStaff')">เพิ่ม</button></div><div id="list_cardStaff" class="bg-light rounded"></div></div></div></div>
       
-      <!-- ตั้งค่าผู้บริหารพร้อมช่องใส่รูปลายเซ็น & ตำแหน่งที่ 1, 2 -->
       <div class="col-md-6">
         <div class="setting-card">
           <div class="setting-header text-bg-primary text-white">หัวหน้ากลุ่มงาน (แนบลายเซ็นอัตโนมัติ)</div>
@@ -1088,7 +1125,7 @@
         $('#c_prob_list').text(probs.length > 0 ? probs.join(", ") : "ไม่พบ");
         
         let finalProbDetText = probDetails.length > 0 ? probDetails.join("\n") : "-";
-        if(r.Problem_Detail) { // รองรับข้อมูลเก่าด้วย
+        if(r.Problem_Detail) { 
             if(finalProbDetText !== "-") finalProbDetText += "\nรายละเอียดเพิ่มเติม: " + r.Problem_Detail;
             else finalProbDetText = r.Problem_Detail;
         }
