@@ -119,7 +119,6 @@
     
     #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     
-    /* แก้ไขการล็อกขนาด A4 ไม่ให้ PDF ทะลุขอบ */
     #captureArea { 
       position: absolute; 
       left: -9999px; 
@@ -219,6 +218,7 @@
     </div>
   </div>
 </div>
+
 <!-- Modal ป็อปอัพแสดงเมื่อบันทึกข้อมูลสำเร็จ -->
 <div class="modal fade" id="afterSaveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -230,8 +230,8 @@
         <!-- รูปภาพตัวอย่างจะถูกนำมาแสดงตรงนี้ -->
       </div>
       <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btnDownloadJpg">
-            <i class="fas fa-download me-2"></i> บันทึกรูปภาพลงเครื่อง
+        <button type="button" class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btnDownloadImg">
+            <i class="fas fa-download me-2"></i> บันทึกรูปภาพ (PNG) ลงเครื่อง
         </button>
         <button type="button" class="btn btn-secondary px-4 py-2 fw-bold shadow-sm" id="btnCloseAfterSave">
             <i class="fas fa-times me-2"></i> ปิดและไปหน้าประวัติ
@@ -535,7 +535,7 @@
         <div class="card-title-bar text-bg-primary text-white"><i class="fas fa-file-signature"></i> 11. ลายมือชื่อผู้รายงาน</div>
         <div class="card-body-custom">
            <div class="alert alert-secondary small mb-3 border-0">
-             <i class="fas fa-info-circle"></i> รายชื่อผู้อำนวยการ และ หัวหน้ากลุ่มงาน จะถูกประทับลงในเอกสาร PDF และ JPG อัตโนมัติ ตามที่ได้ระบุไว้ในเมนู 'ตั้งค่า'
+             <i class="fas fa-info-circle"></i> รายชื่อผู้อำนวยการ และ หัวหน้ากลุ่มงาน จะถูกประทับลงในเอกสาร PDF และ PNG อัตโนมัติ ตามที่ได้ระบุไว้ในเมนู 'ตั้งค่า'
            </div>
            <label class="form-label text-primary"><i class="fas fa-pen-nib me-1"></i> กรุณาเซ็นชื่อในกรอบด้านล่าง (ผู้ตรวจการเวร)</label>
            <div class="signature-wrapper mb-2">
@@ -845,7 +845,7 @@
         var imgBtn = `
             <button class="btn btn-sm btn-outline-primary mb-1 me-1" onclick="previewRecord('${r.id}')" title="ดูตัวอย่าง"><i class="fas fa-eye"></i> ดูตัวอย่าง</button>
             <button class="btn btn-sm btn-outline-danger mb-1 me-1" onclick="downloadFromTable('${r.id}', 'pdf')" title="โหลด PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn btn-sm btn-outline-success mb-1" onclick="downloadFromTable('${r.id}', 'jpg')" title="โหลดรูป JPG"><i class="fas fa-image"></i> JPG</button>
+            <button class="btn btn-sm btn-outline-success mb-1" onclick="downloadFromTable('${r.id}', 'png')" title="โหลดรูป PNG"><i class="fas fa-image"></i> PNG</button>
         `;
         
         tbody.append(`<tr><td class="text-nowrap">${formatDateDisplay(r.ReportDate)}${shiftTxt}</td><td>${r.SupervisorName || '-'}</td><td class="text-center text-nowrap">${imgBtn}</td><td class="text-end text-nowrap"><button class="btn btn-sm btn-warning me-1 mb-1" onclick="editRecord('${r.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light text-danger mb-1" onclick="deleteRecord('${r.id}')"><i class="fas fa-trash"></i></button></td></tr>`);
@@ -859,10 +859,8 @@
       var r = window.allData.find(x => x.id === id);
       if(!r) return;
       
-      // 1. นำข้อมูลลงฟอร์ม (ที่ซ่อนอยู่)
       populateCaptureArea(r);
       
-      // 2. เปิด Modal และแสดงสถานะกำลังโหลด
       $('#previewModalBody').html(`
           <div class="text-center p-5">
               <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
@@ -873,70 +871,102 @@
       var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
       previewModal.show();
 
-      // 3. ใช้ html2canvas ถ่ายภาพทั้ง 2 หน้ามาโชว์ใน Modal
       setTimeout(async () => {
           try {
-              let htmlImgs = '<div style="text-align:center; background:#F1F5F9; padding:15px; border-radius:10px;">';
+              const capArea = document.getElementById('captureArea');
+              const originalStyle = capArea.getAttribute('style') || '';
               
-              // แคปเจอร์หน้า 1
-              const canvas1 = await html2canvas(document.getElementById('print-page-1'), { scale: 1.5, useCORS: true, backgroundColor: '#FFFFFF' });
-              htmlImgs += `<img src="${canvas1.toDataURL('image/jpeg', 0.95)}" style="width:100%; max-width:800px; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">`;
+              // ปรับ Style พื้นที่ให้อ่านง่ายเป็นภาพเดียว
+              capArea.classList.remove('print-hide');
+              capArea.style.cssText = `
+                  position: absolute !important;
+                  left: 0 !important;
+                  top: 0 !important;
+                  width: 850px !important;
+                  background: white !important;
+                  z-index: -9999 !important;
+                  display: block !important;
+              `;
               
-              // แคปเจอร์หน้า 2
-              const canvas2 = await html2canvas(document.getElementById('print-page-2'), { scale: 1.5, useCORS: true, backgroundColor: '#FFFFFF' });
-              htmlImgs += `<img src="${canvas2.toDataURL('image/jpeg', 0.95)}" style="width:100%; max-width:800px; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">`;
+              // ใช้ html2canvas กับ captureArea แบบรวม (จะได้ PNG รูปเดียวยาวต่อกัน)
+              const canvasRender = await html2canvas(capArea, { scale: 1.5, useCORS: true, backgroundColor: '#FFFFFF' });
               
-              htmlImgs += '</div>';
+              // คืนค่า Style เดิม
+              capArea.setAttribute('style', originalStyle);
+              capArea.classList.add('print-hide');
 
-              // 4. เอาภาพที่ได้ไปใส่แทนที่ไอคอนโหลดดิ้งใน Modal
+              const imgData = canvasRender.toDataURL('image/png');
+              let htmlImgs = `<div style="text-align:center; background:#F1F5F9; padding:15px; border-radius:10px;">
+                <img src="${imgData}" style="width:100%; height:auto; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">
+              </div>`;
+
               $('#previewModalBody').html(htmlImgs);
           } catch(e) {
               $('#previewModalBody').html(`<p class="text-danger text-center fw-bold mt-4">เกิดข้อผิดพลาดในการสร้างภาพ: ${e}</p>`);
           }
-      }, 500); // หน่วงเวลาเล็กน้อยให้ DOM อัปเดตข้อมูลเสร็จก่อนแคปเจอร์
+      }, 500);
   }
 
   async function captureAndDownload(format, filename) {
       $('#loadingOverlay').css('display', 'flex');
       
       try {
-          const { jsPDF } = window.jspdf; 
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const capArea = document.getElementById('captureArea');
+          const originalStyle = capArea.getAttribute('style') || '';
           
-          // วนลูป 2 หน้า (หน้า 1 และ หน้า 2)
-          for (let i = 1; i <= 2; i++) {
-              const pageElement = document.getElementById('print-page-' + i);
-              
-              // ใช้ html2canvas แคปเจอร์ทีละหน้า
-              const canvas = await html2canvas(pageElement, { 
+          capArea.classList.remove('print-hide');
+          capArea.style.cssText = `
+              position: absolute !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 850px !important;
+              background: white !important;
+              z-index: -9999 !important;
+              display: block !important;
+          `;
+
+          // ถ้าต้องการ PNG ให้ถ่ายภาพรวมเป็นภาพเดียวยาวๆ
+          if (format === 'png' || format === 'both') {
+              const canvas = await html2canvas(capArea, { 
                   scale: 2, 
                   useCORS: true, 
                   backgroundColor: '#FFFFFF' 
               });
               
-              const imgData = canvas.toDataURL('image/jpeg', 1.0);
-              const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-              
-              // 1. ถ้าเซฟเป็นภาพ (JPG) ให้ดาวน์โหลดแยกไฟล์ หน้า 1 กับ หน้า 2
-              if (format === 'jpg' || format === 'both') {
-                  const link = document.createElement('a');
-                  link.download = `${filename}_หน้า${i}.jpg`;
-                  link.href = imgData;
-                  link.click();
-              }
+              const imgData = canvas.toDataURL('image/png');
+              const link = document.createElement('a');
+              link.download = `${filename}.png`;
+              link.href = imgData;
+              link.click();
+          }
 
-              // 2. ถ้าเซฟเป็น PDF ให้นำภาพแปะลงกระดาษ
-              if (format === 'pdf' || format === 'both') {
+          // ถ้าต้องการ PDF ให้ถ่ายภาพแยกทีละหน้าเหมือนเดิมป้องกันเพจเบรกทับข้อมูล
+          if (format === 'pdf' || format === 'both') {
+              const { jsPDF } = window.jspdf; 
+              const pdf = new jsPDF('p', 'mm', 'a4');
+              const pdfWidth = pdf.internal.pageSize.getWidth();
+              
+              for (let i = 1; i <= 2; i++) {
+                  const pageElement = document.getElementById('print-page-' + i);
+                  const canvas = await html2canvas(pageElement, { 
+                      scale: 2, 
+                      useCORS: true, 
+                      backgroundColor: '#FFFFFF' 
+                  });
+                  
+                  const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                  
                   if (i > 1) pdf.addPage();
                   pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
               }
-          }
-          
-          // บันทึกไฟล์ PDF ออกมา
-          if (format === 'pdf' || format === 'both') {
+              
               pdf.save(filename + '.pdf');
           }
+          
+          // คืนค่ารูปแบบเดิม
+          capArea.setAttribute('style', originalStyle);
+          capArea.classList.add('print-hide');
           
       } catch (err) {
           console.error(err);
@@ -945,6 +975,7 @@
           $('#loadingOverlay').hide();
       }
   }
+  
   window.downloadFromTable = async function(id, format) {
       var r = window.allData.find(x => x.id === id);
       if(!r) return;
@@ -987,18 +1018,18 @@
 
       fd.signatureBase64 = isCanvasBlank(canvas) ? null : canvas.toDataURL("image/png");
 
-      // 1. นำข้อมูลลงฟอร์มเพื่อเตรียมถ่ายภาพ
       populateCaptureArea(fd);
 
-      // 2. จัดการ Layout สำหรับแคปเจอร์
       const capArea = document.getElementById('captureArea');
       const originalStyle = capArea.getAttribute('style') || '';
+      
+      // ปรับ Style พื้นที่ให้เป็นการจับภาพยาวใบเดียว
       capArea.classList.remove('print-hide');
       capArea.style.cssText = `
           position: absolute !important;
           left: 0 !important;
           top: 0 !important;
-          width: 800px !important;
+          width: 850px !important;
           background: white !important;
           z-index: -9999 !important;
           display: block !important;
@@ -1006,26 +1037,20 @@
       
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      let htmlImgs = '';
+      // ใช้ html2canvas จับภาพ capArea เต็มแผ่นเป็น PNG รูปเดียว
+      const canvasRender = await html2canvas(capArea, { 
+          scale: 2, 
+          useCORS: true, 
+          backgroundColor: '#FFFFFF' 
+      });
       
-      // 3. ใช้ html2canvas ถ่ายภาพทั้ง 2 หน้า
-      for (let i = 1; i <= 2; i++) {
-          const pageElement = document.getElementById('print-page-' + i);
-          const canvasRender = await html2canvas(pageElement, { 
-              scale: 2, 
-              useCORS: true, 
-              backgroundColor: '#FFFFFF' 
-          });
-          
-          const imgData = canvasRender.toDataURL('image/jpeg', 0.95);
-          htmlImgs += `<img src="${imgData}" class="saved-preview-img" style="width:100%; max-width:800px; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">`;
-      }
+      const imgData = canvasRender.toDataURL('image/png');
+      const htmlImgs = `<img src="${imgData}" class="saved-preview-img" style="width:100%; height:auto; margin-bottom:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #CBD5E1;">`;
 
-      // 4. ซ่อน Layout กลับเหมือนเดิม
+      // ซ่อน Layout กลับเหมือนเดิม
       capArea.setAttribute('style', originalStyle);
       capArea.classList.add('print-hide');
 
-      // 5. บันทึกข้อมูลลงฐานข้อมูล Firebase
       const recordId = fd.recId || `KSH_${Date.now()}`;
       const finalData = { ...fd, timestamp: new Date().toISOString() };
       delete finalData.recId;
@@ -1033,51 +1058,36 @@
 
       $('#loadingOverlay').hide();
 
-      // 6. นำรูปภาพที่ถ่ายเสร็จไปโชว์ในป็อปอัพ
       $('#afterSaveModalBody').html(htmlImgs);
       let afterSaveModal = new bootstrap.Modal(document.getElementById('afterSaveModal'));
       afterSaveModal.show();
 
-      // 7. จัดการปุ่ม "บันทึกรูปลงเครื่อง"
-      $('#btnDownloadJpg').off('click').on('click', async function() {
-          const filename = `รายงานเวร_${fd.ReportDate}_เวร${fd.Shift}`;
-          let shareFiles = [];
-          let srcArray = [];
-          
-          $('.saved-preview-img').each(function() { 
-              srcArray.push($(this).attr('src')); 
-          });
+      // จัดการปุ่ม "บันทึกรูปลงเครื่อง" เพื่อบันทึกเป็น PNG
+      $('#btnDownloadImg').off('click').on('click', async function() {
+          const filename = `รายงานเวร_${fd.ReportDate}_เวร${fd.Shift}.png`;
+          const imgSrc = $('.saved-preview-img').attr('src');
           
           try {
-              // แปลงรูปภาพให้พร้อมสำหรับการแชร์ลงมือถือ
-              for(let i=0; i<srcArray.length; i++) {
-                   let res = await fetch(srcArray[i]);
-                   let blob = await res.blob();
-                   shareFiles.push(new File([blob], `${filename}_หน้า${i+1}.jpg`, {type: 'image/jpeg'}));
-              }
+              let res = await fetch(imgSrc);
+              let blob = await res.blob();
+              let file = new File([blob], filename, {type: 'image/png'});
               
-              // ตรวจสอบว่าเบราว์เซอร์รองรับการแชร์แบบ Native (มือถือ) หรือไม่
-              if (navigator.canShare && navigator.canShare({ files: shareFiles })) {
-                   await navigator.share({ files: shareFiles, title: filename });
+              if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                  await navigator.share({ files: [file], title: filename });
               } else {
-                   // กรณีเปิดในคอมพิวเตอร์ ให้ดาวน์โหลดไฟล์ลงเครื่องปกติ
-                   srcArray.forEach((src, i) => {
-                       let link = document.createElement('a');
-                       link.download = `${filename}_หน้า${i+1}.jpg`;
-                       link.href = src;
-                       link.click();
-                   });
+                  let link = document.createElement('a');
+                  link.download = filename;
+                  link.href = imgSrc;
+                  link.click();
               }
           } catch(e) {
-              console.log('ปิดหน้าต่างบันทึกรูป หรือไม่รองรับ');
+              console.log('ปิดหน้าต่างบันทึกรูป หรือไม่รองรับการแชร์แบบ Native บนอุปกรณ์นี้');
           }
       });
 
-      // 8. จัดการปุ่ม "ปิดและไปหน้าประวัติ"
       $('#btnCloseAfterSave').off('click').on('click', function() {
           afterSaveModal.hide();
           
-          // หน่วงเวลาเล็กน้อยให้ป็อปอัพปิดสนิทก่อนสลับหน้า
           setTimeout(() => {
               resetForm(); 
               showSection('table');
