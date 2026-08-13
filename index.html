@@ -254,6 +254,11 @@
     <div class="snap-section"><div class="snap-h3">1. ข้อมูลทั่วไป</div><div class="snap-row"><span class="snap-label">ผู้ตรวจการ:</span> <span class="snap-value"><span id="c_sup"></span> (<span id="c_pos"></span>)</span></div><div class="snap-row"><span class="snap-label">แพทย์เวร ER:</span> <span class="snap-value" id="c_docER"></span></div><div class="snap-row"><span class="snap-label">แพทย์เวร Ward:</span> <span class="snap-value" id="c_docWard"></span></div></div>
     <div class="snap-section"><div class="snap-h3">2. อัตรากำลัง</div><div class="snap-row"><span class="snap-label">ER:</span> <span class="snap-value" id="c_nurse_er"></span></div><div class="snap-row"><span class="snap-label">EMT:</span> <span class="snap-value" id="c_emt"></span></div> <div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ ER:</span> <span class="snap-value" id="c_helper_er"></span></div><div class="snap-row"><span class="snap-label">LR:</span> <span class="snap-value" id="c_nurse_lr"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ LR:</span> <span class="snap-value" id="c_helper_lr"></span></div><div class="snap-row"><span class="snap-label">IPD หญิง:</span> <span class="snap-value" id="c_nurse_ipd2"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD2:</span> <span class="snap-value" id="c_helper_ipd2"></span></div><div class="snap-row"><span class="snap-label">IPD ชาย:</span> <span class="snap-value" id="c_nurse_ipd3"></span></div><div class="snap-row"><span class="snap-label">ผู้ช่วยเหลือ IPD3:</span> <span class="snap-value" id="c_helper_ipd3"></span></div><div class="snap-row"><span class="snap-label">สนับสนุน:</span> <span class="snap-value">ห้องบัตร <span id="c_card"></span> | เปล <span id="c_porter"></span></span></div></div>
     <div class="snap-section pt-4"><div class="snap-h3">3. สถิติผู้ป่วย</div><div class="snap-block"><div style="margin-bottom: 10px;"><strong>ER:</strong> <span id="c_stat_er"></span></div><div style="margin-bottom: 10px;"><strong>LR:</strong> <span id="c_stat_lr"></span></div><div style="margin-bottom: 10px;"><strong>IPD หญิง:</strong> <span id="c_stat_ipd2"></span></div><div><strong>IPD ชาย:</strong> <span id="c_stat_ipd3"></span></div></div></div>
+    
+    <div class="snap-section pt-4">
+        <div class="snap-h3">4. รายละเอียดเหตุการณ์สำคัญ (กรณีมีผู้เสียชีวิต/ปฏิเสธ/ชันสูตร/EMS)</div>
+        <div class="snap-block" id="c_important_events" style="white-space: pre-line;"></div>
+    </div>
   </div>
 
   <!-- ================= หน้า 2 ================= -->
@@ -262,9 +267,10 @@
     <div class="snap-section">
       <div class="snap-row"><span class="snap-label">วันที่:</span> <span class="snap-value" id="c_date_p2"></span></div>
     </div>
-    <div class="snap-section pt-4"><div class="snap-h3">4. การส่งต่อ (Refer)</div><div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div></div>
-    <div class="snap-section"><div class="snap-h3">5. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div></div>
-    <div class="snap-section pt-4"><div class="snap-h3">6. ความปลอดภัยและอื่นๆ</div><div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div><div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div></div>
+    
+    <div class="snap-section pt-4"><div class="snap-h3">5. การส่งต่อ (Refer)</div><div class="snap-row"><span class="snap-label">รวม:</span> <span class="snap-value" id="c_ref_sum"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_ref_det" style="white-space: pre-line;"></div></div>
+    <div class="snap-section"><div class="snap-h3">6. ปัญหาที่พบ (<span id="c_prob_list"></span>)</div><div class="snap-row"><span class="snap-label">รายละเอียด:</span></div><div class="snap-block" id="c_prob_det" style="white-space: pre-line;"></div></div>
+    <div class="snap-section pt-4"><div class="snap-h3">7. ความปลอดภัยและอื่นๆ</div><div class="snap-row"><span class="snap-label">ประตู:</span> <span class="snap-value" id="c_sec"></span></div><div class="snap-row"><span class="snap-label">รายละเอียด:</span> <span class="snap-value" id="c_other"></span></div><div class="snap-row"><span class="snap-label">ข้อเสนอแนะ:</span> <span class="snap-value" id="c_comment"></span></div></div>
     
     <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 80px; padding: 0 10px;">
         <div style="width: 33%;">
@@ -447,16 +453,20 @@
       <div class="stats-container mt-3"><span class="stat-title text-danger"><i class="fas fa-chart-line me-1"></i> สถิติผู้ป่วย ER</span><div class="row g-2">
         <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_Total" placeholder="ยอดรวม"></div>
         <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_Refer" placeholder="Refer"></div>
-        <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_EMS" placeholder="EMS" id="input_EMS"></div>
-        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Dead" placeholder="Dead"></div>
-        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Autopsy" placeholder="ชันสูตร" id="input_Autopsy"></div>
+        <div class="col-4 col-md"><input type="number" class="form-control text-center" name="StatER_EMS" placeholder="EMS" id="input_ER_EMS"></div>
+        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Dead" placeholder="Dead" id="input_ER_Dead"></div>
+        <div class="col-6 col-md"><input type="number" class="form-control text-center" name="StatER_Autopsy" placeholder="ชันสูตร" id="input_ER_Autopsy"></div>
         
-        <div class="col-12 mt-2" id="box_EMS_Detail" style="display:none;">
-            <label class="form-label text-danger text-sm">รายละเอียดเคส EMS</label>
+        <div class="col-12 mt-2" id="box_ER_EMS_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคส EMS (ER)</label>
             <input type="text" class="form-control" name="EMS_Detail" placeholder="ระบุรายละเอียดเคส EMS...">
         </div>
-        <div class="col-12 mt-2" id="box_Autopsy_Detail" style="display:none;">
-            <label class="form-label text-danger text-sm">รายละเอียดเคสชันสูตร</label>
+        <div class="col-12 mt-2" id="box_ER_Dead_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคส Dead (ER)</label>
+            <input type="text" class="form-control" name="ER_Dead_Detail" placeholder="ระบุรายละเอียดเคสเสียชีวิต...">
+        </div>
+        <div class="col-12 mt-2" id="box_ER_Autopsy_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคสชันสูตร (ER)</label>
             <input type="text" class="form-control" name="Autopsy_Detail" placeholder="ระบุรายละเอียดเคสชันสูตร...">
         </div>
       </div></div></div></div>
@@ -472,9 +482,19 @@
         <div class="col-3 col-md"><label class="small text-muted mb-1">ย้ายไป</label><input type="number" class="form-control text-center" name="StatLR_Move"></div>
         <div class="col-3 col-md"><label class="small text-muted mb-1">Refer</label><input type="number" class="form-control text-center" name="StatLR_Refer"></div>
         <div class="col-3 col-md"><label class="small text-muted mb-1">D/C</label><input type="number" class="form-control text-center" name="StatLR_DC"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ปฏิเสธ</label><input type="number" class="form-control text-center" name="StatLR_Refuse" id="input_LR_Refuse"></div>
         <div class="col-3 col-md"><label class="small text-muted mb-1">คลอด</label><input type="number" class="form-control text-center" name="StatLR_Birth"></div>
-        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatLR_Dead"></div>
-        <div class="col-3 col-md"><label class="small text-muted mb-1">คงเหลือ</label><input type="number" class="form-control text-center" name="StatLR_Remain"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatLR_Dead" id="input_LR_Dead"></div>
+        <div class="col-12 col-md"><label class="small text-muted mb-1">คงเหลือ</label><input type="number" class="form-control text-center" name="StatLR_Remain"></div>
+        
+        <div class="col-12 mt-2 text-start" id="box_LR_Dead_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคส Dead (LR)</label>
+            <input type="text" class="form-control" name="LR_Dead_Detail" placeholder="ระบุรายละเอียด...">
+        </div>
+        <div class="col-12 mt-2 text-start" id="box_LR_Refuse_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคสปฏิเสธการรักษา (LR)</label>
+            <input type="text" class="form-control" name="LR_Refuse_Detail" placeholder="ระบุรายละเอียด...">
+        </div>
       </div></div></div></div>
 
       <div class="custom-card"><div class="card-title-bar" style="color:#0dcaf0;"><i class="fas fa-procedures"></i> 4. IPD หญิง (IPD2)</div><div class="card-body-custom"><div class="row g-3">
@@ -490,10 +510,19 @@
         <div class="col-3 col-md"><label class="small text-muted mb-1">ย้ายไป</label><input type="number" class="form-control text-center" name="StatIPD2_Move"></div>
         <div class="col-3 col-md"><label class="small text-muted mb-1">Refer</label><input type="number" class="form-control text-center" name="StatIPD2_Refer"></div>
         <div class="col-3 col-md"><label class="small text-muted mb-1">D/C</label><input type="number" class="form-control text-center" name="StatIPD2_DC"></div>
-        <div class="col-3 col-md"><label class="small text-muted mb-1">ปฏิเสธ</label><input type="number" class="form-control text-center" name="StatIPD2_Refuse"></div>
-        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatIPD2_Dead"></div>
-        <div class="col-6 col-md"><label class="small text-muted mb-1">คงเหลือ</label><input type="number" class="form-control text-center" name="StatIPD2_Remain"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ปฏิเสธ</label><input type="number" class="form-control text-center" name="StatIPD2_Refuse" id="input_IPD2_Refuse"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatIPD2_Dead" id="input_IPD2_Dead"></div>
+        <div class="col-6 col-md"><label class="small text-primary mb-1 fw-bold">คงเหลือ</label><input type="number" class="form-control text-center fw-bold bg-light" name="StatIPD2_Remain" readonly></div>
         <div class="col-6 col-md"><label class="small text-muted mb-1">HW</label><input type="number" class="form-control text-center" name="StatIPD2_HW"></div>
+
+        <div class="col-12 mt-2 text-start" id="box_IPD2_Dead_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคส Dead (IPD หญิง)</label>
+            <input type="text" class="form-control" name="IPD2_Dead_Detail" placeholder="ระบุรายละเอียด...">
+        </div>
+        <div class="col-12 mt-2 text-start" id="box_IPD2_Refuse_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคสปฏิเสธการรักษา (IPD หญิง)</label>
+            <input type="text" class="form-control" name="IPD2_Refuse_Detail" placeholder="ระบุรายละเอียด...">
+        </div>
       </div></div></div></div>
 
       <div class="custom-card"><div class="card-title-bar" style="color:#0dcaf0;"><i class="fas fa-procedures"></i> 5. IPD ชาย (IPD3)</div><div class="card-body-custom"><div class="row g-3">
@@ -509,10 +538,19 @@
         <div class="col-3 col-md"><label class="small text-muted mb-1">ย้ายไป</label><input type="number" class="form-control text-center" name="StatIPD3_Move"></div>
         <div class="col-3 col-md"><label class="small text-muted mb-1">Refer</label><input type="number" class="form-control text-center" name="StatIPD3_Refer"></div>
         <div class="col-3 col-md"><label class="small text-muted mb-1">D/C</label><input type="number" class="form-control text-center" name="StatIPD3_DC"></div>
-        <div class="col-3 col-md"><label class="small text-muted mb-1">ปฏิเสธ</label><input type="number" class="form-control text-center" name="StatIPD3_Refuse"></div>
-        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatIPD3_Dead"></div>
-        <div class="col-6 col-md"><label class="small text-muted mb-1">คงเหลือ</label><input type="number" class="form-control text-center" name="StatIPD3_Remain"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">ปฏิเสธ</label><input type="number" class="form-control text-center" name="StatIPD3_Refuse" id="input_IPD3_Refuse"></div>
+        <div class="col-3 col-md"><label class="small text-muted mb-1">Dead</label><input type="number" class="form-control text-center" name="StatIPD3_Dead" id="input_IPD3_Dead"></div>
+        <div class="col-6 col-md"><label class="small text-primary mb-1 fw-bold">คงเหลือ</label><input type="number" class="form-control text-center fw-bold bg-light" name="StatIPD3_Remain" readonly></div>
         <div class="col-6 col-md"><label class="small text-muted mb-1">HW</label><input type="number" class="form-control text-center" name="StatIPD3_HW"></div>
+
+        <div class="col-12 mt-2 text-start" id="box_IPD3_Dead_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคส Dead (IPD ชาย)</label>
+            <input type="text" class="form-control" name="IPD3_Dead_Detail" placeholder="ระบุรายละเอียด...">
+        </div>
+        <div class="col-12 mt-2 text-start" id="box_IPD3_Refuse_Detail" style="display:none;">
+            <label class="form-label text-danger text-sm">รายละเอียดเคสปฏิเสธการรักษา (IPD ชาย)</label>
+            <input type="text" class="form-control" name="IPD3_Refuse_Detail" placeholder="ระบุรายละเอียด...">
+        </div>
       </div></div></div></div>
 
       <div class="custom-card"><div class="card-title-bar"><i class="fas fa-users-cog"></i> 6-7. สนับสนุน</div><div class="card-body-custom"><div class="row g-3">
@@ -714,13 +752,44 @@
   $(document).ready(function() { 
     $('#dash_date').text(new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }));
     
-    $('#input_EMS').on('input', function() {
-        if (parseInt($(this).val()) >= 1) $('#box_EMS_Detail').slideDown();
-        else $('#box_EMS_Detail').slideUp();
-    });
-    $('#input_Autopsy').on('input', function() {
-        if (parseInt($(this).val()) >= 1) $('#box_Autopsy_Detail').slideDown();
-        else $('#box_Autopsy_Detail').slideUp();
+    // ฟังก์ชันช่วยสลับการแสดงผลของกล่องรายละเอียด
+    function toggleDetailBox(inputId, boxId) {
+        $(inputId).on('input', function() {
+            if (parseInt($(this).val()) >= 1) $(boxId).slideDown();
+            else $(boxId).slideUp();
+        });
+    }
+
+    // ผูก Event ให้แต่ละช่อง
+    toggleDetailBox('#input_ER_EMS', '#box_ER_EMS_Detail');
+    toggleDetailBox('#input_ER_Dead', '#box_ER_Dead_Detail');
+    toggleDetailBox('#input_ER_Autopsy', '#box_ER_Autopsy_Detail');
+    toggleDetailBox('#input_LR_Dead', '#box_LR_Dead_Detail');
+    toggleDetailBox('#input_LR_Refuse', '#box_LR_Refuse_Detail');
+    toggleDetailBox('#input_IPD2_Dead', '#box_IPD2_Dead_Detail');
+    toggleDetailBox('#input_IPD2_Refuse', '#box_IPD2_Refuse_Detail');
+    toggleDetailBox('#input_IPD3_Dead', '#box_IPD3_Dead_Detail');
+    toggleDetailBox('#input_IPD3_Refuse', '#box_IPD3_Refuse_Detail');
+
+    // ฟังก์ชันคำนวณยอดคงเหลือ IPD อัตโนมัติ
+    const calcIPD = (dept) => {
+        let carry = parseInt($(`input[name="Stat${dept}_Carry"]`).val()) || 0;
+        let newIn = parseInt($(`input[name="Stat${dept}_New"]`).val()) || 0;
+        let recMove = parseInt($(`input[name="Stat${dept}_RecMove"]`).val()) || 0;
+        let move = parseInt($(`input[name="Stat${dept}_Move"]`).val()) || 0;
+        let refer = parseInt($(`input[name="Stat${dept}_Refer"]`).val()) || 0;
+        let dc = parseInt($(`input[name="Stat${dept}_DC"]`).val()) || 0;
+        let refuse = parseInt($(`input[name="Stat${dept}_Refuse"]`).val()) || 0;
+        let dead = parseInt($(`input[name="Stat${dept}_Dead"]`).val()) || 0;
+        
+        let remain = carry + newIn + recMove - move - refer - dc - refuse - dead;
+        $(`input[name="Stat${dept}_Remain"]`).val(remain);
+    };
+
+    const ipdFields = ['Carry', 'New', 'RecMove', 'Move', 'Refer', 'DC', 'Refuse', 'Dead'];
+    ipdFields.forEach(f => {
+        $(`input[name="StatIPD2_${f}"]`).on('input', () => calcIPD('IPD2'));
+        $(`input[name="StatIPD3_${f}"]`).on('input', () => calcIPD('IPD3'));
     });
 
     signInAnonymously(auth).then(() => {
@@ -906,16 +975,31 @@
         $('#c_card').text(j([r.CardStaff1,r.CardStaff2])||'-'); $('#c_porter').text(j([r.Porter1,r.Porter2])||'-');
         
         let emsText = `EMS ${r.StatER_EMS||0}`;
-        if(r.StatER_EMS >= 1 && r.EMS_Detail) emsText += ` (${r.EMS_Detail})`;
         let autopsyText = `ชันสูตร ${r.StatER_Autopsy||0}`;
-        if(r.StatER_Autopsy >= 1 && r.Autopsy_Detail) autopsyText += ` (${r.Autopsy_Detail})`;
 
         $('#c_stat_er').text(`รวม ${r.StatER_Total||0} | Refer ${r.StatER_Refer||0} | ${emsText} | Dead ${r.StatER_Dead||0} | ${autopsyText}`);
         
-        $('#c_stat_lr').text(`ยกมา ${r.StatLR_Carry||0} | รับ ${r.StatLR_New||0} | ย้าย ${r.StatLR_Move||0} | Ref ${r.StatLR_Refer||0} | D/C ${r.StatLR_DC||0} | คลอด ${r.StatLR_Birth||0} | Dead ${r.StatLR_Dead||0} | คงเหลือ ${r.StatLR_Remain||0}`);
+        $('#c_stat_lr').text(`ยกมา ${r.StatLR_Carry||0} | รับ ${r.StatLR_New||0} | ย้าย ${r.StatLR_Move||0} | Ref ${r.StatLR_Refer||0} | D/C ${r.StatLR_DC||0} | ปฏิเสธ ${r.StatLR_Refuse||0} | คลอด ${r.StatLR_Birth||0} | Dead ${r.StatLR_Dead||0} | คงเหลือ ${r.StatLR_Remain||0}`);
         $('#c_stat_ipd2').text(`ยกมา ${r.StatIPD2_Carry||0} | รับ ${r.StatIPD2_New||0} | รับย้าย ${r.StatIPD2_RecMove||0} | ย้าย ${r.StatIPD2_Move||0} | Ref ${r.StatIPD2_Refer||0} | D/C ${r.StatIPD2_DC||0} | ปฏิเสธ ${r.StatIPD2_Refuse||0} | Dead ${r.StatIPD2_Dead||0} | คงเหลือ ${r.StatIPD2_Remain||0} | HW ${r.StatIPD2_HW||0}`);
         $('#c_stat_ipd3').text(`ยกมา ${r.StatIPD3_Carry||0} | รับ ${r.StatIPD3_New||0} | รับย้าย ${r.StatIPD3_RecMove||0} | ย้าย ${r.StatIPD3_Move||0} | Ref ${r.StatIPD3_Refer||0} | D/C ${r.StatIPD3_DC||0} | ปฏิเสธ ${r.StatIPD3_Refuse||0} | Dead ${r.StatIPD3_Dead||0} | คงเหลือ ${r.StatIPD3_Remain||0} | HW ${r.StatIPD3_HW||0}`);
         
+        // รวบรวมเหตุการณ์สำคัญ
+        let events = [];
+        if(r.StatER_EMS >= 1 && r.EMS_Detail) events.push(`ER (EMS) : ${r.EMS_Detail}`);
+        if(r.StatER_Dead >= 1 && r.ER_Dead_Detail) events.push(`ER (Dead) : ${r.ER_Dead_Detail}`);
+        if(r.StatER_Autopsy >= 1 && r.Autopsy_Detail) events.push(`ER (ชันสูตร) : ${r.Autopsy_Detail}`);
+        
+        if(r.StatLR_Dead >= 1 && r.LR_Dead_Detail) events.push(`LR (Dead) : ${r.LR_Dead_Detail}`);
+        if(r.StatLR_Refuse >= 1 && r.LR_Refuse_Detail) events.push(`LR (ปฏิเสธการรักษา) : ${r.LR_Refuse_Detail}`);
+        
+        if(r.StatIPD2_Dead >= 1 && r.IPD2_Dead_Detail) events.push(`IPD หญิง (Dead) : ${r.IPD2_Dead_Detail}`);
+        if(r.StatIPD2_Refuse >= 1 && r.IPD2_Refuse_Detail) events.push(`IPD หญิง (ปฏิเสธการรักษา) : ${r.IPD2_Refuse_Detail}`);
+
+        if(r.StatIPD3_Dead >= 1 && r.IPD3_Dead_Detail) events.push(`IPD ชาย (Dead) : ${r.IPD3_Dead_Detail}`);
+        if(r.StatIPD3_Refuse >= 1 && r.IPD3_Refuse_Detail) events.push(`IPD ชาย (ปฏิเสธการรักษา) : ${r.IPD3_Refuse_Detail}`);
+
+        $('#c_important_events').html(events.length > 0 ? events.join('<br>') : '-');
+
         var refDet = ""; [r.Ref1, r.Ref2, r.Ref3, r.Ref4, r.Ref5, r.Ref6].forEach((rx, i) => { if(rx) refDet += `รอบ ${i+1}: ${rx}\n`; });
         $('#c_ref_sum').text(`${r.Refer_Total||0} (ชย:${r.Ref_CP||0}, ภข:${r.Ref_PK||0}, ชพ:${r.Ref_CP2||0}, ขก:${r.Ref_KK||0}, อื่นๆ:${r.Ref_Other||0} ${r.Ref_OtherName||''})`);
         $('#c_ref_det').text(refDet||'-');
@@ -925,7 +1009,7 @@
         $('#c_prob_det').text(r.Problem_Detail || '-');
         $('#c_sec').text(r.Security||'-'); $('#c_other').text(r.Other_Detail||'-'); $('#c_comment').text(r.HeadNurse_Comment||'-');
 
-        // ข้อมูลผู้บริหารและลายเซ็น (ปรับให้แสดง 2 ตำแหน่งตามที่ตั้งค่าไว้)
+        // ข้อมูลผู้บริหารและลายเซ็น (ปรับให้แสดง 2 ตำแหน่งตามที่ตั้งค่าไว้ โดยเอาคำว่า ลงชื่อ... ออก)
         $('#c_sup_name2').text(r.SupervisorName || '......................................');
         $('#c_sup_pos1').text(r.Position || ''); // ดึงจาก Field Position ที่บันทึกตอนเซฟ
         
@@ -1269,8 +1353,19 @@
         }
     });
     
-    if (r.StatER_EMS >= 1) $('#box_EMS_Detail').show();
-    if (r.StatER_Autopsy >= 1) $('#box_Autopsy_Detail').show();
+    // แสดงรายละเอียดที่ถูกซ่อนไว้หากมีค่า >= 1
+    if (r.StatER_EMS >= 1) $('#box_ER_EMS_Detail').show();
+    if (r.StatER_Dead >= 1) $('#box_ER_Dead_Detail').show();
+    if (r.StatER_Autopsy >= 1) $('#box_ER_Autopsy_Detail').show();
+    
+    if (r.StatLR_Dead >= 1) $('#box_LR_Dead_Detail').show();
+    if (r.StatLR_Refuse >= 1) $('#box_LR_Refuse_Detail').show();
+    
+    if (r.StatIPD2_Dead >= 1) $('#box_IPD2_Dead_Detail').show();
+    if (r.StatIPD2_Refuse >= 1) $('#box_IPD2_Refuse_Detail').show();
+    
+    if (r.StatIPD3_Dead >= 1) $('#box_IPD3_Dead_Detail').show();
+    if (r.StatIPD3_Refuse >= 1) $('#box_IPD3_Refuse_Detail').show();
 
     if(r.Shift) updateShiftTime();
     showSection('form'); 
@@ -1283,7 +1378,7 @@
     const filtered = window.allData.filter(r => { let d = new Date(r.ReportDate); return d >= new Date(start) && d <= new Date(end); });
     if(!filtered.length) return Swal.fire('ไม่พบข้อมูล','','info');
     
-    const allKeys = ["ReportDate", "Shift", "StartTime", "EndTime", "SupervisorName", "Position", "DoctorER", "DoctorWard", "NurseER1", "NurseER2", "NurseER3", "NurseER4", "EMT", "HelperER", "StatER_Total", "StatER_Refer", "StatER_EMS", "EMS_Detail", "StatER_Dead", "StatER_Autopsy", "Autopsy_Detail", "NurseLR1", "NurseLR2", "HelperLR", "StatLR_Carry", "StatLR_New", "StatLR_Move", "StatLR_Refer", "StatLR_DC", "StatLR_Birth", "StatLR_Dead", "StatLR_Remain", "NurseIPD2_1", "NurseIPD2_2", "NurseIPD2_3", "HelperIPD2", "StatIPD2_Carry", "StatIPD2_New", "StatIPD2_RecMove", "StatIPD2_Move", "StatIPD2_Refer", "StatIPD2_DC", "StatIPD2_Refuse", "StatIPD2_Dead", "StatIPD2_Remain", "StatIPD2_HW", "NurseIPD3_1", "NurseIPD3_2", "NurseIPD3_3", "HelperIPD3", "StatIPD3_Carry", "StatIPD3_New", "StatIPD3_RecMove", "StatIPD3_Move", "StatIPD3_Refer", "StatIPD3_DC", "StatIPD3_Refuse", "StatIPD3_Dead", "StatIPD3_Remain", "StatIPD3_HW", "CardStaff1", "CardStaff2", "Porter1", "Porter2", "Refer_Total", "Ref_CP", "Ref_CP2", "Ref_PK", "Ref_KK", "Ref_Other", "Ref_OtherName", "Ref1", "Ref2", "Ref3", "Ref4", "Ref5", "Ref6", "Prob1", "Prob2", "Prob3", "Prob4", "Prob5", "Prob6", "Prob7", "Prob8", "Prob9", "Problem_Detail", "Security", "Other_Detail", "HeadNurse_Comment", "HeadNurseName", "HeadNursePos1", "HeadNursePos2", "DirectorName", "DirectorPos1", "DirectorPos2"];
+    const allKeys = ["ReportDate", "Shift", "StartTime", "EndTime", "SupervisorName", "Position", "DoctorER", "DoctorWard", "NurseER1", "NurseER2", "NurseER3", "NurseER4", "EMT", "HelperER", "StatER_Total", "StatER_Refer", "StatER_EMS", "EMS_Detail", "StatER_Dead", "ER_Dead_Detail", "StatER_Autopsy", "Autopsy_Detail", "NurseLR1", "NurseLR2", "HelperLR", "StatLR_Carry", "StatLR_New", "StatLR_Move", "StatLR_Refer", "StatLR_DC", "StatLR_Refuse", "LR_Refuse_Detail", "StatLR_Birth", "StatLR_Dead", "LR_Dead_Detail", "StatLR_Remain", "NurseIPD2_1", "NurseIPD2_2", "NurseIPD2_3", "HelperIPD2", "StatIPD2_Carry", "StatIPD2_New", "StatIPD2_RecMove", "StatIPD2_Move", "StatIPD2_Refer", "StatIPD2_DC", "StatIPD2_Refuse", "IPD2_Refuse_Detail", "StatIPD2_Dead", "IPD2_Dead_Detail", "StatIPD2_Remain", "StatIPD2_HW", "NurseIPD3_1", "NurseIPD3_2", "NurseIPD3_3", "HelperIPD3", "StatIPD3_Carry", "StatIPD3_New", "StatIPD3_RecMove", "StatIPD3_Move", "StatIPD3_Refer", "StatIPD3_DC", "StatIPD3_Refuse", "IPD3_Refuse_Detail", "StatIPD3_Dead", "IPD3_Dead_Detail", "StatIPD3_Remain", "StatIPD3_HW", "CardStaff1", "CardStaff2", "Porter1", "Porter2", "Refer_Total", "Ref_CP", "Ref_CP2", "Ref_PK", "Ref_KK", "Ref_Other", "Ref_OtherName", "Ref1", "Ref2", "Ref3", "Ref4", "Ref5", "Ref6", "Prob1", "Prob2", "Prob3", "Prob4", "Prob5", "Prob6", "Prob7", "Prob8", "Prob9", "Problem_Detail", "Security", "Other_Detail", "HeadNurse_Comment", "HeadNurseName", "HeadNursePos1", "HeadNursePos2", "DirectorName", "DirectorPos1", "DirectorPos2"];
     let content = allKeys.join("|") + "\n"; 
     filtered.forEach(r => {
         const row = allKeys.map(k => (r[k] ? String(r[k]) : "").replace(/(\r\n|\n|\r)/gm, " ").replace(/\|/g, "/"));
@@ -1344,7 +1439,7 @@
 
   window.showSection = (id) => { $('.section-content').hide(); $('.nav-link').removeClass('active'); $(`#${id}Section`).fadeIn(); let btnId = id.charAt(0).toUpperCase()+id.slice(1); $(`#btnTab${btnId}`).addClass('active'); if(id==='form') resizeCanvas(); window.scrollTo(0,0); }
   function formatDateDisplay(d) { if(!d) return ''; let dt = new Date(d); const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']; return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + (dt.getFullYear() + 543); }
-  window.resetForm = () => { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val(null).trigger('change'); $('#shiftTimeDisplay').val(''); $('#box_EMS_Detail, #box_Autopsy_Detail').hide(); clearSignature(); }
+  window.resetForm = () => { document.getElementById('mainForm').reset(); $('#recId').val(''); $('.select2-input').val(null).trigger('change'); $('#shiftTimeDisplay').val(''); $('#box_ER_EMS_Detail, #box_ER_Dead_Detail, #box_ER_Autopsy_Detail, #box_LR_Dead_Detail, #box_LR_Refuse_Detail, #box_IPD2_Dead_Detail, #box_IPD2_Refuse_Detail, #box_IPD3_Dead_Detail, #box_IPD3_Refuse_Detail').hide(); clearSignature(); }
 
   var canvas = document.getElementById('signaturePad'), ctx = canvas.getContext('2d'), drawing = false;
   window.resizeCanvas = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth = 2.5; ctx.strokeStyle = "#000"; ctx.lineCap = "round"; }
