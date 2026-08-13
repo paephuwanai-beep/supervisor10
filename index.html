@@ -603,7 +603,7 @@
     </div>
   </div>
 
-  <!-- หมวดคู่มือ โค้ดเดิมยังอยู่ครบ 100% -->
+  <!-- หมวดคู่มือ -->
   <div id="handoutSection" class="section-content" style="display:none;">
     <div class="ho-bg pb-5">
       <div class="ho-header">
@@ -861,13 +861,23 @@
           } catch(e) {
               Swal.fire('Error', 'ไม่สามารถประมวลผลรูปภาพได้', 'error'); return;
           }
+      } else {
+          // ถ้าไม่ได้อัปโหลดไฟล์ใหม่ ให้ดึงลายเซ็นเดิมมาใช้ (ถ้ามี)
+          if(window.dropdownData && window.dropdownData[category] && Object.values(window.dropdownData[category]).length > 0) {
+              let oldVal = Object.values(window.dropdownData[category])[0];
+              let parts = oldVal.split('|');
+              if(parts.length === 3 && parts[2].startsWith('data:image')) {
+                  sigBase64 = parts[2];
+              } else if(parts.length >= 4) {
+                  sigBase64 = parts[3] || '';
+              }
+          }
       }
 
       const val = nameVal + "|" + pos1Val + "|" + pos2Val + "|" + sigBase64;
       try {
-          const id = Date.now().toString();
-          // บันทึกทับข้อมูลเดิม เพราะหัวหน้าและผอ. ปกติมีคนเดียว หากต้องการเพิ่มหลายคนให้แก้ logic ตรงนี้
-          await setDoc(doc(db, 'settings', 'dropdowns'), { [category]: { [id]: val } });
+          const id = "1"; // ใช้ Fixed ID เพื่อให้มีแค่คนเดียวสำหรับหัวหน้า/ผอ. และประหยัดพื้นที่ DB
+          await setDoc(doc(db, 'settings', 'dropdowns'), { [category]: { [id]: val } }, { merge: true });
           nameInput.val(''); pos1Input.val(''); pos2Input.val(''); fileInput.value = '';
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'อัปเดตข้อมูลเรียบร้อย', showConfirmButton: false, timer: 1000 });
       } catch(err) { Swal.fire('Error', err.message, 'error'); }
