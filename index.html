@@ -57,9 +57,10 @@
     .nav-pills .nav-link { color: #555; font-weight: 600; border-radius: 12px; padding: 12px; font-size: 0.95rem; transition: all 0.3s; cursor: pointer; border: none; width: 100%;}
     .nav-pills .nav-link.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2); }
     
+    /* แก้ไขปัญหาเมนูมือถือทับกัน โดยระบุให้จัดการเฉพาะ #mainNav เท่านั้น */
     @media (max-width: 767px) {
       body { padding-bottom: 85px; } 
-      .nav-pills { 
+      #mainNav { 
         position: fixed; 
         bottom: 0; left: 0; right: 0; 
         border-radius: 20px 20px 0 0 !important; 
@@ -73,11 +74,11 @@
         border-top: 1px solid rgba(255, 255, 255, 0.8);
         display: flex; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap;
       }
-      .nav-pills::-webkit-scrollbar { display: none; }
-      .nav-pills .nav-item { margin: 0 2px; flex: 0 0 auto; min-width: 75px;}
-      .nav-pills .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem !important; padding: 8px 5px !important; color: #6c757d; background: transparent !important; }
-      .nav-pills .nav-link i { font-size: 1.3rem; margin-bottom: 4px; }
-      .nav-pills .nav-link.active { background: #eef2ff !important; color: var(--primary-color) !important; font-weight: 700; border-radius: 15px;}
+      #mainNav::-webkit-scrollbar { display: none; }
+      #mainNav .nav-item { margin: 0 2px; flex: 0 0 auto; min-width: 75px;}
+      #mainNav .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem !important; padding: 8px 5px !important; color: #6c757d; background: transparent !important; }
+      #mainNav .nav-link i { font-size: 1.3rem; margin-bottom: 4px; }
+      #mainNav .nav-link.active { background: #eef2ff !important; color: var(--primary-color) !important; font-weight: 700; border-radius: 15px;}
     }
 
     .quick-menu-btn { 
@@ -214,7 +215,7 @@
     @media print {
       body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: white !important;}
       .print-hide { display: none !important; }
-      .app-header, .nav-pills, .filter-box, #dashboardSection, #formSection, #tableSection, #settingsSection, .handout-menu-wrapper { display: none !important; }
+      .app-header, #mainNav, .filter-box, #dashboardSection, #formSection, #tableSection, #settingsSection, .handout-menu-wrapper { display: none !important; }
       #handoutSection { display: block !important; width: 100%; margin: 0; padding: 0; }
       
       /* ทำให้แท็บทุกหน้ากางออกตอนปริ้นต์ */
@@ -734,6 +735,8 @@
             </tbody>
           </table>
         </div>
+        <label class="form-label">รายละเอียดปัญหาและการแก้ไข (เพิ่มเติมภาพรวม)</label>
+        <textarea class="form-control" name="Problem_Detail" rows="3" placeholder="ระบุรายละเอียด..."></textarea>
       </div></div>
 
       <div class="custom-card"><div class="card-title-bar"><i class="fas fa-shield-alt"></i> 10. ความปลอดภัยและอื่นๆ</div><div class="card-body-custom">
